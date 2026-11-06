@@ -65,8 +65,8 @@ elke poging wordt bewaard met je score en antwoorden.
 ## Installeren en starten
 
 ```bash
-git clone https://github.com/<jouw-gebruikersnaam>/toetsr.git
-cd toetsr
+git clone https://github.com/AliAlAttar144/dino.git
+cd dino
 dotnet run
 ```
 
