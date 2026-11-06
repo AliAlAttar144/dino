@@ -1,0 +1,85 @@
+@inherits QuestionInputBase
+
+@{
+    var multi = Question.Type == QuestionType.MultipleChoice;
+}
+<fieldset class="options-fieldset">
+    <legend class="sr-only">@(multi ? "Kies één of meer antwoorden" : "Kies één antwoord")</legend>
+    @if (multi && !Review)
+    {
+        <p class="subtle mb-0 mt-1">Meerdere antwoorden mogelijk.</p>
+    }
+    <ul class="options @(Review ? "boxed" : "")">
+        @foreach (var o in Question.Options)
+        {
+            var option = o;
+            var selected = IsSelected(option);
+            var id = $"{InputName}-o{option.Id}";
+            <li @key="option.Id">
+                <label class="option @(selected ? "selected" : "") @ReviewClass(option, selected) @(Review || Disabled ? "readonly" : "")" for="@id">
+                    @if (multi)
+                    {
+                        <input id="@id" type="checkbox" name="@InputName" checked="@selected" disabled="@(Review || Disabled)"
+                               @onchange="e => OnSelect.InvokeAsync(new OptionSelection(option.Id, e.Value is true))" />
+                        <span class="option-mark square" aria-hidden="true"><Icon Name="check" /></span>
+                    }
+                    else
+                    {
+                        <input id="@id" type="radio" name="@InputName" checked="@selected" disabled="@(Review || Disabled)"
+                               @onchange="() => OnSelect.InvokeAsync(new OptionSelection(option.Id, true))" />
+                        <span class="option-mark" aria-hidden="true"></span>
+                    }
+                    <span class="option-body">
+                        @if (!string.IsNullOrWhiteSpace(option.Text))
+                        {
+                            @((MarkupString)MarkdownRenderer.ToInlineHtml(option.Text))
+                        }
+                        @if (!string.IsNullOrEmpty(option.ImagePath))
+                        {
+                            <img src="@ImageStore.Url(option.ImagePath)" alt="Afbeelding bij antwoord" loading="lazy" />
+                        }
+                        @if (Review)
+                        {
+                            @if (selected && option.IsCorrect)
+                            {
+                                <span class="option-verdict ok"><Icon Name="check" /> jouw antwoord, goed</span>
+                            }
+                            else if (selected)
+                            {
+                                <span class="option-verdict bad"><Icon Name="x" /> jouw antwoord, fout</span>
+                            }
+                            else if (option.IsCorrect)
+                            {
+                                <span class="option-verdict ok">juiste antwoord</span>
+                            }
+                        }
+                    </span>
+                    @if (ShowOptionPoints)
+                    {
+                        <span class="option-points" title="Punten voor deze optie">@OptionPoints(option)</span>
+                    }
+                </label>
+            </li>
+        }
+    </ul>
+</fieldset>
+
+@code {
+    private string ReviewClass(AnswerOption o, bool selected) => !Review ? ""
+        : selected && o.IsCorrect ? "is-correct"
+        : selected ? "is-wrong"
+        : o.IsCorrect ? "is-missed"
+        : "";
+
+    /// <summary>Wat deze optie bijdraagt aan de score (zie de scoreregels in de handlers).</summary>
+    private string OptionPoints(AnswerOption o)
+    {
+        if (Question.Type == QuestionType.SingleChoice)
+            return (o.IsCorrect ? Question.Points : 0).ToString("0.0#");
+        var correct = Question.Options.Count(x => x.IsCorrect);
+        var wrong = Question.Options.Count - correct;
+        return o.IsCorrect
+            ? "+" + (Question.Points / Math.Max(1, correct)).ToString("0.0#")
+            : wrong == 0 ? "0" : "−" + (Question.Points / wrong).ToString("0.0#");
+    }
+}

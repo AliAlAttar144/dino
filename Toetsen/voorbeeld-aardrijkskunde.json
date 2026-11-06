@@ -1,0 +1,77 @@
+{
+  "title": "Voorbeeld – Aardrijkskunde van Nederland",
+  "description": "Korte voorbeeldtoets met **geshuffelde** vragen en antwoorden.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "dropdown",
+      "text": "De hoofdstad van Nederland is {{1}}, maar de regering zetelt in {{2}}.",
+      "points": 2,
+      "explanation": "Amsterdam is volgens de Grondwet de hoofdstad. Regering en parlement zitten in Den Haag.",
+      "gaps": [
+        { "options": [ { "text": "Amsterdam", "correct": true }, { "text": "Den Haag" }, { "text": "Rotterdam" }, { "text": "Utrecht" } ] },
+        { "options": [ { "text": "Amsterdam" }, { "text": "Den Haag", "correct": true }, { "text": "Rotterdam" }, { "text": "Utrecht" } ] }
+      ]
+    },
+    {
+      "type": "multiple",
+      "text": "Welke provincies grenzen aan de Noordzee?",
+      "points": 2,
+      "explanation": "Zeeland, Zuid-Holland, Noord-Holland en Friesland (via de Waddeneilanden) grenzen aan de Noordzee. Utrecht en Gelderland niet.",
+      "options": [
+        { "text": "Zeeland", "correct": true },
+        { "text": "Noord-Holland", "correct": true },
+        { "text": "Utrecht" },
+        { "text": "Gelderland" },
+        { "text": "Zuid-Holland", "correct": true }
+      ]
+    },
+    {
+      "type": "single",
+      "text": "Wat is het hoogste punt van het Europese deel van Nederland?",
+      "points": 1,
+      "explanation": "De Vaalserberg in Limburg is ongeveer 322,4 meter hoog.",
+      "options": [
+        { "text": "De Vaalserberg", "correct": true },
+        { "text": "De Veluwezoom" },
+        { "text": "De Sint-Pietersberg" },
+        { "text": "De Tankenberg" }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "text": "De Rijn komt bij Lobith ons land binnen. Een belangrijke aftakking die langs Arnhem stroomt heet de {{1}}, en de tak die richting Rotterdam stroomt heet de {{2}}.",
+      "points": 2,
+      "explanation": "Bij de Pannerdensche Kop splitst de Rijn zich. De Nederrijn stroomt langs Arnhem, de Waal stroomt via Nijmegen richting Rotterdam.",
+      "gaps": [
+        { "options": [ { "text": "Nederrijn", "correct": true }, { "text": "Maas" }, { "text": "IJssel" } ] },
+        { "options": [ { "text": "Schelde" }, { "text": "Waal", "correct": true }, { "text": "Vecht" } ] }
+      ]
+    },
+    {
+      "type": "single",
+      "text": "Hoeveel provincies heeft Nederland?",
+      "points": 1,
+      "explanation": "Nederland heeft 12 provincies. Flevoland werd in 1986 als laatste een provincie.",
+      "options": [
+        { "text": "10" },
+        { "text": "11" },
+        { "text": "12", "correct": true },
+        { "text": "13" }
+      ]
+    },
+    {
+      "type": "multiple",
+      "text": "Welke van deze steden liggen in de provincie Noord-Brabant?",
+      "points": 1,
+      "explanation": "Eindhoven, Tilburg en 's-Hertogenbosch liggen in Noord-Brabant. Maastricht ligt in Limburg.",
+      "options": [
+        { "text": "Eindhoven", "correct": true },
+        { "text": "Tilburg", "correct": true },
+        { "text": "Maastricht" },
+        { "text": "'s-Hertogenbosch", "correct": true }
+      ]
+    }
+  ]
+}

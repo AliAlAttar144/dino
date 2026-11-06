@@ -1,0 +1,302 @@
+@page "/beheer/nieuw"
+@page "/beheer/{Id:int}"
+@inject QuizService QuizService
+@inject QuestionTypeRegistry Registry
+@inject ToastService Toast
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "Nieuwe toets" : $"{_title} bewerken") – Toetsr</PageTitle>
+
+<div class="page page-narrow">
+    <nav class="breadcrumb" aria-label="Kruimelpad">
+        <a href="/">Mijn toetsen</a>
+        <Icon Name="chevron-right" />
+        @if (!IsNew && _quiz is not null)
+        {
+            <a href="@($"/toets/{Id}")">@_quiz.Title</a>
+            <Icon Name="chevron-right" />
+        }
+        <span aria-current="page">@(IsNew ? "Nieuwe toets" : "Bewerken")</span>
+    </nav>
+
+    @if (_loading)
+    {
+        <Loading />
+    }
+    else if (!IsNew && _quiz is null)
+    {
+        <EmptyState Icon="alert" Title="Toets niet gevonden" Text="Deze toets bestaat niet (meer).">
+            <a class="btn btn-primary" href="/">Naar het overzicht</a>
+        </EmptyState>
+    }
+    else
+    {
+        <div class="page-header">
+            <div>
+                <h1 tabindex="-1">@(IsNew ? "Nieuwe toets" : "Toets bewerken")</h1>
+                <p>@(IsNew ? "Geef de toets een titel. Daarna voeg je vragen toe." : "Wijzigingen aan vragen worden direct opgeslagen. Eerdere pogingen blijven ongewijzigd.")</p>
+            </div>
+            @if (!IsNew)
+            {
+                <div class="row">
+                    <a class="btn btn-ghost" href="@($"/toets/{Id}")"><Icon Name="play" /> Naar toets</a>
+                    <button type="button" class="btn btn-ghost" @onclick="DuplicateAsync"><Icon Name="copy" /> Dupliceren</button>
+                    <a class="btn btn-ghost" href="@($"/export/{Id}/zip")" download><Icon Name="download" /> Exporteren</a>
+                    <button type="button" class="btn btn-danger-ghost" @onclick="DeleteQuizAsync"><Icon Name="trash" /> Verwijderen</button>
+                </div>
+            }
+        </div>
+
+        <section class="card mb-3" aria-labelledby="meta-heading">
+            <div class="card-header"><h2 id="meta-heading">Gegevens</h2></div>
+            <div class="card-body">
+                <form class="form-grid" @onsubmit="SaveMetaAsync" @onsubmit:preventDefault="true">
+                    <div class="field">
+                        <label for="quiz-title">Titel</label>
+                        <input id="quiz-title" class="input @(_metaErrors.Count > 0 ? "invalid" : "")" @bind="_title" maxlength="300" placeholder="Bijv. Vue & Express – oefentoets" aria-invalid="@(_metaErrors.Count > 0 ? "true" : "false")" />
+                    </div>
+                    <div class="field">
+                        <label for="quiz-desc">Omschrijving <span class="subtle">(optioneel, Markdown)</span></label>
+                        <textarea id="quiz-desc" class="textarea" rows="3" @bind="_description" placeholder="Waar gaat deze toets over?"></textarea>
+                    </div>
+                    <div class="row" style="gap:1.5rem">
+                        <Switch Label="Vragen standaard shuffelen" @bind-Value="_shuffleQuestions" />
+                        <Switch Label="Antwoorden standaard shuffelen" @bind-Value="_shuffleOptions" />
+                    </div>
+                    <ErrorList Errors="_metaErrors" />
+                    <div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">@(IsNew ? "Toets aanmaken" : "Gegevens opslaan")</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        @if (!IsNew && _quiz is not null)
+        {
+            <section class="card" aria-labelledby="questions-heading">
+                <div class="card-header">
+                    <h2 id="questions-heading">Vragen <span class="badge">@_quiz.Questions.Count</span> <span class="subtle">· @_quiz.Questions.Sum(q => q.Points).ToString("0.#") punten</span></h2>
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="AddQuestion"><Icon Name="plus" /> Vraag toevoegen</button>
+                </div>
+                <div class="card-body">
+                    @if (_quiz.Questions.Count == 0)
+                    {
+                        <EmptyState Icon="list" Title="Nog geen vragen" Text="Voeg zelf vragen toe of importeer ze uit een JSON-bestand.">
+                            <button type="button" class="btn btn-primary" @onclick="AddQuestion"><Icon Name="plus" /> Eerste vraag toevoegen</button>
+                            <a class="btn btn-secondary" href="/importeren"><Icon Name="upload" /> Importeren</a>
+                        </EmptyState>
+                    }
+                    else
+                    {
+                        <p class="subtle">Sleep vragen om de volgorde te wijzigen, of gebruik de pijltjes.</p>
+                        <ol class="question-list">
+                            @for (var i = 0; i < _quiz.Questions.Count; i++)
+                            {
+                                var index = i;
+                                var q = _quiz.Questions[i];
+                                <li class="question-row @(_dragIndex == index ? "dragging" : "") @(_dropIndex == index && _dragIndex != index ? "drop-target" : "")"
+                                    @key="q.Id"
+                                    draggable="true"
+                                    @ondragstart="() => _dragIndex = index"
+                                    @ondragenter="() => _dropIndex = index"
+                                    @ondragover:preventDefault="true"
+                                    @ondrop="() => DropAsync(index)"
+                                    @ondragend="() => { _dragIndex = null; _dropIndex = null; }">
+                                    <span class="drag-handle" aria-hidden="true"><Icon Name="grip" /></span>
+                                    <span class="q-number">@(index + 1)</span>
+                                    <div class="q-summary">
+                                        <div class="q-text">@(string.IsNullOrWhiteSpace(q.Title) ? "" : q.Title + " – ")@MarkdownRenderer.ToPlainText(q.Text, 140)</div>
+                                        <div class="q-meta">
+                                            <span class="badge badge-brand">@Registry.Get(q.Type).DisplayName</span>
+                                            <span class="badge">@q.Points.ToString("0.#") pt</span>
+                                            @if (q.ImagePath is not null)
+                                            {
+                                                <span class="badge"><Icon Name="image" /> afbeelding</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(q.Explanation))
+                                            {
+                                                <span class="badge">uitleg</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="btn-group row-actions">
+                                        <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="@($"Vraag {index + 1} omhoog")" title="Omhoog" disabled="@(index == 0)" @onclick="() => MoveAsync(q, -1)"><Icon Name="chevron-up" /></button>
+                                        <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="@($"Vraag {index + 1} omlaag")" title="Omlaag" disabled="@(index == _quiz.Questions.Count - 1)" @onclick="() => MoveAsync(q, 1)"><Icon Name="chevron-down" /></button>
+                                        <button type="button" class="btn btn-secondary btn-sm" @onclick="() => EditQuestion(q, index)"><Icon Name="edit" /> Bewerken</button>
+                                        <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" aria-label="@($"Vraag {index + 1} verwijderen")" title="Verwijderen" @onclick="() => DeleteQuestionAsync(q, index)"><Icon Name="trash" /></button>
+                                    </div>
+                                </li>
+                            }
+                        </ol>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-ghost" @onclick="AddQuestion"><Icon Name="plus" /> Vraag toevoegen</button>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+    }
+</div>
+
+<Modal IsOpen="_editorOpen" IsOpenChanged="v => _editorOpen = v" Title="@_editorTitle" Large="true" CloseOnBackdrop="false">
+    @if (_editorOpen)
+    {
+        <QuestionEditor @key="_editorKey" QuizId="Id ?? 0" Question="_editing" Number="_editingNumber" OnSaved="QuestionSavedAsync" OnCancel="() => _editorOpen = false" />
+    }
+</Modal>
+
+<ConfirmDialog @ref="_confirm" />
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private bool IsNew => Id is null;
+    private Quiz? _quiz;
+    private bool _loading = true;
+    private bool _busy;
+    private string _title = "";
+    private string? _description;
+    private bool _shuffleQuestions;
+    private bool _shuffleOptions;
+    private List<string> _metaErrors = [];
+
+    private bool _editorOpen;
+    private Question? _editing;
+    private int _editingNumber;
+    private string _editorTitle = "";
+    private Guid _editorKey;
+
+    private int? _dragIndex;
+    private int? _dropIndex;
+    private ConfirmDialog _confirm = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _metaErrors = [];
+        if (IsNew)
+        {
+            _quiz = null;
+            _title = "";
+            _description = null;
+            _shuffleQuestions = _shuffleOptions = false;
+        }
+        else
+        {
+            await ReloadAsync();
+            if (_quiz is not null)
+            {
+                _title = _quiz.Title;
+                _description = _quiz.Description;
+                _shuffleQuestions = _quiz.ShuffleQuestions;
+                _shuffleOptions = _quiz.ShuffleOptions;
+            }
+        }
+        _loading = false;
+    }
+
+    private async Task ReloadAsync() => _quiz = await QuizService.GetAsync(Id!.Value);
+
+    private async Task SaveMetaAsync()
+    {
+        _busy = true;
+        try
+        {
+            var result = IsNew
+                ? await QuizService.CreateAsync(_title, _description, _shuffleQuestions, _shuffleOptions)
+                : await QuizService.UpdateMetaAsync(Id!.Value, _title, _description, _shuffleQuestions, _shuffleOptions);
+            _metaErrors = result.Errors.ToList();
+            if (!result.Success) return;
+
+            if (IsNew)
+            {
+                Toast.Success("Toets aangemaakt. Voeg nu vragen toe.");
+                Nav.NavigateTo($"/beheer/{result.Id}");
+            }
+            else
+            {
+                Toast.Success("Gegevens opgeslagen.");
+                await ReloadAsync();
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void AddQuestion()
+    {
+        _editing = null;
+        _editingNumber = (_quiz?.Questions.Count ?? 0) + 1;
+        _editorTitle = $"Vraag {_editingNumber} toevoegen";
+        _editorKey = Guid.NewGuid();
+        _editorOpen = true;
+    }
+
+    private void EditQuestion(Question q, int index)
+    {
+        _editing = q;
+        _editingNumber = index + 1;
+        _editorTitle = $"Vraag {_editingNumber} bewerken";
+        _editorKey = Guid.NewGuid();
+        _editorOpen = true;
+    }
+
+    private async Task QuestionSavedAsync(int questionId)
+    {
+        var wasNew = _editing is null;
+        _editorOpen = false;
+        Toast.Success(wasNew ? "Vraag toegevoegd." : "Vraag opgeslagen.");
+        await ReloadAsync();
+    }
+
+    private async Task DeleteQuestionAsync(Question q, int index)
+    {
+        if (!await _confirm.AskAsync("Vraag verwijderen?", $"Vraag {index + 1} wordt verwijderd. Eerdere pogingen blijven bewaard.")) return;
+        await QuizService.DeleteQuestionAsync(Id!.Value, q.Id);
+        Toast.Success("Vraag verwijderd.");
+        await ReloadAsync();
+    }
+
+    private async Task MoveAsync(Question q, int delta)
+    {
+        await QuizService.MoveQuestionAsync(Id!.Value, q.Id, delta);
+        await ReloadAsync();
+    }
+
+    private async Task DropAsync(int targetIndex)
+    {
+        if (_quiz is null || _dragIndex is not int from || from == targetIndex)
+        {
+            _dragIndex = _dropIndex = null;
+            return;
+        }
+        var ids = _quiz.Questions.Select(q => q.Id).ToList();
+        var moved = ids[from];
+        ids.RemoveAt(from);
+        ids.Insert(targetIndex, moved);
+        _dragIndex = _dropIndex = null;
+
+        // Direct tonen, dan opslaan.
+        _quiz.Questions = ids.Select(id => _quiz.Questions.First(q => q.Id == id)).ToList();
+        await QuizService.ReorderQuestionsAsync(Id!.Value, ids);
+        await ReloadAsync();
+    }
+
+    private async Task DuplicateAsync()
+    {
+        var newId = await QuizService.DuplicateAsync(Id!.Value);
+        if (newId is null) return;
+        Toast.Success("Toets gedupliceerd. Je bewerkt nu de kopie.");
+        Nav.NavigateTo($"/beheer/{newId}");
+    }
+
+    private async Task DeleteQuizAsync()
+    {
+        if (!await _confirm.AskAsync("Toets verwijderen?", $"\"{_quiz?.Title}\" wordt met alle vragen en pogingen definitief verwijderd.")) return;
+        await QuizService.DeleteAsync(Id!.Value);
+        Toast.Success("Toets verwijderd.");
+        Nav.NavigateTo("/");
+    }
+}

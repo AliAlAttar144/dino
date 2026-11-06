@@ -1,0 +1,25 @@
+@page "/Error"
+@layout MainLayout
+@using System.Diagnostics
+
+<PageTitle>Fout – Toetsr</PageTitle>
+
+<div class="page page-narrow">
+    <h1>Er ging iets mis</h1>
+    <p>Er is een onverwachte fout opgetreden. Probeer de pagina opnieuw te laden.</p>
+    @if (!string.IsNullOrEmpty(RequestId))
+    {
+        <p class="subtle">Request-ID: <code>@RequestId</code></p>
+    }
+    <a class="btn btn-primary" href="/">Naar het overzicht</a>
+</div>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}

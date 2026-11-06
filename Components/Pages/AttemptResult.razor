@@ -1,0 +1,217 @@
+@page "/poging/{Id:int}/resultaat"
+@layout ExamLayout
+@inject AttemptService AttemptService
+@inject ToastService Toast
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<PageTitle>Resultaat @(_session?.QuizTitle) – Toetsr</PageTitle>
+
+@if (_loading)
+{
+    <div class="exam"><header class="exam-topbar"><span class="exam-title">Laden…</span></header><Loading /></div>
+}
+else if (_session is null)
+{
+    <div class="page page-narrow">
+        <EmptyState Icon="alert" Title="Poging niet gevonden" Text="Deze poging bestaat niet (meer).">
+            <a class="btn btn-primary" href="/">Naar het overzicht</a>
+        </EmptyState>
+    </div>
+}
+else
+{
+    var attempt = _session.Attempt;
+    var questions = _session.Questions;
+    var grade = Grading.ToGrade(attempt.Score, attempt.MaxScore);
+    var passed = grade >= Grading.PassGrade;
+    var selected = questions[_selected];
+    var selectedResult = _session.Results[selected.Id];
+    var counts = questions.GroupBy(q => _session.Results[q.Id].State).ToDictionary(g => g.Key, g => g.Count());
+
+    <div class="exam">
+        <header class="exam-topbar">
+            <a class="back" href="@($"/toets/{attempt.QuizId}")" aria-label="Terug naar de toets" title="Terug naar de toets"><Icon Name="arrow-left" /></a>
+            <div class="exam-title">@_session.QuizTitle – resultaat</div>
+            <span class="exam-chip" title="Cijfer"><Icon Name="chart" /> @grade.ToString("0.0")</span>
+            <button type="button" class="btn btn-white btn-sm" disabled="@_busy" @onclick="RetryAsync"><Icon Name="refresh" /> Opnieuw proberen</button>
+        </header>
+
+        <div class="exam-body with-panel">
+            <nav class="qnav" aria-label="Vragen">
+                @for (var i = 0; i < questions.Count; i++)
+                {
+                    var index = i;
+                    var state = _session.Results[questions[i].Id].State;
+                    <button type="button" class="qnav-item @StateClass(state) @(index == _selected ? "current" : "")"
+                            aria-current="@(index == _selected ? "step" : null)"
+                            aria-label="@($"Vraag {index + 1}: {StateText(state)}")"
+                            @onclick="() => SelectAsync(index, true)">
+                        @(index + 1)
+                    </button>
+                }
+            </nav>
+
+            <div class="exam-main" id="exam-main">
+                <div class="exam-scroll">
+                    <div class="exam-content">
+                        <nav class="breadcrumb" aria-label="Kruimelpad">
+                            <a href="/">Toetsr</a>
+                            <Icon Name="chevron-right" />
+                            <a href="@($"/toets/{attempt.QuizId}")">@_session.QuizTitle</a>
+                            <Icon Name="chevron-right" />
+                            <span aria-current="page">Resultaat</span>
+                        </nav>
+
+                        <section class="result-hero" aria-label="Samenvatting">
+                            <div class="grade-circle @(passed ? "" : "fail")">
+                                <span class="grade">@grade.ToString("0.0")</span>
+                                <span class="grade-label">cijfer</span>
+                            </div>
+                            <div>
+                                <h1 tabindex="-1" class="mb-1">@(passed ? "Goed gedaan!" : "Nog even oefenen")</h1>
+                                <div class="result-meta">
+                                    <span><strong>@attempt.Score.ToString("0.##")</strong> van @attempt.MaxScore.ToString("0.##") punten</span>
+                                    <span><strong>@attempt.Percentage.ToString("0.#")%</strong> goed</span>
+                                    <span>Ingeleverd @attempt.SubmittedAt?.ToLocalTime().ToString("d MMMM yyyy 'om' HH:mm")</span>
+                                </div>
+                                <div class="result-legend">
+                                    <span class="badge badge-success">@counts.GetValueOrDefault(ResultState.Correct) goed</span>
+                                    @if (counts.GetValueOrDefault(ResultState.Partial) > 0)
+                                    {
+                                        <span class="badge badge-warning">@counts[ResultState.Partial] deels goed</span>
+                                    }
+                                    <span class="badge badge-danger">@counts.GetValueOrDefault(ResultState.Wrong) fout</span>
+                                    @if (counts.GetValueOrDefault(ResultState.Unanswered) > 0)
+                                    {
+                                        <span class="badge">@counts[ResultState.Unanswered] niet beantwoord</span>
+                                    }
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="exam-sheet-title">Digitale toets</div>
+                        @for (var i = 0; i < questions.Count; i++)
+                        {
+                            var index = i;
+                            var q = questions[i];
+                            <div class="review-question @(index == _selected ? "active" : "")" @onclick="() => SelectAsync(index, false)" @key="q.Id">
+                                <QuestionView Question="q" Number="i + 1" Selected="_session.Selected(q.Id)" Review="true"
+                                              Result="_session.Results[q.Id]" ShowExplanation="false" IdPrefix="r" />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <footer class="exam-footer">
+                    <button type="button" class="pager-btn" disabled="@(_selected == 0)" @onclick="() => SelectAsync(_selected - 1, true)">
+                        <Icon Name="chevron-up" />
+                        <span class="pager-num" aria-hidden="true">@(_selected)</span>
+                        <span class="pager-text">
+                            <span class="pager-label">Vorige vraag</span>
+                            <span class="pager-preview">@(_selected > 0 ? Preview(questions[_selected - 1]) : "")</span>
+                        </span>
+                    </button>
+                    <button type="button" class="pager-btn next" disabled="@(_selected >= questions.Count - 1)" @onclick="() => SelectAsync(_selected + 1, true)">
+                        <Icon Name="chevron-down" />
+                        <span class="pager-num" aria-hidden="true">@(_selected + 2)</span>
+                        <span class="pager-text">
+                            <span class="pager-label">Volgende vraag</span>
+                            <span class="pager-preview">@(_selected < questions.Count - 1 ? Preview(questions[_selected + 1]) : "")</span>
+                        </span>
+                    </button>
+                </footer>
+            </div>
+
+            <aside class="detail-panel @(_panelOpen ? "open" : "")" aria-label="Details van vraag @(_selected + 1)">
+                <div class="row-between">
+                    <h2>@(selected.Title ?? $"Vraag {_selected + 1}")</h2>
+                    <button type="button" class="btn btn-ghost btn-icon btn-sm panel-close" aria-label="Details sluiten" @onclick="() => _panelOpen = false"><Icon Name="x" /></button>
+                </div>
+                <div class="subtle">@(_selected + 1) &nbsp; @MarkdownRenderer.ToPlainText(selected.Text, 90)</div>
+                <div class="detail-score">
+                    <span>@selectedResult.Score.ToString("0.0#") / @selectedResult.MaxScore.ToString("0.0#") <small>punten</small></span>
+                    <ResultBadge State="selectedResult.State" />
+                </div>
+                <QuestionView @key="@($"detail-{selected.Id}")" Question="selected" Number="_selected + 1" Selected="_session.Selected(selected.Id)" Review="true"
+                              ShowOptionPoints="true" ShowExplanation="true" ShowTitle="false" IdPrefix="d" />
+            </aside>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private AttemptSession? _session;
+    private bool _loading = true;
+    private bool _busy;
+    private int _selected;
+    private bool _panelOpen;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _session = await AttemptService.GetSessionAsync(Id);
+        _loading = false;
+        if (_session is { IsSubmitted: false })
+        {
+            Nav.NavigateTo($"/poging/{Id}", replace: true);
+            return;
+        }
+        if (_session is { Questions.Count: 0 }) _session = null;
+        // Start bij de eerste vraag die niet helemaal goed was.
+        if (_session is not null)
+        {
+            var firstWrong = _session.Questions.FindIndex(q => _session.Results[q.Id].State != ResultState.Correct);
+            _selected = firstWrong < 0 ? 0 : firstWrong;
+        }
+    }
+
+    private async Task SelectAsync(int index, bool scroll)
+    {
+        if (_session is null || index < 0 || index >= _session.Questions.Count) return;
+        _selected = index;
+        _panelOpen = true;
+        if (scroll) await JS.InvokeVoidAsync("toetsr.scrollToId", $"r-vraag-{index + 1}", true);
+    }
+
+    private async Task RetryAsync()
+    {
+        if (_session is null) return;
+        _busy = true;
+        try
+        {
+            // Nieuwe poging met dezelfde shuffle-instellingen als de toets.
+            var attemptId = await AttemptService.StartAsync(_session.Attempt.QuizId,
+                _session.Attempt.Quiz?.ShuffleQuestions ?? false, _session.Attempt.Quiz?.ShuffleOptions ?? false);
+            Nav.NavigateTo($"/poging/{attemptId}");
+        }
+        catch (InvalidOperationException ex)
+        {
+            Toast.Error(ex.Message);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string StateClass(ResultState s) => s switch
+    {
+        ResultState.Correct => "correct",
+        ResultState.Partial => "partial",
+        ResultState.Wrong => "wrong",
+        _ => "unanswered",
+    };
+
+    private static string StateText(ResultState s) => s switch
+    {
+        ResultState.Correct => "goed",
+        ResultState.Partial => "deels goed",
+        ResultState.Wrong => "fout",
+        _ => "niet beantwoord",
+    };
+
+    private static string Preview(Question q) => q.Title ?? MarkdownRenderer.ToPlainText(q.Text, 60);
+}

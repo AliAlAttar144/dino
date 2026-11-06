@@ -1,0 +1,250 @@
+@page "/toets/{Id:int}"
+@inject QuizService QuizService
+@inject AttemptService AttemptService
+@inject ToastService Toast
+@inject NavigationManager Nav
+
+<PageTitle>@(_quiz?.Title ?? "Toets") – Toetsr</PageTitle>
+
+<div class="page">
+    <nav class="breadcrumb" aria-label="Kruimelpad">
+        <a href="/">Mijn toetsen</a>
+        <Icon Name="chevron-right" />
+        <span aria-current="page">@(_quiz?.Title ?? "…")</span>
+    </nav>
+
+    @if (_loading)
+    {
+        <Loading />
+    }
+    else if (_quiz is null)
+    {
+        <EmptyState Icon="alert" Title="Toets niet gevonden" Text="Deze toets bestaat niet (meer).">
+            <a class="btn btn-primary" href="/">Naar het overzicht</a>
+        </EmptyState>
+    }
+    else
+    {
+        <div class="page-header">
+            <div class="grow">
+                <h1 tabindex="-1">@_quiz.Title</h1>
+                <p>@_quiz.Questions.Count vragen · @TotalPoints.ToString("0.#") punten</p>
+            </div>
+            <div class="row">
+                <a class="btn btn-ghost" href="@($"/beheer/{Id}")"><Icon Name="edit" /> Bewerken</a>
+                <a class="btn btn-ghost" href="@($"/export/{Id}/json")" download><Icon Name="file" /> JSON</a>
+                <a class="btn btn-ghost" href="@($"/export/{Id}/zip")" download><Icon Name="zip" /> ZIP</a>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(_quiz.Description))
+        {
+            <Markdown Text="@_quiz.Description" Class="mb-3" />
+        }
+
+        <section class="card mb-3" aria-labelledby="start-heading">
+            <div class="card-body start-card">
+                <div>
+                    @if (_inProgress is not null)
+                    {
+                        <h2 id="start-heading">Je hebt een poging die nog bezig is</h2>
+                        <p class="muted mb-0">Gestart op @_inProgress.StartedAt.ToLocalTime().ToString("d MMMM yyyy 'om' HH:mm"). Je antwoorden zijn bewaard.</p>
+                    }
+                    else
+                    {
+                        <h2 id="start-heading">@(_attempts.Count == 0 ? "Klaar om te beginnen?" : "Nog een keer oefenen?")</h2>
+                        <p class="muted mb-0">Je kunt de toets zo vaak maken als je wilt. Elke poging wordt bewaard.</p>
+                    }
+                    <div class="start-options">
+                        <Switch Label="Vragen shuffelen" @bind-Value="_shuffleQuestions" />
+                        <Switch Label="Antwoorden shuffelen" @bind-Value="_shuffleOptions" />
+                    </div>
+                </div>
+                <div class="row">
+                    @if (_inProgress is not null)
+                    {
+                        <button type="button" class="btn btn-secondary btn-lg" disabled="@_busy" @onclick="StartAsync">Nieuwe poging</button>
+                        <a class="btn btn-primary btn-lg" href="@($"/poging/{_inProgress.Id}")"><Icon Name="play" /> Hervatten</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary btn-lg" disabled="@(_busy || _quiz.Questions.Count == 0)" @onclick="StartAsync">
+                            <Icon Name="play" /> Start toets
+                        </button>
+                    }
+                </div>
+            </div>
+            @if (_quiz.Questions.Count == 0)
+            {
+                <div class="card-body" style="padding-top:0">
+                    <div class="alert alert-info"><Icon Name="info" /><div>Deze toets heeft nog geen vragen. <a href="@($"/beheer/{Id}")">Voeg vragen toe</a> of <a href="/importeren">importeer ze</a>.</div></div>
+                </div>
+            }
+        </section>
+
+        <h2 class="mb-2">Resultaten</h2>
+        @if (_done.Count == 0)
+        {
+            <EmptyState Icon="chart" Title="Nog geen resultaten" Text="Na je eerste ingeleverde poging zie je hier je scores, je beste en gemiddelde resultaat." />
+        }
+        else
+        {
+            <div class="stat-grid mb-3">
+                <div class="stat"><div class="stat-label">Pogingen</div><div class="stat-value">@_done.Count</div></div>
+                <div class="stat"><div class="stat-label">Beste score</div><div class="stat-value">@_done.Max(a => a.Percentage).ToString("0.#")<small>%</small></div></div>
+                <div class="stat"><div class="stat-label">Gemiddeld</div><div class="stat-value">@_done.Average(a => a.Percentage).ToString("0.#")<small>%</small></div></div>
+                <div class="stat"><div class="stat-label">Beste cijfer</div><div class="stat-value">@_done.Max(a => a.Grade).ToString("0.0")</div></div>
+                <div class="stat">
+                    <div class="stat-label">Verloop</div>
+                    <div class="trend" role="img" aria-label="Scores per poging: @string.Join(", ", Chrono.Select(a => a.Percentage.ToString("0") + "%"))">
+                        @foreach (var a in Chrono.TakeLast(20))
+                        {
+                            <span class="@(a.Grade >= Grading.PassGrade ? "pass" : "")" style="height:@(Math.Max(4, a.Percentage).ToString(System.Globalization.CultureInfo.InvariantCulture))%" title="Poging @a.Number: @a.Percentage.ToString("0.#")%"></span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_attempts.Count > 0)
+        {
+            <div class="card">
+                <div class="table-wrap">
+                    <table class="table responsive">
+                        <thead>
+                            <tr>
+                                <th scope="col">Poging</th>
+                                <th scope="col">Datum</th>
+                                <th scope="col" class="num">Score</th>
+                                <th scope="col" class="num">Percentage</th>
+                                <th scope="col" class="num">Cijfer</th>
+                                <th scope="col">Duur</th>
+                                <th scope="col" class="actions"><span class="sr-only">Acties</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in _attempts)
+                            {
+                                <tr @key="a.Id">
+                                    <td class="cell-main"><strong>#@a.Number</strong>
+                                        @if (a.Status == AttemptStatus.InProgress)
+                                        {
+                                            <span class="badge badge-brand" style="margin-left:.4rem">Bezig</span>
+                                        }
+                                        else if (_bestId == a.Id && _done.Count > 1)
+                                        {
+                                            <span class="badge badge-success" style="margin-left:.4rem">Beste</span>
+                                        }
+                                    </td>
+                                    <td data-label="Datum" class="nowrap">@((a.SubmittedAt ?? a.StartedAt).ToLocalTime().ToString("d MMM yyyy, HH:mm"))</td>
+                                    @if (a.Status == AttemptStatus.Submitted)
+                                    {
+                                        <td class="num" data-label="Score">@a.Score.ToString("0.##") / @a.MaxScore.ToString("0.##")</td>
+                                        <td class="num" data-label="Percentage">@a.Percentage.ToString("0.#")%</td>
+                                        <td class="num" data-label="Cijfer"><span class="badge @(a.Grade >= Grading.PassGrade ? "badge-success" : "badge-danger")">@a.Grade.ToString("0.0")</span></td>
+                                        <td data-label="Duur">@FormatDuration(a.Duration)</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="num" data-label="Score">–</td>
+                                        <td class="num" data-label="Percentage">–</td>
+                                        <td class="num" data-label="Cijfer">–</td>
+                                        <td data-label="Duur">–</td>
+                                    }
+                                    <td class="actions">
+                                        <div class="btn-group">
+                                            @if (a.Status == AttemptStatus.Submitted)
+                                            {
+                                                <a class="btn btn-secondary btn-sm" href="@($"/poging/{a.Id}/resultaat")"><Icon Name="eye" /> Terugkijken</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-primary btn-sm" href="@($"/poging/{a.Id}")"><Icon Name="play" /> Hervatten</a>
+                                            }
+                                            <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" aria-label="Poging @a.Number verwijderen" title="Verwijderen" @onclick="() => DeleteAttemptAsync(a)"><Icon Name="trash" /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<ConfirmDialog @ref="_confirm" />
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Quiz? _quiz;
+    private List<AttemptListItem> _attempts = [];
+    private List<AttemptListItem> _done = [];
+    private AttemptListItem? _inProgress;
+    private int? _bestId;
+    private bool _loading = true;
+    private bool _busy;
+    private bool _shuffleQuestions;
+    private bool _shuffleOptions;
+    private ConfirmDialog _confirm = default!;
+
+    private double TotalPoints => _quiz?.Questions.Sum(q => q.Points) ?? 0;
+    private IEnumerable<AttemptListItem> Chrono => _done.OrderBy(a => a.StartedAt);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _quiz = await QuizService.GetAsync(Id);
+        if (_quiz is not null)
+        {
+            _shuffleQuestions = _quiz.ShuffleQuestions;
+            _shuffleOptions = _quiz.ShuffleOptions;
+            await LoadAttemptsAsync();
+        }
+        _loading = false;
+    }
+
+    private async Task LoadAttemptsAsync()
+    {
+        _attempts = await AttemptService.GetAttemptsAsync(Id);
+        _done = _attempts.Where(a => a.Status == AttemptStatus.Submitted).ToList();
+        _inProgress = _attempts.FirstOrDefault(a => a.Status == AttemptStatus.InProgress);
+        _bestId = _done.OrderByDescending(a => a.Percentage).ThenBy(a => a.StartedAt).FirstOrDefault()?.Id;
+    }
+
+    private async Task StartAsync()
+    {
+        _busy = true;
+        try
+        {
+            var attemptId = await AttemptService.StartAsync(Id, _shuffleQuestions, _shuffleOptions);
+            Nav.NavigateTo($"/poging/{attemptId}");
+        }
+        catch (InvalidOperationException ex)
+        {
+            Toast.Error(ex.Message);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task DeleteAttemptAsync(AttemptListItem attempt)
+    {
+        if (!await _confirm.AskAsync("Poging verwijderen?", $"Poging #{attempt.Number} en de gegeven antwoorden worden definitief verwijderd.")) return;
+        await AttemptService.DeleteAttemptAsync(attempt.Id);
+        Toast.Success("Poging verwijderd.");
+        await LoadAttemptsAsync();
+    }
+
+    private static string FormatDuration(TimeSpan? d) => d switch
+    {
+        null => "–",
+        { TotalMinutes: < 1 } => $"{Math.Max(1, (int)d.Value.TotalSeconds)} sec",
+        { TotalHours: < 1 } => $"{(int)d.Value.TotalMinutes} min",
+        _ => $"{(int)d.Value.TotalHours} u {d.Value.Minutes} min",
+    };
+}

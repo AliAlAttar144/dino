@@ -1,0 +1,65 @@
+@inherits QuestionInputBase
+
+<div class="md question-text dropdown-text">
+    @foreach (var block in DropdownText.SplitBlocks(Question.Text))
+    {
+        if (!DropdownText.GapRegex().IsMatch(block))
+        {
+            @((MarkupString)MarkdownRenderer.ToHtml(block))
+            continue;
+        }
+        <p>
+            @foreach (var seg in DropdownText.Split(block))
+            {
+                if (seg.Gap is int gap)
+                {
+                    @RenderGap(gap)
+                }
+                else
+                {
+                    @((MarkupString)MarkdownRenderer.ToInlineHtml(seg.Text))
+                }
+            }
+        </p>
+    }
+</div>
+
+@code {
+    private RenderFragment RenderGap(int gap) => @<text>
+        @{
+            var options = Question.Options.Where(o => o.GapNumber == gap).ToList();
+            var chosen = options.FirstOrDefault(IsSelected);
+            var correct = options.FirstOrDefault(o => o.IsCorrect);
+            var ok = chosen is not null && chosen.IsCorrect;
+        }
+        @if (Review)
+        {
+            <span class="gap-result @(ok ? "ok" : "bad")">
+                <Icon Name="@(ok ? "check" : "x")" />
+                <span>@(chosen?.Text ?? "niet ingevuld")</span>
+                @if (!ok && correct is not null)
+                {
+                    <span class="fix" title="Juiste antwoord"><span class="sr-only">Juiste antwoord: </span>@correct.Text</span>
+                }
+            </span>
+        }
+        else
+        {
+            <select class="gap-select @(chosen is null ? "" : "filled")" aria-label="@($"Gat {gap}")" disabled="@Disabled"
+                    @onchange="e => OnChange(options, chosen, e.Value?.ToString())">
+                <option value="" selected="@(chosen is null)">Kies…</option>
+                @foreach (var o in options)
+                {
+                    <option value="@o.Id" selected="@(chosen?.Id == o.Id)">@o.Text</option>
+                }
+            </select>
+        }
+    </text>;
+
+    private Task OnChange(List<AnswerOption> options, AnswerOption? current, string? value)
+    {
+        if (int.TryParse(value, out var id) && options.Any(o => o.Id == id))
+            return OnSelect.InvokeAsync(new OptionSelection(id, true));
+        return current is null ? Task.CompletedTask : OnSelect.InvokeAsync(new OptionSelection(current.Id, false));
+    }
+}

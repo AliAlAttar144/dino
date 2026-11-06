@@ -1,0 +1,5 @@
+# Normaliseer regeleindes, zodat de repo op Windows, macOS en Linux hetzelfde is.
+* text=auto
+*.png binary
+*.jpg binary
+*.zip binary

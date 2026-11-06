@@ -1,0 +1,19 @@
+@switch (State)
+{
+    case ResultState.Correct:
+        <span class="badge badge-success"><Icon Name="check" /> Goed</span>
+        break;
+    case ResultState.Partial:
+        <span class="badge badge-warning"><Icon Name="minus" /> Deels goed</span>
+        break;
+    case ResultState.Wrong:
+        <span class="badge badge-danger"><Icon Name="x" /> Fout</span>
+        break;
+    default:
+        <span class="badge">Niet beantwoord</span>
+        break;
+}
+
+@code {
+    [Parameter] public ResultState State { get; set; }
+}

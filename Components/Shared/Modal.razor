@@ -1,0 +1,65 @@
+@* Toegankelijke modal: role="dialog", sluit met Escape of de sluitknop, focus gaat naar het venster. *@
+@if (IsOpen)
+{
+    <div class="modal-backdrop" @onmousedown="BackdropDown" @onmouseup="BackdropUp">
+        <div class="modal @SizeClass" role="dialog" aria-modal="true" aria-labelledby="@_titleId" tabindex="-1"
+             @ref="_dialog" @onkeydown="OnKeyDown" @onmousedown:stopPropagation="true" @onmouseup:stopPropagation="true">
+            <div class="modal-header">
+                <h2 id="@_titleId">@Title</h2>
+                <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="Sluiten" @onclick="Close"><Icon Name="x" /></button>
+            </div>
+            <div class="modal-body">@ChildContent</div>
+            @if (Footer is not null)
+            {
+                <div class="modal-footer">@Footer</div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+    [Parameter] public bool Large { get; set; }
+    [Parameter] public bool CloseOnBackdrop { get; set; } = true;
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private readonly string _titleId = "dlg-" + Guid.NewGuid().ToString("N")[..8];
+    private ElementReference _dialog;
+    private bool _wasOpen;
+    private bool _backdropDown;
+
+    private string SizeClass => Large ? "modal-lg" : "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (IsOpen && !_wasOpen)
+        {
+            try { await _dialog.FocusAsync(); } catch (JSException) { }
+        }
+        _wasOpen = IsOpen;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") await Close();
+    }
+
+    private void BackdropDown() => _backdropDown = true;
+
+    private async Task BackdropUp()
+    {
+        if (_backdropDown && CloseOnBackdrop) await Close();
+        _backdropDown = false;
+    }
+
+    public async Task Close()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(false);
+        await OnClose.InvokeAsync();
+    }
+}

@@ -1,0 +1,320 @@
+@* Formulier om één vraag te maken of te bewerken. Werkt op een kopie; pas bij "Opslaan" gaat het naar de database. *@
+@inject QuizService QuizService
+@inject QuestionValidator Validator
+@inject QuestionTypeRegistry Registry
+@inject ImageStore ImageStore
+@inject ToetsrOptions Options
+
+<div class="form-grid">
+    <fieldset class="field options-fieldset">
+        <legend class="label mb-1">Type vraag</legend>
+        <div class="type-picker">
+            @foreach (var h in Registry.All)
+            {
+                var handler = h;
+                <label class="type-card @(_q.Type == handler.Type ? "selected" : "")">
+                    <input type="radio" name="qtype" checked="@(_q.Type == handler.Type)" @onchange="() => ChangeType(handler.Type)" />
+                    <span><strong>@handler.DisplayName</strong><span class="subtle">@handler.Description</span></span>
+                </label>
+            }
+        </div>
+    </fieldset>
+
+    <div class="form-grid-2">
+        <div class="field">
+            <label for="q-title">Kop / onderwerp <span class="subtle">(optioneel)</span></label>
+            <input id="q-title" class="input" @bind="_q.Title" placeholder="Bijv. Hoofdstuk 3 – Routing" maxlength="200" />
+        </div>
+        <div class="field">
+            <label for="q-points">Punten</label>
+            <input id="q-points" class="input" type="number" min="0.1" max="1000" step="0.5" @bind="_q.Points" />
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="row-between">
+            <label for="q-text">Vraagtekst</label>
+            @if (_q.Type == QuestionType.Dropdown)
+            {
+                <button type="button" class="btn btn-secondary btn-sm" @onclick="InsertGap"><Icon Name="plus" /> Gat {{@DropdownText.NextGapNumber(_q.Text)}} invoegen</button>
+            }
+        </div>
+        <textarea id="q-text" class="textarea" rows="5" @bind="_q.Text" @bind:event="oninput"
+                  placeholder="@(_q.Type == QuestionType.Dropdown ? "Bijv. De hoofdstad van Frankrijk is {{1}}." : "Typ hier de vraag. Markdown mag: **vet**, *schuin*, `code` en codeblokken met ```.")"></textarea>
+        <span class="field-hint">
+            Markdown wordt ondersteund (ook codeblokken met ```).
+            @if (_q.Type == QuestionType.Dropdown)
+            {
+                <text> Zet <code>{{1}}</code>, <code>{{2}}</code>, … op de plekken van de dropdowns.</text>
+            }
+        </span>
+    </div>
+
+    <div class="field">
+        <span class="label">Afbeelding bij de vraag <span class="subtle">(optioneel)</span></span>
+        <div class="image-field">
+            @if (!string.IsNullOrEmpty(_q.ImagePath))
+            {
+                <div class="image-preview">
+                    <img src="@ImageStore.Url(_q.ImagePath)" alt="Voorbeeld van de afbeelding" />
+                </div>
+                <button type="button" class="btn btn-danger-ghost btn-sm" @onclick="() => _q.ImagePath = null"><Icon Name="trash" /> Afbeelding verwijderen</button>
+            }
+            else
+            {
+                <div class="dropzone dropzone-sm grow">
+                    <InputFile OnChange="e => UploadAsync(e, path => _q.ImagePath = path)" accept="@ImageStore.AcceptAttribute" aria-label="Afbeelding kiezen" />
+                    <Icon Name="image" /> <span>Klik of sleep een afbeelding hierheen (png, jpg, gif, webp)</span>
+                </div>
+            }
+        </div>
+        @if (_uploading)
+        {
+            <span class="subtle row"><span class="spinner spinner-sm"></span> Uploaden…</span>
+        }
+    </div>
+
+    @if (_q.Type == QuestionType.Dropdown)
+    {
+        <div class="field">
+            <span class="label">Keuzes per gat</span>
+            @{
+                var gaps = DropdownText.GapNumbers(_q.Text);
+            }
+            @if (gaps.Count == 0)
+            {
+                <div class="alert alert-info"><Icon Name="info" /><div>Zet eerst een gat in de tekst, bijvoorbeeld <code>{{1}}</code>, of klik op "Gat invoegen".</div></div>
+            }
+            @foreach (var gap in gaps)
+            {
+                var g = gap;
+                <div class="gap-editor">
+                    <h4>Gat {{@g}}</h4>
+                    <div class="option-editor">
+                        @foreach (var o in _q.Options.Where(o => o.GapNumber == g).ToList())
+                        {
+                            var opt = o;
+                            <div class="option-edit-row @(opt.IsCorrect ? "correct" : "")" @key="opt.Id">
+                                <label class="check" title="Dit is het goede antwoord">
+                                    <input type="radio" name="@($"gap-{g}")" checked="@opt.IsCorrect" @onchange="() => SetSingleCorrect(opt, g)" /> Goed
+                                </label>
+                                <input class="input input-sm" @bind="opt.Text" @bind:event="oninput" aria-label="Tekst van keuze" placeholder="Keuze" />
+                                <span></span>
+                                <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="Keuze verwijderen" @onclick="() => _q.Options.Remove(opt)"><Icon Name="x" /></button>
+                            </div>
+                        }
+                        <div><button type="button" class="btn btn-ghost btn-sm" @onclick="() => AddOption(g)"><Icon Name="plus" /> Keuze toevoegen</button></div>
+                    </div>
+                </div>
+            }
+            @foreach (var orphan in _q.Options.Where(o => o.GapNumber is not null && !gaps.Contains(o.GapNumber.Value)).Select(o => o.GapNumber!.Value).Distinct().ToList())
+            {
+                var gapNo = orphan;
+                <div class="alert alert-warning">
+                    <Icon Name="alert" />
+                    <div class="grow row-between">
+                        <span>Er zijn keuzes voor gat {{@gapNo}}, maar dat gat staat niet meer in de tekst.</span>
+                        <button type="button" class="btn btn-ghost btn-sm" @onclick="() => _q.Options.RemoveAll(o => o.GapNumber == gapNo)">Keuzes verwijderen</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="field">
+            <span class="label">Antwoordopties <span class="subtle">– vink @(_q.Type == QuestionType.SingleChoice ? "het goede antwoord" : "alle goede antwoorden") aan</span></span>
+            <div class="option-editor">
+                @for (var i = 0; i < _q.Options.Count; i++)
+                {
+                    var opt = _q.Options[i];
+                    var index = i;
+                    <div class="option-edit-row @(opt.IsCorrect ? "correct" : "")" @key="opt.Id">
+                        <label class="check" title="Goed antwoord">
+                            @if (_q.Type == QuestionType.SingleChoice)
+                            {
+                                <input type="radio" name="correct-option" checked="@opt.IsCorrect" @onchange="() => SetSingleCorrect(opt, null)" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" checked="@opt.IsCorrect" @onchange="e => opt.IsCorrect = e.Value is true" />
+                            }
+                            Goed
+                        </label>
+                        <div>
+                            <input class="input input-sm" @bind="opt.Text" @bind:event="oninput" aria-label="@($"Tekst van optie {index + 1}")" placeholder="@($"Optie {index + 1}")" />
+                            @if (!string.IsNullOrEmpty(opt.ImagePath))
+                            {
+                                <div class="option-thumb">
+                                    <img src="@ImageStore.Url(opt.ImagePath)" alt="Afbeelding bij optie @(index + 1)" />
+                                    <button type="button" class="btn btn-danger-ghost btn-sm" @onclick="() => opt.ImagePath = null">Afbeelding verwijderen</button>
+                                </div>
+                            }
+                        </div>
+                        <label class="btn btn-ghost btn-icon btn-sm opt-image-btn" title="Afbeelding bij deze optie" style="position:relative;overflow:hidden">
+                            <Icon Name="image" /><span class="sr-only">Afbeelding bij optie @(index + 1) kiezen</span>
+                            <InputFile OnChange="e => UploadAsync(e, path => opt.ImagePath = path)" accept="@ImageStore.AcceptAttribute" style="position:absolute;inset:0;opacity:0;cursor:pointer" />
+                        </label>
+                        <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="@($"Optie {index + 1} verwijderen")" @onclick="() => _q.Options.Remove(opt)"><Icon Name="x" /></button>
+                    </div>
+                }
+                <div><button type="button" class="btn btn-ghost btn-sm" @onclick="() => AddOption(null)"><Icon Name="plus" /> Optie toevoegen</button></div>
+            </div>
+        </div>
+    }
+
+    <div class="field">
+        <label for="q-explanation">Uitleg / feedback <span class="subtle">(getoond na het nakijken)</span></label>
+        <textarea id="q-explanation" class="textarea" rows="3" @bind="_q.Explanation" placeholder="Waarom is het goede antwoord goed?"></textarea>
+    </div>
+
+    <details>
+        <summary class="label" style="cursor:pointer">Voorbeeld bekijken</summary>
+        <div class="preview-box mt-1">
+            <QuestionView Question="_q" Number="Number" Selected="_previewSelection" IdPrefix="pv" OnSelect="PreviewSelect" />
+        </div>
+    </details>
+
+    <ErrorList Errors="_errors" Title="De vraag kan nog niet worden opgeslagen:" />
+</div>
+
+<div class="modal-footer" style="margin:1rem -1.4rem -1rem;">
+    <button type="button" class="btn btn-ghost" @onclick="OnCancel">Annuleren</button>
+    <button type="button" class="btn btn-primary" disabled="@(_saving || _uploading)" @onclick="SaveAsync">
+        @if (_saving)
+        {
+            <span class="spinner spinner-sm" aria-hidden="true"></span>
+        }
+        Vraag opslaan
+    </button>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public int QuizId { get; set; }
+
+    /// <summary>De te bewerken vraag, of null voor een nieuwe vraag.</summary>
+    [Parameter] public Question? Question { get; set; }
+    [Parameter] public int Number { get; set; } = 1;
+    [Parameter] public EventCallback<int> OnSaved { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private Question _q = new();
+    private List<string> _errors = [];
+    private List<int> _previewSelection = [];
+    private bool _saving;
+    private bool _uploading;
+    private int _tempId;
+
+    private bool _initialized;
+    private Question? _source;
+
+    protected override void OnParametersSet()
+    {
+        // Alleen opnieuw beginnen als er een andere vraag binnenkomt; anders blijven wijzigingen staan.
+        if (_initialized && ReferenceEquals(Question, _source)) return;
+        _initialized = true;
+        _source = Question;
+
+        if (Question is not null)
+        {
+            _q = QuizService.Clone(Question);
+        }
+        else
+        {
+            _q = new Question { Type = QuestionType.SingleChoice, Points = 1 };
+            for (var i = 0; i < 4; i++) AddOption(null);
+        }
+        _errors = [];
+        _previewSelection = [];
+    }
+
+    private void AddOption(int? gap)
+    {
+        _q.Options.Add(new AnswerOption { Id = --_tempId, GapNumber = gap, Order = _q.Options.Count(o => o.GapNumber == gap) });
+        if (gap is not null && _q.Options.Count(o => o.GapNumber == gap) == 1)
+            _q.Options.Add(new AnswerOption { Id = --_tempId, GapNumber = gap, Order = 1 });
+    }
+
+    private void SetSingleCorrect(AnswerOption option, int? gap)
+    {
+        foreach (var o in _q.Options.Where(o => o.GapNumber == gap)) o.IsCorrect = o == option;
+    }
+
+    private void ChangeType(QuestionType type)
+    {
+        if (_q.Type == type) return;
+        var wasDropdown = _q.Type == QuestionType.Dropdown;
+        _q.Type = type;
+        _previewSelection = [];
+
+        if (type == QuestionType.Dropdown && !wasDropdown)
+        {
+            // Bestaande opties worden de keuzes van het eerste gat.
+            _q.Options.RemoveAll(o => string.IsNullOrWhiteSpace(o.Text));
+            foreach (var o in _q.Options) { o.GapNumber = 1; o.ImagePath = null; }
+            if (!DropdownText.GapRegex().IsMatch(_q.Text ?? ""))
+                _q.Text = ((_q.Text ?? "").TrimEnd() + " {{1}}").TrimStart();
+            if (_q.Options.Count < 2) { AddOption(1); if (_q.Options.Count < 2) AddOption(1); }
+        }
+        else if (type != QuestionType.Dropdown && wasDropdown)
+        {
+            _q.Options = _q.Options.Where(o => o.GapNumber == 1).ToList();
+            foreach (var o in _q.Options) o.GapNumber = null;
+            while (_q.Options.Count < 4) AddOption(null);
+        }
+
+        if (type == QuestionType.SingleChoice && _q.Options.Count(o => o.IsCorrect) > 1)
+        {
+            var first = _q.Options.First(o => o.IsCorrect);
+            foreach (var o in _q.Options) o.IsCorrect = o == first;
+        }
+    }
+
+    private void InsertGap()
+    {
+        var n = DropdownText.NextGapNumber(_q.Text);
+        _q.Text = string.IsNullOrWhiteSpace(_q.Text) ? $"{{{{{n}}}}}" : $"{_q.Text.TrimEnd()} {{{{{n}}}}}";
+        AddOption(n);
+    }
+
+    private async Task UploadAsync(InputFileChangeEventArgs e, Action<string> assign)
+    {
+        _uploading = true;
+        _errors = [];
+        try
+        {
+            await using var stream = e.File.OpenReadStream(Options.MaxImageBytes);
+            assign(await ImageStore.SaveAsync(stream, e.File.Name));
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            _errors = [ex.Message.Contains("exceeds the maximum") ? $"De afbeelding is groter dan {Options.MaxImageBytes / 1024 / 1024} MB." : ex.Message];
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
+
+    private void PreviewSelect(OptionSelection s) =>
+        _previewSelection = Registry.Get(_q.Type).ApplySelection(_q, _previewSelection, s.OptionId, s.Selected);
+
+    private async Task SaveAsync()
+    {
+        _saving = true;
+        try
+        {
+            var result = await QuizService.SaveQuestionAsync(QuizId, _q);
+            if (!result.Success)
+            {
+                _errors = result.Errors.ToList();
+                return;
+            }
+            await OnSaved.InvokeAsync(result.Id);
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

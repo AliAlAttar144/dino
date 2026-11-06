@@ -1,0 +1,405 @@
+@page "/importeren"
+@using Toetsr.Services.ImportExport
+@inject ImportService ImportService
+@inject FolderImportService FolderImport
+@inject FolderImportReport FolderReport
+@inject QuestionTypeRegistry Registry
+@inject AppPaths Paths
+@inject ToetsrOptions Options
+@inject ToastService Toast
+@inject IJSRuntime JS
+
+<PageTitle>Importeren – Toetsr</PageTitle>
+
+<div class="page page-narrow">
+    <div class="page-header">
+        <div>
+            <h1 tabindex="-1">Vragen importeren</h1>
+            <p>Laat ChatGPT of Claude een toets maken in het Toetsr-formaat, en plak of upload het resultaat hier.</p>
+        </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Importmethode">
+        @foreach (var (key, label, icon) in Tabs)
+        {
+            var k = key;
+            <button type="button" role="tab" id="@($"tab-{k}")" class="tab" aria-selected="@(_tab == k ? "true" : "false")" aria-controls="@($"panel-{k}")"
+                    tabindex="@(_tab == k ? 0 : -1)" @onclick="() => SelectTab(k)" @onkeydown="e => TabKey(e, k)">
+                <Icon Name="@icon" /> @label
+            </button>
+        }
+    </div>
+
+    @if (_tab == "plakken")
+    {
+        <section id="panel-plakken" role="tabpanel" aria-labelledby="tab-plakken" class="stack">
+            <div class="field">
+                <label for="json-input">Plak hier de JSON</label>
+                <textarea id="json-input" class="textarea code" spellcheck="false" @bind="_json" @bind:event="oninput"
+                          placeholder='{ "title": "Mijn toets", "questions": [ ... ] }'></textarea>
+                <span class="field-hint">Tekst of ```json-blokken rond de JSON (zoals ChatGPT die vaak toevoegt) worden automatisch weggehaald.</span>
+            </div>
+            <div class="row">
+                <button type="button" class="btn btn-primary" disabled="@string.IsNullOrWhiteSpace(_json)" @onclick="PreviewText"><Icon Name="eye" /> Controleren</button>
+                @if (!string.IsNullOrEmpty(_json))
+                {
+                    <button type="button" class="btn btn-ghost" @onclick="Reset">Leegmaken</button>
+                }
+            </div>
+        </section>
+    }
+    else if (_tab == "bestand")
+    {
+        <section id="panel-bestand" role="tabpanel" aria-labelledby="tab-bestand" class="stack">
+            <div class="dropzone">
+                <InputFile OnChange="UploadAsync" accept=".json,.zip,application/json,application/zip" aria-label="JSON- of ZIP-bestand kiezen" />
+                <Icon Name="upload" />
+                <p class="mb-0 mt-1"><strong>Klik of sleep een bestand hierheen</strong></p>
+                <p class="subtle mb-0">.json (alleen vragen) of .zip (JSON + afbeeldingen, zoals een export uit Toetsr). Max @(Options.MaxImportBytes / 1024 / 1024) MB.</p>
+            </div>
+            @if (_reading)
+            {
+                <Loading Text="Bestand lezen…" />
+            }
+        </section>
+    }
+    else if (_tab == "prompt")
+    {
+        <section id="panel-prompt" role="tabpanel" aria-labelledby="tab-prompt" class="stack">
+            <div class="alert alert-info">
+                <Icon Name="sparkles" />
+                <div>
+                    <strong>Zo werkt het:</strong>
+                    <ol style="margin:.3rem 0 0;padding-left:1.2rem">
+                        <li>Vul hieronder het onderwerp of plak je leerstof.</li>
+                        <li>Kopieer de prompt en plak hem in ChatGPT of Claude.</li>
+                        <li>Kopieer het JSON-antwoord en plak het bij <a href="javascript:void(0)" @onclick='() => SelectTab("plakken")'>JSON plakken</a>.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="field">
+                <label for="topic">Onderwerp of leerstof</label>
+                <textarea id="topic" class="textarea" rows="4" @bind="_topic" @bind:event="oninput" placeholder="Bijv. Vue Router: nested routes, route params en navigation guards"></textarea>
+            </div>
+            <div class="prompt-box">
+                <div class="row-between mb-1">
+                    <span class="label">Prompt</span>
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="CopyPromptAsync"><Icon Name="clipboard" /> Kopieer prompt</button>
+                </div>
+                <pre>@PromptText</pre>
+            </div>
+        </section>
+    }
+    else if (_tab == "formaat")
+    {
+        <section id="panel-formaat" role="tabpanel" aria-labelledby="tab-formaat" class="stack">
+            <p>Eén toets is één JSON-object. Velden zijn niet hoofdlettergevoelig; onbekende velden worden genegeerd (met een waarschuwing).</p>
+            <div class="table-wrap card">
+                <table class="table">
+                    <thead><tr><th>Veld</th><th>Uitleg</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>title</code></td><td>Titel van de toets (verplicht).</td></tr>
+                        <tr><td><code>description</code></td><td>Omschrijving, Markdown (optioneel).</td></tr>
+                        <tr><td><code>shuffleQuestions</code>, <code>shuffleOptions</code></td><td><code>true</code>/<code>false</code>: standaard shuffelen (optioneel).</td></tr>
+                        <tr><td><code>questions[].type</code></td><td>@string.Join(", ", Registry.All.Select(h => $"\"{h.JsonName}\" = {h.DisplayName}"))</td></tr>
+                        <tr><td><code>questions[].text</code></td><td>Vraagtekst in Markdown. Bij dropdown met gaten <code>{{1}}</code>, <code>{{2}}</code>, …</td></tr>
+                        <tr><td><code>questions[].title</code></td><td>Kop boven de vraag (optioneel).</td></tr>
+                        <tr><td><code>questions[].points</code></td><td>Punten (standaard 1).</td></tr>
+                        <tr><td><code>questions[].image</code></td><td>Bestandsnaam van een afbeelding in <code>Toetsen/afbeeldingen/</code> of in de zip (optioneel).</td></tr>
+                        <tr><td><code>questions[].explanation</code></td><td>Uitleg na het nakijken (optioneel).</td></tr>
+                        <tr><td><code>questions[].options[]</code></td><td>Bij single/multiple: <code>{ "text": "...", "correct": true, "image": "x.png" }</code>. <code>correct</code> weglaten = fout.</td></tr>
+                        <tr><td><code>questions[].gaps[]</code></td><td>Bij dropdown: per gat <code>{ "options": [ ... ] }</code>; het eerste element hoort bij <code>{{1}}</code>.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Scoreregels</h3>
+            <ul>
+                @foreach (var h in Registry.All)
+                {
+                    <li><strong>@h.DisplayName:</strong> @h.Description</li>
+                }
+            </ul>
+            <h3>Voorbeeld</h3>
+            <pre class="code-sample"><code>@ExampleJson</code></pre>
+        </section>
+    }
+    else if (_tab == "map")
+    {
+        <section id="panel-map" role="tabpanel" aria-labelledby="tab-map" class="stack">
+            <p>
+                Elk <code>.json</code>-bestand in de map <code>@Paths.QuizFolder</code> wordt bij het opstarten automatisch geïmporteerd.
+                Wijzig je het bestand, dan wordt de toets bijgewerkt (pogingen blijven bewaard). Afbeeldingen zet je in <code>Toetsen/afbeeldingen/</code>.
+            </p>
+            <div class="row">
+                <button type="button" class="btn btn-primary" disabled="@_rescanning" @onclick="RescanAsync">
+                    @if (_rescanning)
+                    {
+                        <span class="spinner spinner-sm" aria-hidden="true"></span>
+                    }
+                    else
+                    {
+                        <Icon Name="refresh" />
+                    }
+                    Map nu opnieuw inlezen
+                </button>
+                @if (FolderReport.RanAt is DateTime ran)
+                {
+                    <span class="subtle">Laatst ingelezen om @ran.ToString("HH:mm:ss")</span>
+                }
+            </div>
+            @if (FolderReport.Entries.Count == 0)
+            {
+                <EmptyState Icon="folder" Title="Geen bestanden gevonden" Text="Zet een .json-bestand in de map Toetsen/ en klik op 'Map nu opnieuw inlezen'." />
+            }
+            else
+            {
+                <div class="card table-wrap">
+                    <table class="table responsive">
+                        <thead><tr><th>Bestand</th><th>Status</th><th>Meldingen</th></tr></thead>
+                        <tbody>
+                            @foreach (var e in FolderReport.Entries)
+                            {
+                                <tr>
+                                    <td class="cell-main"><strong>@e.FileName</strong>
+                                        @if (e.QuizId is int qid)
+                                        {
+                                            <div><a href="@($"/toets/{qid}")">@e.Title</a></div>
+                                        }
+                                    </td>
+                                    <td data-label="Status"><span class="badge @StatusClass(e.Status)">@StatusText(e.Status)</span></td>
+                                    <td data-label="Meldingen">
+                                        @if (e.Messages.Count == 0)
+                                        {
+                                            <span class="subtle">–</span>
+                                        }
+                                        else
+                                        {
+                                            <ul style="margin:0;padding-left:1.1rem;text-align:left">
+                                                @foreach (var m in e.Messages)
+                                                {
+                                                    <li>@m</li>
+                                                }
+                                            </ul>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+    }
+
+    @if (_prepared is { Count: > 0 } && (_tab == "plakken" || _tab == "bestand"))
+    {
+        <section class="mt-3" aria-label="Resultaat van de controle" aria-live="polite">
+            <h2>Controle</h2>
+            @foreach (var item in _prepared)
+            {
+                var p = item.Preview;
+                var imported = _importedIds.TryGetValue(item, out var importedId);
+                <div class="preview-card">
+                    <div class="preview-head">
+                        <div>
+                            <strong>@(string.IsNullOrWhiteSpace(p.Quiz?.Title) ? "(zonder titel)" : p.Quiz!.Title)</strong>
+                            <div class="subtle">@p.SourceName @(p.Quiz is null ? "" : $"· {p.Quiz.Questions.Count} vragen · {p.Quiz.Questions.Sum(q => q.Points):0.#} punten")</div>
+                        </div>
+                        @if (imported)
+                        {
+                            <a class="btn btn-secondary btn-sm" href="@($"/toets/{importedId}")"><Icon Name="check" /> Geïmporteerd – bekijken</a>
+                        }
+                        else if (p.IsValid)
+                        {
+                            <button type="button" class="btn btn-primary btn-sm" disabled="@_importing" @onclick="() => ImportAsync(item)"><Icon Name="download" /> Importeren</button>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger"><Icon Name="alert" /> @p.Errors.Count @(p.Errors.Count == 1 ? "fout" : "fouten")</span>
+                        }
+                    </div>
+                    <div class="preview-content stack">
+                        <ErrorList Errors="p.Errors" Title="Los deze fouten op en controleer opnieuw:" />
+                        @if (p.Warnings.Count > 0)
+                        {
+                            <div class="alert alert-warning">
+                                <Icon Name="alert" />
+                                <div><strong>Waarschuwingen</strong><ul>@foreach (var w in p.Warnings) { <li>@w</li> }</ul></div>
+                            </div>
+                        }
+                        @if (p.Quiz is { Questions.Count: > 0 })
+                        {
+                            <div>
+                                <div class="row">
+                                    @foreach (var g in p.Quiz.Questions.GroupBy(q => q.Type))
+                                    {
+                                        <span class="badge badge-brand">@g.Count() × @Registry.Get(g.Key).DisplayName</span>
+                                    }
+                                </div>
+                                <ol class="preview-questions">
+                                    @foreach (var q in p.Quiz.Questions.Take(_showAllQuestions ? int.MaxValue : 8))
+                                    {
+                                        <li>@MarkdownRenderer.ToPlainText(q.Text, 110)</li>
+                                    }
+                                </ol>
+                                @if (p.Quiz.Questions.Count > 8 && !_showAllQuestions)
+                                {
+                                    <button type="button" class="btn btn-ghost btn-sm" @onclick="() => _showAllQuestions = true">Alle @p.Quiz.Questions.Count vragen tonen</button>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (_prepared.Count(p => p.Preview.IsValid && !_importedIds.ContainsKey(p)) > 1)
+            {
+                <button type="button" class="btn btn-primary mt-2" disabled="@_importing" @onclick="ImportAllAsync">Alle geldige toetsen importeren</button>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    private static readonly (string Key, string Label, string Icon)[] Tabs =
+    [
+        ("plakken", "JSON plakken", "clipboard"),
+        ("bestand", "Bestand uploaden", "upload"),
+        ("prompt", "AI-prompt", "sparkles"),
+        ("formaat", "Formaat", "help"),
+        ("map", "Map Toetsen/", "folder"),
+    ];
+
+    private string _tab = "plakken";
+    private string _json = "";
+    private string _topic = "";
+    private List<PreparedImport>? _prepared;
+    private readonly Dictionary<PreparedImport, int> _importedIds = [];
+    private bool _reading;
+    private bool _importing;
+    private bool _rescanning;
+    private bool _showAllQuestions;
+
+    private string PromptText => string.IsNullOrWhiteSpace(_topic) ? AiPrompt.Text : AiPrompt.Text.Replace(AiPrompt.Placeholder, _topic.Trim());
+
+    private static readonly string ExampleJson = ExtractExample();
+
+    private static string ExtractExample()
+    {
+        var text = AiPrompt.Text;
+        var start = text.IndexOf('{');
+        var end = text.IndexOf("\n}", StringComparison.Ordinal);
+        return start >= 0 && end > start ? text[start..(end + 2)] : text;
+    }
+
+    private void SelectTab(string key) => _tab = key;
+
+    private void TabKey(KeyboardEventArgs e, string current)
+    {
+        var index = Array.FindIndex(Tabs, t => t.Key == current);
+        if (e.Key == "ArrowRight") _tab = Tabs[(index + 1) % Tabs.Length].Key;
+        else if (e.Key == "ArrowLeft") _tab = Tabs[(index - 1 + Tabs.Length) % Tabs.Length].Key;
+    }
+
+    private void Reset()
+    {
+        _json = "";
+        _prepared = null;
+        _importedIds.Clear();
+    }
+
+    private void PreviewText()
+    {
+        _importedIds.Clear();
+        _showAllQuestions = false;
+        _prepared = ImportService.PrepareFromText(_json);
+    }
+
+    private async Task UploadAsync(InputFileChangeEventArgs e)
+    {
+        _reading = true;
+        _prepared = null;
+        _importedIds.Clear();
+        _showAllQuestions = false;
+        try
+        {
+            await using var stream = e.File.OpenReadStream(Options.MaxImportBytes);
+            _prepared = await ImportService.PrepareFromFileAsync(stream, e.File.Name);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            var p = new ImportPreview { SourceName = e.File.Name };
+            p.Errors.Add(ex.Message.Contains("exceeds the maximum") ? $"Het bestand is groter dan {Options.MaxImportBytes / 1024 / 1024} MB." : ex.Message);
+            _prepared = [new PreparedImport(p, ImportService.DefaultImages)];
+        }
+        finally
+        {
+            _reading = false;
+        }
+    }
+
+    private async Task ImportAsync(PreparedImport item)
+    {
+        _importing = true;
+        try
+        {
+            var id = await ImportService.ImportAsync(item);
+            _importedIds[item] = id;
+            Toast.Success($"\"{item.Preview.Quiz!.Title}\" is geïmporteerd.");
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            Toast.Error($"Importeren mislukt: {ex.Message}");
+        }
+        finally
+        {
+            _importing = false;
+        }
+    }
+
+    private async Task ImportAllAsync()
+    {
+        foreach (var item in _prepared!.Where(p => p.Preview.IsValid && !_importedIds.ContainsKey(p)).ToList())
+            await ImportAsync(item);
+    }
+
+    private async Task CopyPromptAsync()
+    {
+        var ok = await JS.InvokeAsync<bool>("toetsr.copyText", PromptText);
+        if (ok) Toast.Success("Prompt gekopieerd. Plak hem in ChatGPT of Claude.");
+        else Toast.Error("Kopiëren lukte niet. Selecteer de tekst en kopieer handmatig.");
+    }
+
+    private async Task RescanAsync()
+    {
+        _rescanning = true;
+        try
+        {
+            var entries = await FolderImport.ImportAllAsync();
+            var changed = entries.Count(e => e.Status is FolderImportStatus.Imported or FolderImportStatus.Updated);
+            var failed = entries.Count(e => e.Status == FolderImportStatus.Failed);
+            if (failed > 0) Toast.Error($"{failed} bestand(en) bevatten fouten.");
+            else Toast.Success(changed == 0 ? "Alles is al up-to-date." : $"{changed} toets(en) geïmporteerd of bijgewerkt.");
+        }
+        finally
+        {
+            _rescanning = false;
+        }
+    }
+
+    private static string StatusText(FolderImportStatus s) => s switch
+    {
+        FolderImportStatus.Imported => "Geïmporteerd",
+        FolderImportStatus.Updated => "Bijgewerkt",
+        FolderImportStatus.Unchanged => "Ongewijzigd",
+        FolderImportStatus.SkippedDeleted => "Overgeslagen",
+        _ => "Fout",
+    };
+
+    private static string StatusClass(FolderImportStatus s) => s switch
+    {
+        FolderImportStatus.Imported or FolderImportStatus.Updated => "badge-success",
+        FolderImportStatus.Unchanged => "",
+        FolderImportStatus.SkippedDeleted => "badge-warning",
+        _ => "badge-danger",
+    };
+}

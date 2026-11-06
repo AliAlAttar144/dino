@@ -1,0 +1,203 @@
+@page "/"
+@using Toetsr.Services.ImportExport
+@inject QuizService QuizService
+@inject AttemptService AttemptService
+@inject FolderImportReport FolderReport
+@inject ToastService Toast
+@inject NavigationManager Nav
+
+<PageTitle>Mijn toetsen – Toetsr</PageTitle>
+
+<div class="page">
+    <div class="page-header">
+        <div>
+            <h1 tabindex="-1">Mijn toetsen</h1>
+            <p>Oefen zo vaak als je wilt. Alles wordt lokaal op je eigen computer bewaard.</p>
+        </div>
+        <div class="row">
+            <a class="btn btn-secondary" href="/importeren"><Icon Name="upload" /> Importeren</a>
+            <a class="btn btn-primary" href="/beheer/nieuw"><Icon Name="plus" /> Nieuwe toets</a>
+        </div>
+    </div>
+
+    @if (_failedImports.Count > 0 && !_hideImportWarning)
+    {
+        <div class="alert alert-warning mb-2" role="alert">
+            <Icon Name="alert" />
+            <div class="grow">
+                <strong>Niet alle bestanden uit de map Toetsen/ konden worden ingelezen:</strong>
+                <ul>
+                    @foreach (var f in _failedImports)
+                    {
+                        <li><strong>@f.FileName</strong>: @string.Join(" ", f.Messages.Take(3))@(f.Messages.Count > 3 ? $" (+{f.Messages.Count - 3} meer)" : "")</li>
+                    }
+                </ul>
+                <a href="/importeren">Bekijk details op de importpagina</a>
+            </div>
+            <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="Melding verbergen" @onclick="() => _hideImportWarning = true"><Icon Name="x" /></button>
+        </div>
+    }
+
+    @if (_quizzes is null)
+    {
+        <Loading Text="Toetsen laden…" />
+    }
+    else if (_quizzes.Count == 0)
+    {
+        <EmptyState Icon="layers" Title="Nog geen toetsen"
+                    Text="Maak zelf een toets, of laat ChatGPT of Claude vragen genereren en importeer ze. Je kunt ook .json-bestanden in de map Toetsen/ zetten.">
+            <a class="btn btn-primary" href="/beheer/nieuw"><Icon Name="plus" /> Nieuwe toets</a>
+            <a class="btn btn-secondary" href="/importeren"><Icon Name="sparkles" /> Vragen importeren</a>
+        </EmptyState>
+    }
+    else
+    {
+        <div class="card">
+            <div class="table-wrap">
+                <table class="table responsive">
+                    <thead>
+                        <tr>
+                            <th scope="col">Toets</th>
+                            <th scope="col" class="num">Vragen</th>
+                            <th scope="col" class="num">Pogingen</th>
+                            <th scope="col" class="num">Beste score</th>
+                            <th scope="col">Laatst gemaakt</th>
+                            <th scope="col" class="actions"><span class="sr-only">Acties</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var q in _quizzes)
+                        {
+                            <tr @key="q.Id">
+                                <td class="cell-main">
+                                    <a class="quiz-title-link" href="@($"/toets/{q.Id}")">@q.Title</a>
+                                    @if (!string.IsNullOrWhiteSpace(q.Description))
+                                    {
+                                        <div class="subtle">@MarkdownRenderer.ToPlainText(q.Description, 110)</div>
+                                    }
+                                    @if (q.InProgressAttemptId is not null)
+                                    {
+                                        <span class="badge badge-brand mt-1"><Icon Name="clock" /> Poging bezig</span>
+                                    }
+                                </td>
+                                <td class="num" data-label="Vragen">@q.QuestionCount</td>
+                                <td class="num" data-label="Pogingen">@q.AttemptCount</td>
+                                <td class="num" data-label="Beste score">
+                                    @if (q.BestPercentage is double best)
+                                    {
+                                        <span class="badge @(best >= 55 ? "badge-success" : "badge-danger")">@best.ToString("0.#")%</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="subtle">–</span>
+                                    }
+                                </td>
+                                <td data-label="Laatst gemaakt" class="nowrap">
+                                    @(q.LastAttemptAt is DateTime d ? d.ToLocalTime().ToString("d MMM yyyy, HH:mm") : "Nog niet")
+                                </td>
+                                <td class="actions">
+                                    <div class="btn-group">
+                                        @if (q.InProgressAttemptId is int running)
+                                        {
+                                            <a class="btn btn-primary btn-sm" href="@($"/poging/{running}")"><Icon Name="play" /> Hervatten</a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-primary btn-sm" disabled="@(q.QuestionCount == 0 || _busy)"
+                                                    title="@(q.QuestionCount == 0 ? "Voeg eerst vragen toe" : null)"
+                                                    @onclick="() => StartAsync(q)">
+                                                <Icon Name="play" /> Starten
+                                            </button>
+                                        }
+                                        <a class="btn btn-ghost btn-icon btn-sm" href="@($"/toets/{q.Id}")" title="Resultaten" aria-label="Resultaten van @q.Title"><Icon Name="chart" /></a>
+                                        <a class="btn btn-ghost btn-icon btn-sm" href="@($"/beheer/{q.Id}")" title="Bewerken" aria-label="@q.Title bewerken"><Icon Name="edit" /></a>
+                                        <button type="button" class="btn btn-ghost btn-icon btn-sm" title="Dupliceren" aria-label="@q.Title dupliceren" disabled="@_busy" @onclick="() => DuplicateAsync(q)"><Icon Name="copy" /></button>
+                                        <a class="btn btn-ghost btn-icon btn-sm" href="@($"/export/{q.Id}/zip")" download title="Exporteren (.zip met afbeeldingen)" aria-label="@q.Title exporteren"><Icon Name="download" /></a>
+                                        <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" title="Verwijderen" aria-label="@q.Title verwijderen" disabled="@_busy" @onclick="() => DeleteAsync(q)"><Icon Name="trash" /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<ConfirmDialog @ref="_confirm" />
+
+@code {
+    private List<QuizSummary>? _quizzes;
+    private List<FolderImportEntry> _failedImports = [];
+    private bool _hideImportWarning;
+    private bool _busy;
+    private ConfirmDialog _confirm = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _failedImports = FolderReport.Entries.Where(e => e.Status == FolderImportStatus.Failed).ToList();
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync() => _quizzes = await QuizService.GetSummariesAsync();
+
+    private async Task StartAsync(QuizSummary quiz)
+    {
+        // Starten vanaf het overzicht gebruikt de shuffle-instellingen van de toets.
+        _busy = true;
+        try
+        {
+            var full = await QuizService.GetAsync(quiz.Id);
+            if (full is null) return;
+            var attemptId = await AttemptService.StartAsync(quiz.Id, full.ShuffleQuestions, full.ShuffleOptions);
+            Nav.NavigateTo($"/poging/{attemptId}");
+        }
+        catch (InvalidOperationException ex)
+        {
+            Toast.Error(ex.Message);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task DuplicateAsync(QuizSummary quiz)
+    {
+        _busy = true;
+        try
+        {
+            var id = await QuizService.DuplicateAsync(quiz.Id);
+            if (id is not null)
+            {
+                Toast.Success($"\"{quiz.Title}\" is gedupliceerd.");
+                await LoadAsync();
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task DeleteAsync(QuizSummary quiz)
+    {
+        var message = quiz.AttemptCount > 0
+            ? $"\"{quiz.Title}\" en alle {quiz.AttemptCount} pogingen worden definitief verwijderd. Dit kan niet ongedaan worden gemaakt."
+            : $"\"{quiz.Title}\" wordt definitief verwijderd. Dit kan niet ongedaan worden gemaakt.";
+        if (!await _confirm.AskAsync("Toets verwijderen?", message)) return;
+
+        _busy = true;
+        try
+        {
+            await QuizService.DeleteAsync(quiz.Id);
+            Toast.Success("Toets verwijderd.");
+            await LoadAsync();
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

@@ -1,0 +1,309 @@
+@page "/poging/{Id:int}"
+@layout ExamLayout
+@implements IDisposable
+@inject AttemptService AttemptService
+@inject QuestionTypeRegistry Registry
+@inject ToastService Toast
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<PageTitle>@(_session?.QuizTitle ?? "Toets") – Toetsr</PageTitle>
+
+@if (_loading)
+{
+    <div class="exam"><header class="exam-topbar"><span class="exam-title">Laden…</span></header><Loading /></div>
+}
+else if (_session is null)
+{
+    <div class="page page-narrow">
+        <EmptyState Icon="alert" Title="Poging niet gevonden" Text="Deze poging bestaat niet (meer).">
+            <a class="btn btn-primary" href="/">Naar het overzicht</a>
+        </EmptyState>
+    </div>
+}
+else
+{
+    var questions = _session.Questions;
+    var answered = questions.Count(IsAnswered);
+    var pct = questions.Count == 0 ? 0 : answered * 100.0 / questions.Count;
+
+    <div class="exam">
+        <header class="exam-topbar">
+            <a class="back" href="@($"/toets/{_session.Attempt.QuizId}")" aria-label="Terug naar de toets (je antwoorden blijven bewaard)" title="Terug (antwoorden blijven bewaard)"><Icon Name="arrow-left" /></a>
+            <div class="exam-title">@_session.QuizTitle</div>
+            <div class="exam-progress" aria-label="@answered van @questions.Count vragen beantwoord">
+                <span><span class="label-long">Beantwoord </span>@answered/@questions.Count</span>
+                <span class="exam-progress-bar" aria-hidden="true"><span style="width:@pct.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%"></span></span>
+            </div>
+            <button type="button" class="btn btn-light btn-sm" @onclick="ToggleView" aria-pressed="@(_showAll ? "true" : "false")"
+                    title="@(_showAll ? "Toon één vraag per pagina" : "Toon alle vragen op één pagina")">
+                <Icon Name="@(_showAll ? "file" : "list")" /><span class="label-long">@(_showAll ? "Per vraag" : "Alle vragen")</span>
+            </button>
+            <button type="button" class="btn btn-white btn-sm" @onclick="() => _submitOpen = true"><Icon Name="send" /> Inleveren</button>
+        </header>
+
+        <div class="exam-body">
+            <nav class="qnav" aria-label="Vragen">
+                @for (var i = 0; i < questions.Count; i++)
+                {
+                    var index = i;
+                    var q = questions[i];
+                    var isAnswered = IsAnswered(q);
+                    var flagged = _session.IsFlagged(q.Id);
+                    <button type="button" class="qnav-item @(isAnswered ? "answered" : "") @(index == _current ? "current" : "")"
+                            aria-current="@(index == _current ? "step" : null)"
+                            aria-label="@($"Vraag {index + 1}{(isAnswered ? ", beantwoord" : ", niet beantwoord")}{(flagged ? ", gemarkeerd" : "")}")"
+                            @onclick="() => GoToAsync(index)">
+                        @(index + 1)
+                        @if (flagged)
+                        {
+                            <span class="qnav-dot flag" aria-hidden="true"><Icon Name="bookmark-filled" /></span>
+                        }
+                    </button>
+                }
+            </nav>
+
+            <div class="exam-main" id="exam-main">
+                <div class="exam-scroll">
+                    <div class="exam-content">
+                        <nav class="breadcrumb" aria-label="Kruimelpad">
+                            <a href="/">Toetsr</a>
+                            <Icon Name="chevron-right" />
+                            <a href="@($"/toets/{_session.Attempt.QuizId}")">@_session.QuizTitle</a>
+                        </nav>
+
+                        @if (_showAll)
+                        {
+                            <div class="exam-sheet-title">Digitale toets</div>
+                            @for (var i = 0; i < questions.Count; i++)
+                            {
+                                var q = questions[i];
+                                <QuestionView @key="q.Id" Question="q" Number="i + 1" Selected="_session.Selected(q.Id)" IdPrefix="t"
+                                              Flagged="_session.IsFlagged(q.Id)"
+                                              StatusText="@StatusFor(q.Id)"
+                                              OnSelect="s => SelectAsync(q, s)"
+                                              OnClear="() => ClearAsync(q)"
+                                              OnToggleFlag="() => ToggleFlagAsync(q)" />
+                            }
+                        }
+                        else
+                        {
+                            var q = questions[_current];
+                            <QuestionView @key="q.Id" Question="q" Number="_current + 1" Selected="_session.Selected(q.Id)" IdPrefix="t"
+                                          Flagged="_session.IsFlagged(q.Id)"
+                                          StatusText="@StatusFor(q.Id)"
+                                          OnSelect="s => SelectAsync(q, s)"
+                                          OnClear="() => ClearAsync(q)"
+                                          OnToggleFlag="() => ToggleFlagAsync(q)" />
+                            @if (_current == questions.Count - 1)
+                            {
+                                <div class="alert alert-info mt-3">
+                                    <Icon Name="info" />
+                                    <div class="grow row-between">
+                                        <span>Dit was de laatste vraag. @(answered < questions.Count ? $"Je hebt nog {questions.Count - answered} vraag/vragen open." : "Je hebt alles beantwoord.")</span>
+                                        <button type="button" class="btn btn-primary btn-sm" @onclick="() => _submitOpen = true">Inleveren</button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <footer class="exam-footer">
+                    <button type="button" class="pager-btn" disabled="@(_current == 0)" @onclick="() => GoToAsync(_current - 1)">
+                        <Icon Name="chevron-up" />
+                        <span class="pager-num" aria-hidden="true">@(_current)</span>
+                        <span class="pager-text">
+                            <span class="pager-label">Vorige vraag</span>
+                            <span class="pager-preview">@(_current > 0 ? Preview(questions[_current - 1]) : "")</span>
+                        </span>
+                    </button>
+                    <button type="button" class="pager-btn next" disabled="@(_current >= questions.Count - 1)" @onclick="() => GoToAsync(_current + 1)">
+                        <Icon Name="chevron-down" />
+                        <span class="pager-num" aria-hidden="true">@(_current + 2)</span>
+                        <span class="pager-text">
+                            <span class="pager-label">Volgende vraag</span>
+                            <span class="pager-preview">@(_current < questions.Count - 1 ? Preview(questions[_current + 1]) : "")</span>
+                        </span>
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <Modal @bind-IsOpen="_submitOpen" Title="Toets inleveren?">
+        <ChildContent>
+            @{
+                var open = questions.Count - answered;
+                var flaggedCount = questions.Count(q => _session.IsFlagged(q.Id));
+            }
+            <p>Je hebt <strong>@answered van de @questions.Count</strong> vragen beantwoord.</p>
+            @if (open > 0)
+            {
+                <div class="alert alert-warning mb-1"><Icon Name="alert" /><div>@open @(open == 1 ? "vraag is" : "vragen zijn") nog niet beantwoord en @(open == 1 ? "telt" : "tellen") als fout.</div></div>
+            }
+            @if (flaggedCount > 0)
+            {
+                <div class="alert alert-info mb-1"><Icon Name="bookmark" /><div>Je hebt @flaggedCount @(flaggedCount == 1 ? "vraag" : "vragen") gemarkeerd om nog naar te kijken.</div></div>
+            }
+            <p class="muted mb-0">Na het inleveren zie je direct je score en de juiste antwoorden.</p>
+        </ChildContent>
+        <Footer>
+            <button type="button" class="btn btn-ghost" @onclick="() => _submitOpen = false">Verder met de toets</button>
+            <button type="button" class="btn btn-primary" disabled="@_submitting" @onclick="SubmitAsync">
+                @if (_submitting)
+                {
+                    <span class="spinner spinner-sm" aria-hidden="true"></span>
+                }
+                Inleveren
+            </button>
+        </Footer>
+    </Modal>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private AttemptSession? _session;
+    private bool _loading = true;
+    private int _current;
+    private bool _showAll;
+    private bool _submitOpen;
+    private bool _submitting;
+    private readonly Dictionary<int, DateTime> _savedAt = [];
+    private readonly HashSet<int> _saving = [];
+    private readonly SemaphoreSlim _gate = new(1, 1);
+    private Timer? _timer;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _session = await AttemptService.GetSessionAsync(Id);
+        _loading = false;
+        if (_session is { IsSubmitted: true })
+        {
+            Nav.NavigateTo($"/poging/{Id}/resultaat", replace: true);
+            return;
+        }
+        if (_session is not null)
+        {
+            // Begin bij de eerste onbeantwoorde vraag bij hervatten.
+            var first = _session.Questions.FindIndex(q => !IsAnswered(q));
+            _current = first < 0 ? 0 : first;
+            // Ververs "Bijgewerkt zojuist" elke halve minuut.
+            _timer ??= new Timer(_ => InvokeAsync(StateHasChanged), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+        }
+    }
+
+    private bool IsAnswered(Question q) => AttemptService.IsAnswered(q, _session!.Selected(q.Id));
+
+    private string? StatusFor(int questionId)
+    {
+        if (_saving.Contains(questionId)) return "Opslaan…";
+        if (!_savedAt.TryGetValue(questionId, out var at)) return null;
+        var age = DateTime.Now - at;
+        return age.TotalSeconds < 60 ? "Bijgewerkt zojuist" : $"Bijgewerkt om {at:HH:mm}";
+    }
+
+    private static string Preview(Question q) => q.Title ?? MarkdownRenderer.ToPlainText(q.Text, 60);
+
+    private async Task GoToAsync(int index)
+    {
+        if (_session is null || index < 0 || index >= _session.Questions.Count) return;
+        _current = index;
+        if (_showAll)
+            await JS.InvokeVoidAsync("toetsr.scrollToId", $"t-vraag-{index + 1}", true);
+        else
+            await JS.InvokeVoidAsync("toetsr.scrollTop");
+    }
+
+    private async Task ToggleView()
+    {
+        _showAll = !_showAll;
+        StateHasChanged();
+        await Task.Yield();
+        if (_showAll && _current > 0)
+            await JS.InvokeVoidAsync("toetsr.scrollToId", $"t-vraag-{_current + 1}", false);
+    }
+
+    private async Task SelectAsync(Question q, OptionSelection selection)
+    {
+        if (_session is null) return;
+        var index = _session.Questions.IndexOf(q);
+        if (index >= 0) _current = index;
+
+        // Direct tonen, daarna opslaan.
+        var answer = EnsureAnswer(q.Id);
+        answer.SelectedOptionIds = Registry.Get(q.Type).ApplySelection(q, answer.SelectedOptionIds, selection.OptionId, selection.Selected);
+        await SaveAsync(q.Id, () => AttemptService.SelectOptionAsync(Id, q, selection.OptionId, selection.Selected));
+    }
+
+    private async Task ClearAsync(Question q)
+    {
+        EnsureAnswer(q.Id).SelectedOptionIds = [];
+        await SaveAsync(q.Id, () => AttemptService.ClearAnswerAsync(Id, q.Id));
+    }
+
+    private async Task ToggleFlagAsync(Question q)
+    {
+        var answer = EnsureAnswer(q.Id);
+        answer.Flagged = !answer.Flagged;
+        await SaveAsync(q.Id, () => AttemptService.SetFlagAsync(Id, q.Id, answer.Flagged), showStatus: false);
+    }
+
+    private AttemptAnswer EnsureAnswer(int questionId)
+    {
+        if (!_session!.Answers.TryGetValue(questionId, out var a))
+            _session.Answers[questionId] = a = new AttemptAnswer { AttemptId = Id, QuestionId = questionId };
+        return a;
+    }
+
+    private async Task SaveAsync(int questionId, Func<Task<AttemptAnswer>> save, bool showStatus = true)
+    {
+        if (showStatus) _saving.Add(questionId);
+        await _gate.WaitAsync();
+        try
+        {
+            var stored = await save();
+            _session!.Answers[questionId] = stored;
+            if (showStatus) _savedAt[questionId] = DateTime.Now;
+        }
+        catch (InvalidOperationException ex)
+        {
+            Toast.Error($"Opslaan mislukt: {ex.Message}");
+            _session = await AttemptService.GetSessionAsync(Id);
+            if (_session is { IsSubmitted: true }) Nav.NavigateTo($"/poging/{Id}/resultaat", replace: true);
+        }
+        finally
+        {
+            _saving.Remove(questionId);
+            _gate.Release();
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        _submitting = true;
+        await _gate.WaitAsync();
+        try
+        {
+            await AttemptService.SubmitAsync(Id);
+            Nav.NavigateTo($"/poging/{Id}/resultaat");
+        }
+        catch (InvalidOperationException ex)
+        {
+            Toast.Error(ex.Message);
+        }
+        finally
+        {
+            _gate.Release();
+            _submitting = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+        _gate.Dispose();
+    }
+}

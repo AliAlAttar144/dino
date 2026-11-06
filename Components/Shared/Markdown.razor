@@ -1,0 +1,7 @@
+@* Toont Markdown als veilige HTML (ruwe HTML wordt niet uitgevoerd). *@
+<div class="md @Class">@((MarkupString)MarkdownRenderer.ToHtml(Text))</div>
+
+@code {
+    [Parameter] public string? Text { get; set; }
+    [Parameter] public string? Class { get; set; }
+}
