@@ -36,9 +36,85 @@ public sealed class FolderImportTests : IDisposable
         var images = new ImageStore(_paths, options, _db, NullLogger<ImageStore>.Instance);
         var reader = Reader();
         var import = new ImportService(_db, reader, images, _paths, options);
-        _folderImport = new FolderImportService(_db, reader, import, _paths, new FolderImportReport(), NullLogger<FolderImportService>.Instance);
+        _folderImport = new FolderImportService(_db, reader, import, Registry, _paths, new FolderImportReport(), NullLogger<FolderImportService>.Instance);
         _quizzes = new QuizService(_db, Validator);
         _attempts = new AttemptService(_db, Registry);
+
+        // Zelfde koppeling als in Program.cs.
+        _quizzes.Changed += id => _folderImport.WriteQuizAsync(id);
+        _quizzes.Deleting += id => _folderImport.MoveToDeletedAsync(id);
+    }
+
+    private string[] JsonFilesInFolder() =>
+        Directory.GetFiles(_paths.QuizFolder, "*.json").Select(Path.GetFileName).Order().ToArray()!;
+
+    /// <summary>Nieuwe (nog niet opgeslagen) meerkeuzevraag voor de editor.</summary>
+    private static Question NewQuestion()
+    {
+        var q = Choice(QuestionType.SingleChoice, 1, true, false);
+        q.Id = 0;
+        return q;
+    }
+
+    [Fact]
+    public async Task Quiz_made_in_app_is_written_to_folder_and_not_reimported()
+    {
+        var created = await _quizzes.CreateAsync("Mijn eigen toets", null, false, false);
+        Assert.Empty(JsonFilesInFolder()); // nog geen vragen → nog geen geldig bestand
+
+        var saved = await _quizzes.SaveQuestionAsync(created.Id, NewQuestion());
+        Assert.True(saved.Success);
+
+        Assert.Equal(["mijn-eigen-toets.json"], JsonFilesInFolder());
+        var json = await File.ReadAllTextAsync(Path.Combine(_paths.QuizFolder, "mijn-eigen-toets.json"));
+        Assert.Contains("\"Mijn eigen toets\"", json);
+
+        // Het geschreven bestand is meteen "ongewijzigd": geen dubbele toets.
+        var entry = Assert.Single(await _folderImport.ImportAllAsync());
+        Assert.Equal(FolderImportStatus.Unchanged, entry.Status);
+        Assert.Equal(created.Id, entry.QuizId);
+        Assert.Single(await _quizzes.GetSummariesAsync());
+    }
+
+    [Fact]
+    public async Task Editing_imported_quiz_in_app_updates_its_file()
+    {
+        WriteQuiz(QuizJson);
+        var quizId = Assert.Single(await _folderImport.ImportAllAsync()).QuizId!.Value;
+
+        await _quizzes.UpdateMetaAsync(quizId, "Hernoemd in de app", null, false, false);
+
+        Assert.Equal(["map.json"], JsonFilesInFolder()); // zelfde bestandsnaam
+        Assert.Contains("Hernoemd in de app", await File.ReadAllTextAsync(Path.Combine(_paths.QuizFolder, "map.json")));
+        Assert.Equal(FolderImportStatus.Unchanged, Assert.Single(await _folderImport.ImportAllAsync()).Status);
+    }
+
+    [Fact]
+    public async Task Existing_quizzes_without_file_are_exported()
+    {
+        // Toets van vóór de koppeling: zonder events opgeslagen.
+        var plain = new QuizService(_db, Validator);
+        var created = await plain.CreateAsync("Oude toets", null, false, false);
+        await plain.SaveQuestionAsync(created.Id, NewQuestion());
+        Assert.Empty(JsonFilesInFolder());
+
+        await _folderImport.ExportMissingAsync();
+        await _folderImport.ExportMissingAsync();
+
+        Assert.Equal(["oude-toets.json"], JsonFilesInFolder());
+        Assert.Equal(FolderImportStatus.Unchanged, Assert.Single(await _folderImport.ImportAllAsync()).Status);
+    }
+
+    [Fact]
+    public async Task Duplicate_gets_its_own_file()
+    {
+        WriteQuiz(QuizJson);
+        var quizId = Assert.Single(await _folderImport.ImportAllAsync()).QuizId!.Value;
+
+        await _quizzes.DuplicateAsync(quizId);
+
+        Assert.Equal(["map-toets-kopie.json", "map.json"], JsonFilesInFolder());
+        Assert.All(await _folderImport.ImportAllAsync(), e => Assert.Equal(FolderImportStatus.Unchanged, e.Status));
     }
 
     private void WriteQuiz(string json, string name = "map.json") => File.WriteAllText(Path.Combine(_paths.QuizFolder, name), json);
@@ -79,16 +155,19 @@ public sealed class FolderImportTests : IDisposable
     }
 
     [Fact]
-    public async Task Deleted_quiz_is_not_reimported_until_file_changes()
+    public async Task Deleting_quiz_in_app_moves_file_to_deleted_folder()
     {
         WriteQuiz(QuizJson);
         var quizId = Assert.Single(await _folderImport.ImportAllAsync()).QuizId!.Value;
         await _quizzes.DeleteAsync(quizId);
 
-        Assert.Equal(FolderImportStatus.SkippedDeleted, Assert.Single(await _folderImport.ImportAllAsync()).Status);
+        Assert.Empty(JsonFilesInFolder());
+        Assert.True(File.Exists(Path.Combine(_folderImport.DeletedFolder, "map.json")));
+        Assert.Empty(await _folderImport.ImportAllAsync());
         Assert.Empty(await _quizzes.GetSummariesAsync());
 
-        WriteQuiz(QuizJson.Replace("Map-toets", "Map-toets opnieuw"));
+        // Bestand terugzetten = toets terug.
+        File.Move(Path.Combine(_folderImport.DeletedFolder, "map.json"), Path.Combine(_paths.QuizFolder, "map.json"));
         Assert.Equal(FolderImportStatus.Imported, Assert.Single(await _folderImport.ImportAllAsync()).Status);
     }
 

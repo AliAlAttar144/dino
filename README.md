@@ -112,19 +112,28 @@ Een `.zip` mag één of meer `.json`-bestanden en de bijbehorende afbeeldingen b
 
 ### 3. Via de map `Toetsen/`
 
-Zet een `.json`-bestand in de map `Toetsen/` en eventuele afbeeldingen in `Toetsen/afbeeldingen/`. Bij het opstarten
-(of met de knop **Map nu opnieuw inlezen** op de importpagina) gebeurt het volgende:
+De map `Toetsen/` en de app blijven automatisch gelijk, in beide richtingen.
+
+**Map → app.** Zet een `.json`-bestand in de map `Toetsen/` en eventuele afbeeldingen in `Toetsen/afbeeldingen/`.
+Dino houdt de map in de gaten: binnen een paar seconden (en bij het opstarten) gebeurt het volgende, zonder dat je iets hoeft te klikken.
+De knop **Map nu opnieuw inlezen** op de importpagina doet hetzelfde met de hand.
 
 | Situatie | Wat gebeurt er |
 |---|---|
 | Nieuw bestand | Er wordt een nieuwe toets aangemaakt. |
 | Bestand ongewijzigd | Niets; er ontstaan geen dubbele toetsen. |
 | Bestand gewijzigd (JSON of afbeeldingen) | De vragen van de toets worden vervangen. Eerdere pogingen blijven bewaard en tonen de vragen zoals ze toen waren. |
-| Toets in de app verwijderd | Het bestand wordt niet opnieuw geïmporteerd, tenzij je het wijzigt. |
 | Bestand bevat fouten | Het wordt overgeslagen; de fouten zie je op het overzicht en op de importpagina. |
 
-> Let op: wijzigingen die je in de app maakt aan een toets uit de map, worden overschreven zodra je het bestand zelf wijzigt.
-> Wil je in de app verder werken, dupliceer de toets dan eerst.
+**App → map.** Elke toets die je in de app maakt, importeert, bewerkt of dupliceert, staat ook als `.json`-bestand in `Toetsen/`
+(de bestandsnaam komt van de titel, bijvoorbeeld `mijn-toets.json`). Afbeeldingen worden naar `Toetsen/afbeeldingen/` gekopieerd.
+Een nieuwe toets verschijnt in de map zodra er minstens één vraag in staat.
+
+| Situatie | Wat gebeurt er |
+|---|---|
+| Toets in de app gewijzigd | Het bestand wordt meteen bijgewerkt (de opmaak van het bestand wordt daarbij opnieuw geschreven). |
+| Toets in de app verwijderd | Het bestand gaat naar `Toetsen/verwijderd/`. Zet je het terug in `Toetsen/`, dan komt de toets terug (zonder de oude pogingen). |
+| Bestand uit de map verwijderd | De toets blijft in de app; bij de volgende start wordt het bestand opnieuw geschreven. Verwijder een toets dus in de app. |
 
 ## Het JSON-formaat
 
@@ -372,7 +381,7 @@ Een poging bewaart een kopie (snapshot) van de vragen. Daardoor kun je een toets
 | `Failed to bind to address http://localhost:5044: address already in use` | De app draait al, of een ander programma gebruikt de poort. Stop het andere proces of start met `dotnet run --urls http://localhost:5050`. |
 | De browser opent niet vanzelf | Open zelf http://localhost:5044. |
 | "Opnieuw verbinden met de app…" | De app is gestopt of herstart. Start `dotnet run` opnieuw en herlaad de pagina. Je antwoorden zijn al opgeslagen. |
-| Mijn JSON-bestand in `Toetsen/` verschijnt niet | Kijk op **Importeren → Map Toetsen/** voor de foutmelding, los die op en klik op **Map nu opnieuw inlezen**. |
+| Mijn JSON-bestand in `Toetsen/` verschijnt niet | Kijk op **Importeren → Map Toetsen/** voor de foutmelding en los die op; na het opslaan wordt het bestand vanzelf opnieuw ingelezen. |
 | Een afbeelding wordt niet getoond | Controleer of de bestandsnaam in de JSON precies klopt en of het bestand in `Toetsen/afbeeldingen/` (of in de zip) staat. |
 | `database is locked` | Er draait waarschijnlijk een tweede exemplaar van de app. Sluit dat af. |
 | Ik wil helemaal opnieuw beginnen | Stop de app en verwijder de map `App_Data/`. Bij de volgende start wordt alles opnieuw aangemaakt en worden de toetsen uit `Toetsen/` opnieuw ingelezen. |

@@ -27,6 +27,18 @@ public record SaveResult(bool Success, IReadOnlyList<string> Errors, int Id = 0)
 /// <summary>Toetsen en vragen aanmaken, bewerken, herordenen, dupliceren en verwijderen.</summary>
 public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionValidator validator)
 {
+    /// <summary>Gaat af nadat de inhoud van een toets is opgeslagen (argument: id van de toets).</summary>
+    public event Func<int, Task>? Changed;
+
+    /// <summary>Gaat af vlak voordat een toets wordt verwijderd (argument: id van de toets).</summary>
+    public event Func<int, Task>? Deleting;
+
+    private static async Task RaiseAsync(Func<int, Task>? handlers, int quizId)
+    {
+        if (handlers is null) return;
+        foreach (var handler in handlers.GetInvocationList().Cast<Func<int, Task>>())
+            await handler(quizId);
+    }
     public async Task<List<QuizSummary>> GetSummariesAsync(CancellationToken ct = default)
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
@@ -117,6 +129,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         quiz.ShuffleOptions = shuffleOptions;
         quiz.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
+        await RaiseAsync(Changed, id);
         return SaveResult.Ok(id);
     }
 
@@ -164,6 +177,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
 
         quiz.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
+        await RaiseAsync(Changed, quizId);
         return SaveResult.Ok(entity.Id);
     }
 
@@ -196,7 +210,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         await RenumberAsync(db, quizId, ids, ct);
     }
 
-    private static async Task RenumberAsync(ToetsrDbContext db, int quizId, IReadOnlyList<int>? orderedIds, CancellationToken ct)
+    private async Task RenumberAsync(ToetsrDbContext db, int quizId, IReadOnlyList<int>? orderedIds, CancellationToken ct)
     {
         var questions = await db.Questions.Where(q => q.QuizId == quizId).OrderBy(q => q.Order).ThenBy(q => q.Id).ToListAsync(ct);
         if (orderedIds is not null)
@@ -208,6 +222,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         var quiz = await db.Quizzes.FindAsync([quizId], ct);
         if (quiz is not null) quiz.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
+        await RaiseAsync(Changed, quizId);
     }
 
     public async Task<int?> DuplicateAsync(int id, CancellationToken ct = default)
@@ -243,6 +258,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         };
         db.Quizzes.Add(copy);
         await db.SaveChangesAsync(ct);
+        await RaiseAsync(Changed, copy.Id);
         return copy.Id;
     }
 
@@ -252,6 +268,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var quiz = await db.Quizzes.FindAsync([id], ct);
         if (quiz is null) return;
+        await RaiseAsync(Deleting, id);
         db.Quizzes.Remove(quiz);
         foreach (var f in await db.ImportedFiles.Where(f => f.QuizId == id).ToListAsync(ct))
             f.QuizId = null;

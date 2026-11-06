@@ -38,6 +38,7 @@ builder.Services.AddSingleton<ImportService>();
 builder.Services.AddSingleton<ExportService>();
 builder.Services.AddSingleton<FolderImportReport>();
 builder.Services.AddSingleton<FolderImportService>();
+builder.Services.AddHostedService<QuizFolderWatcher>();
 builder.Services.AddScoped<ToastService>();
 
 builder.Services.AddRazorComponents()
@@ -62,9 +63,16 @@ await using (var db = await app.Services.GetRequiredService<IDbContextFactory<To
 {
     await db.Database.MigrateAsync();
 }
+var folderSync = app.Services.GetRequiredService<FolderImportService>();
 if (options.ImportQuizFolderOnStartup)
-    await app.Services.GetRequiredService<FolderImportService>().ImportAllAsync();
+    await folderSync.ImportAllAsync();
 await app.Services.GetRequiredService<ImageStore>().CleanupOrphansAsync();
+
+// App → map: elke toets staat ook als .json-bestand in Toetsen/, en wijzigingen in de app gaan meteen mee.
+var quizService = app.Services.GetRequiredService<QuizService>();
+quizService.Changed += id => folderSync.WriteQuizAsync(id);
+quizService.Deleting += id => folderSync.MoveToDeletedAsync(id);
+await folderSync.ExportMissingAsync();
 
 if (!app.Environment.IsDevelopment())
 {

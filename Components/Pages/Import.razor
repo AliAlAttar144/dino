@@ -8,6 +8,7 @@
 @inject ToetsrOptions Options
 @inject ToastService Toast
 @inject IJSRuntime JS
+@implements IDisposable
 
 <PageTitle>Importeren – Dino</PageTitle>
 
@@ -127,8 +128,12 @@
     {
         <section id="panel-map" role="tabpanel" aria-labelledby="tab-map" class="stack">
             <p>
-                Elk <code>.json</code>-bestand in de map <code>@Paths.QuizFolder</code> wordt bij het opstarten automatisch geïmporteerd.
-                Wijzig je het bestand, dan wordt de toets bijgewerkt (pogingen blijven bewaard). Afbeeldingen zet je in <code>Toetsen/afbeeldingen/</code>.
+                Elk <code>.json</code>-bestand in de map <code>@Paths.QuizFolder</code> wordt automatisch geïmporteerd, ook terwijl Dino draait.
+                Wijzig je het bestand, dan wordt de toets binnen een paar seconden bijgewerkt (pogingen blijven bewaard). Afbeeldingen zet je in <code>Toetsen/afbeeldingen/</code>.
+            </p>
+            <p>
+                Andersom werkt het ook: elke toets die je in de app maakt, importeert of bewerkt, staat als <code>.json</code>-bestand in deze map.
+                Verwijder je een toets in de app, dan gaat het bestand naar <code>Toetsen/@FolderImportService.DeletedFolderName/</code>.
             </p>
             <div class="row">
                 <button type="button" class="btn btn-primary" disabled="@_rescanning" @onclick="RescanAsync">
@@ -269,6 +274,13 @@
         ("map", "Map Toetsen/", "folder"),
     ];
 
+    protected override void OnInitialized() => FolderReport.Changed += OnFolderChanged;
+
+    /// <summary>De map Toetsen/ is (automatisch) opnieuw ingelezen: tabel verversen.</summary>
+    private void OnFolderChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => FolderReport.Changed -= OnFolderChanged;
+
     private string _tab = "plakken";
     private string _json = "";
     private string _topic = "";
@@ -343,6 +355,7 @@
         try
         {
             var id = await ImportService.ImportAsync(item);
+            await FolderImport.WriteQuizAsync(id);
             _importedIds[item] = id;
             Toast.Success($"\"{item.Preview.Quiz!.Title}\" is geïmporteerd.");
         }

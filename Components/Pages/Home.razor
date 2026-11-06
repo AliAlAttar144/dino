@@ -5,6 +5,7 @@
 @inject FolderImportReport FolderReport
 @inject ToastService Toast
 @inject NavigationManager Nav
+@implements IDisposable
 
 <PageTitle>Mijn toetsen – Dino</PageTitle>
 
@@ -138,7 +139,18 @@
     {
         _failedImports = FolderReport.Entries.Where(e => e.Status == FolderImportStatus.Failed).ToList();
         await LoadAsync();
+        FolderReport.Changed += OnFolderChanged;
     }
+
+    /// <summary>De map Toetsen/ is (automatisch) opnieuw ingelezen: lijst verversen.</summary>
+    private void OnFolderChanged() => _ = InvokeAsync(async () =>
+    {
+        _failedImports = FolderReport.Entries.Where(e => e.Status == FolderImportStatus.Failed).ToList();
+        await LoadAsync();
+        StateHasChanged();
+    });
+
+    public void Dispose() => FolderReport.Changed -= OnFolderChanged;
 
     private async Task LoadAsync() => _quizzes = await QuizService.GetSummariesAsync();
 
