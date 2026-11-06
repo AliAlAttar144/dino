@@ -1,6 +1,6 @@
 {
   "title": "Voorbeeld – Vue & Express oefentoets",
-  "description": "Voorbeeldtoets die alle vraagtypen van Toetsr laat zien: meerkeuze met één antwoord, meerdere antwoorden, dropdowns, codeblokken en een afbeelding.",
+  "description": "Voorbeeldtoets die alle vraagtypen van Dino laat zien: meerkeuze met één antwoord, meerdere antwoorden, dropdowns, codeblokken en een afbeelding.",
   "shuffleQuestions": false,
   "shuffleOptions": false,
   "questions": [

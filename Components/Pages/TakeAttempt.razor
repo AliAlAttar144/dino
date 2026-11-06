@@ -7,7 +7,7 @@
 @inject NavigationManager Nav
 @inject IJSRuntime JS
 
-<PageTitle>@(_session?.QuizTitle ?? "Toets") – Toetsr</PageTitle>
+<PageTitle>@(_session?.QuizTitle ?? "Toets") – Dino</PageTitle>
 
 @if (_loading)
 {
@@ -67,7 +67,7 @@ else
                 <div class="exam-scroll">
                     <div class="exam-content">
                         <nav class="breadcrumb" aria-label="Kruimelpad">
-                            <a href="/">Toetsr</a>
+                            <a href="/">Dino</a>
                             <Icon Name="chevron-right" />
                             <a href="@($"/toets/{_session.Attempt.QuizId}")">@_session.QuizTitle</a>
                         </nav>

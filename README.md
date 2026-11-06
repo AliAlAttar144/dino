@@ -1,14 +1,14 @@
-# Toetsr
+# Dino
 
-**Toetsr** is een open-source app om oefentoetsen te maken en te oefenen, helemaal lokaal op je eigen computer.
+**Dino** is een open-source app om oefentoetsen te maken en te oefenen, helemaal lokaal op je eigen computer.
 Maak zelf vragen, of laat ChatGPT of Claude een toets genereren en plak die erin. Maak de toets zo vaak als je wilt;
 elke poging wordt bewaard met je score en antwoorden.
 
-> **Disclaimer:** Toetsr is een onofficieel, onafhankelijk hobbyproject. Het is **niet** verbonden met, goedgekeurd door
+> **Disclaimer:** Dino is een onofficieel, onafhankelijk hobbyproject. Het is **niet** verbonden met, goedgekeurd door
 > of gesponsord door Ans (ans.app) of Ans Delft B.V. De opzet is geïnspireerd op digitale toetsomgevingen, maar alle code,
 > namen, het logo en de vormgeving zijn eigen werk.
 
-![Screenshot van het overzicht in Toetsr](docs/screenshot-overzicht.jpg)
+![Screenshot van het overzicht in Dino](docs/screenshot-overzicht.jpg)
 ![Screenshot van een vraag tijdens de toets](docs/screenshot-toets.jpg)
 ![Screenshot van het resultaat met nakijkpaneel](docs/screenshot-resultaat.jpg)
 
@@ -380,6 +380,6 @@ Een poging bewaart een kopie (snapshot) van de vragen. Daardoor kun je een toets
 
 ## Licentie
 
-[MIT](LICENSE). Je mag Toetsr vrij gebruiken, aanpassen en delen.
+[MIT](LICENSE). Je mag Dino vrij gebruiken, aanpassen en delen.
 
-Toetsr is een onofficieel, onafhankelijk project en is niet verbonden met Ans (ans.app). Alle genoemde merknamen zijn van hun respectieve eigenaren.
+Dino is een onofficieel, onafhankelijk project en is niet verbonden met Ans (ans.app). Alle genoemde merknamen zijn van hun respectieve eigenaren.

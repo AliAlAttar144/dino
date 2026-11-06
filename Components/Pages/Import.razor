@@ -9,13 +9,13 @@
 @inject ToastService Toast
 @inject IJSRuntime JS
 
-<PageTitle>Importeren – Toetsr</PageTitle>
+<PageTitle>Importeren – Dino</PageTitle>
 
 <div class="page page-narrow">
     <div class="page-header">
         <div>
             <h1 tabindex="-1">Vragen importeren</h1>
-            <p>Laat ChatGPT of Claude een toets maken in het Toetsr-formaat, en plak of upload het resultaat hier.</p>
+            <p>Laat ChatGPT of Claude een toets maken in het Dino-formaat, en plak of upload het resultaat hier.</p>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
                 <InputFile OnChange="UploadAsync" accept=".json,.zip,application/json,application/zip" aria-label="JSON- of ZIP-bestand kiezen" />
                 <Icon Name="upload" />
                 <p class="mb-0 mt-1"><strong>Klik of sleep een bestand hierheen</strong></p>
-                <p class="subtle mb-0">.json (alleen vragen) of .zip (JSON + afbeeldingen, zoals een export uit Toetsr). Max @(Options.MaxImportBytes / 1024 / 1024) MB.</p>
+                <p class="subtle mb-0">.json (alleen vragen) of .zip (JSON + afbeeldingen, zoals een export uit Dino). Max @(Options.MaxImportBytes / 1024 / 1024) MB.</p>
             </div>
             @if (_reading)
             {

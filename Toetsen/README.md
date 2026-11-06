@@ -1,6 +1,6 @@
 # Map Toetsen/
 
-Zet hier `.json`-bestanden met toetsen. Bij het opstarten van Toetsr worden ze automatisch geïmporteerd
+Zet hier `.json`-bestanden met toetsen. Bij het opstarten van Dino worden ze automatisch geïmporteerd
 (en bijgewerkt als je een bestand wijzigt). Afbeeldingen zet je in `afbeeldingen/` en noem je in de JSON
 alleen bij bestandsnaam, bijvoorbeeld `"image": "kaart.png"`.
 

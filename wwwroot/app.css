@@ -1,5 +1,5 @@
 /* =========================================================
-   Toetsr – eigen CSS-systeem
+   Dino – eigen CSS-systeem
    ========================================================= */
 
 :root {
@@ -121,7 +121,7 @@ h1:focus, h1:focus-visible { outline: none; }
 }
 .brand { display: inline-flex; align-items: center; gap: .55rem; color: #fff; text-decoration: none; font-family: var(--font-heading); font-weight: 600; font-size: 1.1rem; letter-spacing: .2px; }
 .brand:hover { color: #fff; }
-.brand-logo { width: 30px; height: 30px; }
+.brand-logo { width: 36px; height: 36px; }
 .topnav { display: flex; gap: .25rem; align-items: center; }
 .topnav a {
     color: rgba(255, 255, 255, .86); text-decoration: none; padding: .4rem .75rem; border-radius: var(--radius);

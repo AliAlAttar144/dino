@@ -1,6 +1,6 @@
 namespace Toetsr.Services;
 
-/// <summary>Kant-en-klare prompt om met ChatGPT/Claude vragen in het Toetsr-formaat te laten maken.
+/// <summary>Kant-en-klare prompt om met ChatGPT/Claude vragen in het Dino-formaat te laten maken.
 /// Houd deze tekst gelijk met de prompt in README.md.</summary>
 public static class AiPrompt
 {
