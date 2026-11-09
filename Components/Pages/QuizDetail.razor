@@ -34,6 +34,10 @@
                     {
                         <span> · <a href="@($"/beheer/{Id}")" title="Uitgesloten vragen komen niet in nieuwe pogingen. Neem ze weer op via Bewerken.">@ExcludedCount uitgesloten</a></span>
                     }
+                    @if (FlaggedCount > 0)
+                    {
+                        <span> · <Icon Name="bookmark-filled" /> @FlaggedCount gemarkeerd</span>
+                    }
                 </p>
             </div>
             <div class="row">
@@ -64,6 +68,10 @@
                     <div class="start-options">
                         <Switch Label="Vragen shuffelen" @bind-Value="_shuffleQuestions" />
                         <Switch Label="Antwoorden shuffelen" @bind-Value="_shuffleOptions" />
+                        @if (FlaggedCount > 0)
+                        {
+                            <Switch Label="@($"Alleen gemarkeerde vragen ({FlaggedCount})")" @bind-Value="_onlyFlagged" />
+                        }
                     </div>
                 </div>
                 <div class="row">
@@ -194,10 +202,14 @@
     private bool _busy;
     private bool _shuffleQuestions;
     private bool _shuffleOptions;
+    private bool _onlyFlagged;
+    private HashSet<int> _flagged = [];
     private ConfirmDialog _confirm = default!;
 
     private double TotalPoints => _quiz?.Questions.Sum(q => q.Points) ?? 0;
     private int ExcludedCount => _quiz?.Questions.Count(q => q.Excluded) ?? 0;
+    // Uitgesloten vragen tellen niet mee: die komen toch niet in een poging.
+    private int FlaggedCount => _quiz?.Questions.Count(q => !q.Excluded && _flagged.Contains(q.Id)) ?? 0;
     private IEnumerable<AttemptListItem> Chrono => _done.OrderBy(a => a.StartedAt);
 
     protected override async Task OnParametersSetAsync()
@@ -218,6 +230,8 @@
         _attempts = await AttemptService.GetAttemptsAsync(Id);
         _done = _attempts.Where(a => a.Status == AttemptStatus.Submitted).ToList();
         _inProgress = _attempts.FirstOrDefault(a => a.Status == AttemptStatus.InProgress);
+        _flagged = await AttemptService.GetFlaggedQuestionIdsAsync(Id);
+        if (FlaggedCount == 0) _onlyFlagged = false;
         _bestId = _done.OrderByDescending(a => a.Percentage).ThenBy(a => a.StartedAt).FirstOrDefault()?.Id;
     }
 
@@ -226,7 +240,7 @@
         _busy = true;
         try
         {
-            var attemptId = await AttemptService.StartAsync(Id, _shuffleQuestions, _shuffleOptions);
+            var attemptId = await AttemptService.StartAsync(Id, _shuffleQuestions, _shuffleOptions, _onlyFlagged && FlaggedCount > 0);
             Nav.NavigateTo($"/poging/{attemptId}");
         }
         catch (InvalidOperationException ex)

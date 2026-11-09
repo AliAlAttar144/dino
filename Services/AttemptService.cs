@@ -39,8 +39,9 @@ public class AttemptService(IDbContextFactory<ToetsrDbContext> dbFactory, Questi
 {
     private static readonly JsonSerializerOptions SnapshotJson = new() { WriteIndented = false };
 
-    /// <summary>Start een nieuwe poging met een snapshot van de huidige toets.</summary>
-    public async Task<int> StartAsync(int quizId, bool shuffleQuestions, bool shuffleOptions, CancellationToken ct = default)
+    /// <summary>Start een nieuwe poging met een snapshot van de huidige toets.
+    /// Gemarkeerde vragen blijven gemarkeerd; met <paramref name="onlyFlagged"/> komen alleen die vragen in de poging.</summary>
+    public async Task<int> StartAsync(int quizId, bool shuffleQuestions, bool shuffleOptions, bool onlyFlagged = false, CancellationToken ct = default)
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var quiz = await db.Quizzes.AsNoTracking()
@@ -56,6 +57,14 @@ public class AttemptService(IDbContextFactory<ToetsrDbContext> dbFactory, Questi
         if (included.Count == 0)
             throw new InvalidOperationException("Alle vragen van deze toets zijn uitgesloten. Neem er minstens één weer op via Bewerken.");
 
+        var flagged = await FlaggedQuestionIdsAsync(db, quizId, ct);
+        if (onlyFlagged)
+        {
+            included = included.Where(q => flagged.Contains(q.Id)).ToList();
+            if (included.Count == 0)
+                throw new InvalidOperationException("Je hebt geen gemarkeerde vragen in deze toets.");
+        }
+
         var questions = BuildSnapshot(included, shuffleQuestions, shuffleOptions, Random.Shared);
         var attempt = new Attempt
         {
@@ -63,11 +72,30 @@ public class AttemptService(IDbContextFactory<ToetsrDbContext> dbFactory, Questi
             Status = AttemptStatus.InProgress,
             MaxScore = Math.Round(questions.Sum(q => q.Points), 2),
             SnapshotJson = JsonSerializer.Serialize(questions, SnapshotJson),
-            Answers = questions.Select(q => new AttemptAnswer { QuestionId = q.Id }).ToList(),
+            Answers = questions.Select(q => new AttemptAnswer { QuestionId = q.Id, Flagged = flagged.Contains(q.Id) }).ToList(),
         };
         db.Attempts.Add(attempt);
         await db.SaveChangesAsync(ct);
         return attempt.Id;
+    }
+
+    /// <summary>Ids van de vragen die nu gemarkeerd zijn: per vraag telt de markering uit de laatste poging waarin hij voorkwam.</summary>
+    public async Task<HashSet<int>> GetFlaggedQuestionIdsAsync(int quizId, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        return await FlaggedQuestionIdsAsync(db, quizId, ct);
+    }
+
+    private static async Task<HashSet<int>> FlaggedQuestionIdsAsync(ToetsrDbContext db, int quizId, CancellationToken ct)
+    {
+        var rows = await db.AttemptAnswers.AsNoTracking()
+            .Where(a => a.Attempt!.QuizId == quizId)
+            .Select(a => new { a.QuestionId, a.Flagged, a.Attempt!.StartedAt, a.AttemptId })
+            .ToListAsync(ct);
+        return rows.GroupBy(r => r.QuestionId)
+            .Where(g => g.OrderByDescending(r => r.StartedAt).ThenByDescending(r => r.AttemptId).First().Flagged)
+            .Select(g => g.Key)
+            .ToHashSet();
     }
 
     /// <summary>Kopieert de vragen en shufflet ze desgewenst. Opties van dropdowns worden binnen hun gat geshuffeld.</summary>

@@ -155,6 +155,35 @@ public sealed class FolderImportTests : IDisposable
     }
 
     [Fact]
+    public async Task Flagged_questions_carry_over_and_can_be_practiced_alone()
+    {
+        WriteQuiz("""
+            { "title": "Markeren", "questions": [
+              { "type": "single", "text": "A", "options": [ { "text": "Goed", "correct": true }, { "text": "Fout" } ] },
+              { "type": "single", "text": "B", "options": [ { "text": "Goed", "correct": true }, { "text": "Fout" } ] }
+            ] }
+            """);
+        var quizId = Assert.Single(await _folderImport.ImportAllAsync()).QuizId!.Value;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _attempts.StartAsync(quizId, false, false, onlyFlagged: true));
+
+        var first = await _attempts.StartAsync(quizId, false, false);
+        var b = (await _attempts.GetSessionAsync(first))!.Questions.Single(q => q.Text == "B");
+        await _attempts.SetFlagAsync(first, b.Id, true);
+        await _attempts.SubmitAsync(first);
+        Assert.Equal([b.Id], await _attempts.GetFlaggedQuestionIdsAsync(quizId));
+
+        // Alleen de gemarkeerde vraag, en die is nog steeds gemarkeerd.
+        var second = await _attempts.StartAsync(quizId, false, false, onlyFlagged: true);
+        var session = (await _attempts.GetSessionAsync(second))!;
+        Assert.Equal(b.Id, Assert.Single(session.Questions).Id);
+        Assert.True(session.IsFlagged(b.Id));
+
+        // Markering weghalen in de nieuwste poging haalt hem uit de set.
+        await _attempts.SetFlagAsync(second, b.Id, false);
+        Assert.Empty(await _attempts.GetFlaggedQuestionIdsAsync(quizId));
+    }
+
+    [Fact]
     public async Task Deleting_quiz_in_app_moves_file_to_deleted_folder()
     {
         WriteQuiz(QuizJson);
