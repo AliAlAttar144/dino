@@ -128,6 +128,7 @@ public class ImportService(
                 Text = q.Text,
                 Points = q.Points,
                 Explanation = q.Explanation,
+                Excluded = q.Excluded,
                 ImagePath = await Store(q.ImagePath),
             };
             foreach (var o in q.Options)

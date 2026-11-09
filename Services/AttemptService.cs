@@ -52,7 +52,11 @@ public class AttemptService(IDbContextFactory<ToetsrDbContext> dbFactory, Questi
         if (quiz.Questions.Count == 0)
             throw new InvalidOperationException("Deze toets heeft nog geen vragen.");
 
-        var questions = BuildSnapshot(quiz.Questions, shuffleQuestions, shuffleOptions, Random.Shared);
+        var included = quiz.Questions.Where(q => !q.Excluded).ToList();
+        if (included.Count == 0)
+            throw new InvalidOperationException("Alle vragen van deze toets zijn uitgesloten. Neem er minstens één weer op via Bewerken.");
+
+        var questions = BuildSnapshot(included, shuffleQuestions, shuffleOptions, Random.Shared);
         var attempt = new Attempt
         {
             QuizId = quizId,

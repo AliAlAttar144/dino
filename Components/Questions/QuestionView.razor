@@ -72,6 +72,10 @@
             {
                 <button type="button" class="btn btn-ghost btn-sm clear-answer" @onclick="OnClear" disabled="@Disabled">Antwoord wissen</button>
             }
+            @if (Excluded && OnToggleExclude.HasDelegate)
+            {
+                <div class="excluded-note"><Icon Name="eye-off" /> Uitgesloten: deze vraag komt niet meer terug in je volgende pogingen.</div>
+            }
             @if (StatusText is not null)
             {
                 <div class="saved-status" aria-live="polite">@StatusText</div>
@@ -85,6 +89,15 @@
                         aria-label="@(Flagged ? $"Markering vraag {Number} verwijderen" : $"Vraag {Number} markeren")"
                         @onclick="OnToggleFlag">
                     <Icon Name="@(Flagged ? "bookmark-filled" : "bookmark")" />
+                </button>
+            }
+            @if (OnToggleExclude.HasDelegate)
+            {
+                <button type="button" class="flag-btn exclude-btn" aria-pressed="@(Excluded ? "true" : "false")"
+                        title="@(Excluded ? "Weer opnemen in volgende pogingen (X)" : "Uitsluiten van volgende pogingen (X)")"
+                        aria-label="@(Excluded ? $"Vraag {Number} weer opnemen" : $"Vraag {Number} uitsluiten")"
+                        @onclick="OnToggleExclude">
+                    <Icon Name="eye-off" />
                 </button>
             }
         </div>
@@ -107,6 +120,9 @@
     [Parameter] public EventCallback<OptionSelection> OnSelect { get; set; }
     [Parameter] public EventCallback OnToggleFlag { get; set; }
     [Parameter] public EventCallback OnClear { get; set; }
+    /// <summary>Vraag is uitgesloten van volgende pogingen.</summary>
+    [Parameter] public bool Excluded { get; set; }
+    [Parameter] public EventCallback OnToggleExclude { get; set; }
 
     /// <summary>Directe feedback tijdens de toets: grote goed/fout-melding i.p.v. het kleine label.</summary>
     [Parameter] public bool Feedback { get; set; }

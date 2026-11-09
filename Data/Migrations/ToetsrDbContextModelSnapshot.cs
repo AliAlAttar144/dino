@@ -153,6 +153,9 @@ namespace Toetsr.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Excluded")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Explanation")
                         .HasColumnType("TEXT");
 

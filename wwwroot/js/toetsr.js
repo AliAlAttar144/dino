@@ -36,10 +36,26 @@ window.toetsr = {
             ArrowUp: "up", w: "up", W: "up",
             ArrowDown: "down", s: "down", S: "down",
             Enter: "enter", " ": "toggle",
-            ArrowLeft: "prev", ArrowRight: "next"
+            ArrowLeft: "prev", ArrowRight: "next",
+            x: "exclude", X: "exclude"
+        };
+        // In de uitsluit-dialoog: links/rechts (of A/D) kiezen, Enter bevestigen, Esc annuleren.
+        const dialogKeys = {
+            ArrowLeft: "left", a: "left", A: "left", ArrowUp: "up",
+            ArrowRight: "right", d: "right", D: "right", ArrowDown: "down",
+            Enter: "enter", Escape: "cancel", x: "cancel", X: "cancel"
         };
         this._examKeys = function (e) {
             if (e.ctrlKey || e.altKey || e.metaKey || e.repeat && e.key === "Enter") return;
+            if (document.querySelector(".modal-backdrop [data-exam-keys]")) {
+                const dk = dialogKeys[e.key];
+                if (!dk) return;
+                e.preventDefault();
+                e.stopPropagation();
+                if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+                dotnet.invokeMethodAsync("OnExamKey", dk);
+                return;
+            }
             const key = keys[e.key];
             if (!key) return;
             if (document.querySelector(".modal-backdrop")) return;
@@ -52,10 +68,10 @@ window.toetsr = {
             if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
             dotnet.invokeMethodAsync("OnExamKey", key);
         };
-        document.addEventListener("keydown", this._examKeys);
+        document.addEventListener("keydown", this._examKeys, true);
     },
     unregisterExamKeys: function () {
-        if (this._examKeys) document.removeEventListener("keydown", this._examKeys);
+        if (this._examKeys) document.removeEventListener("keydown", this._examKeys, true);
         this._examKeys = null;
     }
 };

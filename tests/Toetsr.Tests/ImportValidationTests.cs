@@ -162,6 +162,7 @@ public class ImportValidationTests
     {
         var original = ReadOne(Valid).Quiz!;
         original.Questions[0].Explanation = "Uitleg";
+        original.Questions[0].Excluded = true;
 
         var json = ExportService.ToJson(original, Registry);
         var again = ReadOne(json).Quiz!;
@@ -174,6 +175,7 @@ public class ImportValidationTests
             Assert.Equal(original.Questions[i].Text, again.Questions[i].Text);
             Assert.Equal(original.Questions[i].Points, again.Questions[i].Points);
             Assert.Equal(original.Questions[i].Explanation, again.Questions[i].Explanation);
+            Assert.Equal(original.Questions[i].Excluded, again.Questions[i].Excluded);
             Assert.Equal(
                 original.Questions[i].Options.Select(o => (o.Text, o.IsCorrect, o.GapNumber)),
                 again.Questions[i].Options.Select(o => (o.Text, o.IsCorrect, o.GapNumber)));

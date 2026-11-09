@@ -37,6 +37,7 @@ elke poging wordt bewaard met je score en antwoorden.
 - **Overzicht van al je toetsen** met het aantal vragen, pogingen, je beste score en wanneer je de toets het laatst maakte.
 - **Toets maken zoals in een echte digitale toets:** één vraag per pagina (of alle vragen op één pagina), vraagnummers aan de zijkant,
   vragen markeren om later terug te komen, een voortgangsbalk en automatisch opslaan ("Bijgewerkt zojuist").
+  Druk op <kbd>X</kbd> om een slechte vraag uit te sluiten: hij komt dan niet meer terug in je volgende pogingen.
   Je kunt een poging onderbreken en later hervatten.
 - **Direct resultaat:** cijfer (1–10), percentage, per vraag goed, deels goed of fout, de juiste antwoorden, punten per optie en uitleg.
 - **Onbeperkt opnieuw proberen.** Per toets zie je alle pogingen, je beste en gemiddelde score en het verloop, en je kunt elke poging terugkijken.
@@ -194,6 +195,7 @@ Veldnamen zijn niet hoofdlettergevoelig, commentaar (`//`) en een komma na het l
 | `questions[].points` | nee | Aantal punten (standaard `1`). |
 | `questions[].image` | nee | Alleen de bestandsnaam, bijvoorbeeld `"kaart.png"`. Het bestand staat in `Toetsen/afbeeldingen/` of in de zip. |
 | `questions[].explanation` | nee | Uitleg die na het nakijken getoond wordt. |
+| `questions[].excluded` | nee | `true` = vraag wordt overgeslagen bij nieuwe pogingen. Zet je tijdens de toets met <kbd>X</kbd>, terugzetten kan via **Bewerken**. |
 | `questions[].options[]` | bij single/multiple | `{ "text": "...", "correct": true, "image": "x.png" }`. Laat je `correct` weg, dan is de optie fout. |
 | `questions[].gaps[]` | bij dropdown | Per gat `{ "options": [ ... ] }`. Het eerste element hoort bij `{{1}}`, het tweede bij `{{2}}`, enzovoort. Per gat precies één goed antwoord. |
 

@@ -6,6 +6,7 @@
 @inject ToastService Toast
 @inject NavigationManager Nav
 @inject IJSRuntime JS
+@inject QuizService QuizService
 
 <PageTitle>@(_session?.QuizTitle ?? "Toets") – Dino</PageTitle>
 
@@ -86,7 +87,9 @@ else
                                               StatusText="@StatusFor(q.Id)"
                                               OnSelect="s => SelectAsync(q, s)"
                                               OnClear="() => ClearAsync(q)"
-                                              OnToggleFlag="() => ToggleFlagAsync(q)" />
+                                              OnToggleFlag="() => ToggleFlagAsync(q)"
+                                              Excluded="_excluded.Contains(q.Id)"
+                                              OnToggleExclude="() => AskExclude(q)" />
                             }
                         }
                         else
@@ -100,7 +103,9 @@ else
                                           StatusText="@StatusFor(q.Id)"
                                           OnSelect="s => SelectAsync(q, s)"
                                           OnClear="() => ClearAsync(q)"
-                                          OnToggleFlag="() => ToggleFlagAsync(q)" />
+                                          OnToggleFlag="() => ToggleFlagAsync(q)"
+                                          Excluded="_excluded.Contains(q.Id)"
+                                          OnToggleExclude="() => AskExclude(q)" />
                             @if (_current == questions.Count - 1)
                             {
                                 <div class="alert alert-info mt-3">
@@ -136,6 +141,29 @@ else
             </div>
         </div>
     </div>
+
+    <Modal IsOpen="_excludeTarget is not null" Title="@(_excludeUndo ? "Vraag weer opnemen?" : "Vraag uitsluiten?")" OnClose="CloseExclude">
+        <ChildContent>
+            <div data-exam-keys>
+                @if (_excludeUndo)
+                {
+                    <p>Vraag @_excludeNumber komt dan weer terug in je volgende pogingen.</p>
+                }
+                else
+                {
+                    <p>Vraag @_excludeNumber komt niet meer terug in je volgende pogingen. In deze poging blijft hij gewoon staan.</p>
+                    <p class="muted mb-0">Je kunt hem later weer opnemen via <strong>Bewerken</strong> bij de toets.</p>
+                }
+                <div class="key-hint"><kbd>←</kbd><kbd>→</kbd> of <kbd>A</kbd><kbd>D</kbd> kiezen · <kbd>Enter</kbd> bevestigen · <kbd>Esc</kbd> annuleren</div>
+            </div>
+        </ChildContent>
+        <Footer>
+            <button type="button" class="btn btn-ghost @(_excludeChoice == 0 ? "kbd-choice" : "")" @onclick="CloseExclude">Annuleren</button>
+            <button type="button" class="btn @(_excludeUndo ? "btn-primary" : "btn-danger") @(_excludeChoice == 1 ? "kbd-choice" : "")" @onclick="ConfirmExcludeAsync">
+                @(_excludeUndo ? "Weer opnemen" : "Uitsluiten")
+            </button>
+        </Footer>
+    </Modal>
 
     <Modal @bind-IsOpen="_submitOpen" Title="Toets inleveren?">
         <ChildContent>
@@ -188,6 +216,13 @@ else
     private string? _scrollAfterRender;
     private DotNetObjectReference<TakeAttempt>? _selfRef;
 
+    // Uitsluiten van volgende pogingen (ids van vragen in de toets; gelijk aan de ids in de snapshot).
+    private HashSet<int> _excluded = [];
+    private Question? _excludeTarget;
+    private int _excludeNumber;
+    private bool _excludeUndo;
+    private int _excludeChoice; // 0 = annuleren, 1 = bevestigen
+
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
@@ -207,6 +242,8 @@ else
             _revealed.Clear();
             foreach (var q in _session.Questions.Where(IsAnswered)) _revealed.Add(q.Id);
             ResetCursor();
+            var quiz = await QuizService.GetAsync(_session.Attempt.QuizId);
+            _excluded = quiz?.Questions.Where(x => x.Excluded).Select(x => x.Id).ToHashSet() ?? [];
             // Ververs "Bijgewerkt zojuist" elke halve minuut.
             _timer ??= new Timer(_ => InvokeAsync(StateHasChanged), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
         }
@@ -313,13 +350,13 @@ else
     {
         if (IsRevealed(q))
             return _current == _session!.Questions.Count - 1
-                ? "<kbd>Enter</kbd> inleveren"
-                : "<kbd>Enter</kbd> volgende vraag";
+                ? "<kbd>Enter</kbd> inleveren · <kbd>X</kbd> uitsluiten"
+                : "<kbd>Enter</kbd> volgende vraag · <kbd>X</kbd> uitsluiten";
         return q.Type switch
         {
-            QuestionType.SingleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Enter</kbd> controleren",
-            QuestionType.MultipleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Spatie</kbd> aan/uit · <kbd>Enter</kbd> controleren",
-            _ => "Vul alle gaten in · <kbd>Enter</kbd> controleren",
+            QuestionType.SingleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten",
+            QuestionType.MultipleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Spatie</kbd> aan/uit · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten",
+            _ => "Vul alle gaten in · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten",
         };
     }
 
@@ -342,7 +379,24 @@ else
     [JSInvokable]
     public async Task OnExamKey(string key)
     {
-        if (_session is null || _submitOpen || _session.Questions.Count == 0) return;
+        if (_session is null || _session.Questions.Count == 0) return;
+        if (_excludeTarget is not null)
+        {
+            switch (key)
+            {
+                case "left" or "up": _excludeChoice = 0; break;
+                case "right" or "down": _excludeChoice = 1; break;
+                case "enter":
+                    if (_excludeChoice == 1) await ConfirmExcludeAsync();
+                    else CloseExclude();
+                    break;
+                case "cancel": CloseExclude(); break;
+                default: return;
+            }
+            StateHasChanged();
+            return;
+        }
+        if (_submitOpen) return;
         var q = _session.Questions[_current];
         switch (key)
         {
@@ -366,6 +420,9 @@ else
             case "enter":
                 Reveal(q);
                 break;
+            case "exclude":
+                AskExclude(q);
+                break;
             case "prev":
                 await GoToAsync(_current - 1);
                 break;
@@ -376,6 +433,35 @@ else
                 return;
         }
         StateHasChanged();
+    }
+
+    private void AskExclude(Question q)
+    {
+        var index = _session!.Questions.IndexOf(q);
+        if (index >= 0 && index != _current) { _current = index; ResetCursor(); }
+        _excludeTarget = q;
+        _excludeNumber = index + 1;
+        _excludeUndo = _excluded.Contains(q.Id);
+        _excludeChoice = 1;
+    }
+
+    private void CloseExclude() => _excludeTarget = null;
+
+    private async Task ConfirmExcludeAsync()
+    {
+        if (_excludeTarget is not { } q) return;
+        var exclude = !_excludeUndo;
+        _excludeTarget = null;
+        try
+        {
+            await QuizService.SetExcludedAsync(_session!.Attempt.QuizId, q.Id, exclude);
+            if (exclude) _excluded.Add(q.Id); else _excluded.Remove(q.Id);
+            Toast.Success(exclude ? $"Vraag {_excludeNumber} wordt de volgende keer overgeslagen." : $"Vraag {_excludeNumber} doet weer mee.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            Toast.Error(ex.Message);
+        }
     }
 
     private async Task ClearAsync(Question q)

@@ -28,7 +28,13 @@
         <div class="page-header">
             <div class="grow">
                 <h1 tabindex="-1">@_quiz.Title</h1>
-                <p>@_quiz.Questions.Count vragen · @TotalPoints.ToString("0.#") punten</p>
+                <p>
+                    @_quiz.Questions.Count vragen · @TotalPoints.ToString("0.#") punten
+                    @if (ExcludedCount > 0)
+                    {
+                        <span> · <a href="@($"/beheer/{Id}")" title="Uitgesloten vragen komen niet in nieuwe pogingen. Neem ze weer op via Bewerken.">@ExcludedCount uitgesloten</a></span>
+                    }
+                </p>
             </div>
             <div class="row">
                 <a class="btn btn-ghost" href="@($"/beheer/{Id}")"><Icon Name="edit" /> Bewerken</a>
@@ -68,7 +74,7 @@
                     }
                     else
                     {
-                        <button type="button" class="btn btn-primary btn-lg" disabled="@(_busy || _quiz.Questions.Count == 0)" @onclick="StartAsync">
+                        <button type="button" class="btn btn-primary btn-lg" disabled="@(_busy || _quiz.Questions.Count == ExcludedCount)" @onclick="StartAsync">
                             <Icon Name="play" /> Start toets
                         </button>
                     }
@@ -191,6 +197,7 @@
     private ConfirmDialog _confirm = default!;
 
     private double TotalPoints => _quiz?.Questions.Sum(q => q.Points) ?? 0;
+    private int ExcludedCount => _quiz?.Questions.Count(q => q.Excluded) ?? 0;
     private IEnumerable<AttemptListItem> Chrono => _done.OrderBy(a => a.StartedAt);
 
     protected override async Task OnParametersSetAsync()

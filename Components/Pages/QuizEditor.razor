@@ -94,7 +94,7 @@
                             {
                                 var index = i;
                                 var q = _quiz.Questions[i];
-                                <li class="question-row @(_dragIndex == index ? "dragging" : "") @(_dropIndex == index && _dragIndex != index ? "drop-target" : "")"
+                                <li class="question-row @(q.Excluded ? "excluded" : "") @(_dragIndex == index ? "dragging" : "") @(_dropIndex == index && _dragIndex != index ? "drop-target" : "")"
                                     @key="q.Id"
                                     draggable="true"
                                     @ondragstart="() => _dragIndex = index"
@@ -107,6 +107,10 @@
                                     <div class="q-summary">
                                         <div class="q-text">@(string.IsNullOrWhiteSpace(q.Title) ? "" : q.Title + " – ")@MarkdownRenderer.ToPlainText(q.Text, 140)</div>
                                         <div class="q-meta">
+                                            @if (q.Excluded)
+                                            {
+                                                <span class="badge badge-danger"><Icon Name="eye-off" /> uitgesloten</span>
+                                            }
                                             <span class="badge badge-brand">@Registry.Get(q.Type).DisplayName</span>
                                             <span class="badge">@q.Points.ToString("0.#") pt</span>
                                             @if (q.ImagePath is not null)
@@ -122,6 +126,10 @@
                                     <div class="btn-group row-actions">
                                         <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="@($"Vraag {index + 1} omhoog")" title="Omhoog" disabled="@(index == 0)" @onclick="() => MoveAsync(q, -1)"><Icon Name="chevron-up" /></button>
                                         <button type="button" class="btn btn-ghost btn-icon btn-sm" aria-label="@($"Vraag {index + 1} omlaag")" title="Omlaag" disabled="@(index == _quiz.Questions.Count - 1)" @onclick="() => MoveAsync(q, 1)"><Icon Name="chevron-down" /></button>
+                                        <button type="button" class="btn btn-ghost btn-icon btn-sm exclude-btn" aria-pressed="@(q.Excluded ? "true" : "false")"
+                                                aria-label="@(q.Excluded ? $"Vraag {index + 1} weer opnemen" : $"Vraag {index + 1} uitsluiten")"
+                                                title="@(q.Excluded ? "Weer opnemen in pogingen" : "Uitsluiten van pogingen")"
+                                                @onclick="() => ToggleExcludedAsync(q)"><Icon Name="eye-off" /></button>
                                         <button type="button" class="btn btn-secondary btn-sm" @onclick="() => EditQuestion(q, index)"><Icon Name="edit" /> Bewerken</button>
                                         <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" aria-label="@($"Vraag {index + 1} verwijderen")" title="Verwijderen" @onclick="() => DeleteQuestionAsync(q, index)"><Icon Name="trash" /></button>
                                     </div>
@@ -256,6 +264,12 @@
         if (!await _confirm.AskAsync("Vraag verwijderen?", $"Vraag {index + 1} wordt verwijderd. Eerdere pogingen blijven bewaard.")) return;
         await QuizService.DeleteQuestionAsync(Id!.Value, q.Id);
         Toast.Success("Vraag verwijderd.");
+        await ReloadAsync();
+    }
+
+    private async Task ToggleExcludedAsync(Question q)
+    {
+        await QuizService.SetExcludedAsync(Id!.Value, q.Id, !q.Excluded);
         await ReloadAsync();
     }
 

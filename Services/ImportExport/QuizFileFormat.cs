@@ -25,6 +25,9 @@ public class QuestionDto
     public double? Points { get; set; }
     public string? Explanation { get; set; }
 
+    /// <summary>true = vraag overslaan bij nieuwe pogingen.</summary>
+    public bool? Excluded { get; set; }
+
     /// <summary>Antwoordopties bij single/multiple.</summary>
     public List<OptionDto>? Options { get; set; }
 
@@ -65,7 +68,7 @@ public static class QuizFileJson
     };
 
     public static readonly IReadOnlySet<string> QuizFields = Names("title", "description", "shuffleQuestions", "shuffleOptions", "questions", "$schema");
-    public static readonly IReadOnlySet<string> QuestionFields = Names("type", "title", "text", "image", "points", "explanation", "options", "gaps");
+    public static readonly IReadOnlySet<string> QuestionFields = Names("type", "title", "text", "image", "points", "explanation", "excluded", "options", "gaps");
     public static readonly IReadOnlySet<string> OptionFields = Names("text", "correct", "image");
     public static readonly IReadOnlySet<string> GapFields = Names("options");
 

@@ -23,6 +23,7 @@ public class ExportService(QuizService quizzes, QuestionTypeRegistry registry, I
             Image = q.ImagePath,
             Points = q.Points,
             Explanation = q.Explanation,
+            Excluded = q.Excluded ? true : null,
             Options = q.Type == QuestionType.Dropdown ? null : q.Options.OrderBy(o => o.Order).Select(ToOption).ToList(),
             Gaps = q.Type != QuestionType.Dropdown ? null : DropdownText.GapNumbers(q.Text).Select(gap => new GapDto
             {

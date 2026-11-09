@@ -181,6 +181,20 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         return SaveResult.Ok(entity.Id);
     }
 
+    /// <summary>Sluit een vraag uit van (of neemt hem weer op in) nieuwe pogingen.</summary>
+    public async Task SetExcludedAsync(int quizId, int questionId, bool excluded, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var question = await db.Questions.FirstOrDefaultAsync(q => q.Id == questionId && q.QuizId == quizId, ct)
+                       ?? throw new InvalidOperationException("Vraag niet gevonden (misschien is de toets intussen gewijzigd).");
+        if (question.Excluded == excluded) return;
+        question.Excluded = excluded;
+        var quiz = await db.Quizzes.FindAsync([quizId], ct);
+        if (quiz is not null) quiz.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync(ct);
+        await RaiseAsync(Changed, quizId);
+    }
+
     public async Task DeleteQuestionAsync(int quizId, int questionId, CancellationToken ct = default)
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
@@ -246,6 +260,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
                 ImagePath = q.ImagePath,
                 Points = q.Points,
                 Explanation = q.Explanation,
+                Excluded = q.Excluded,
                 Options = q.Options.Select(o => new AnswerOption
                 {
                     GapNumber = o.GapNumber,
@@ -287,6 +302,7 @@ public class QuizService(IDbContextFactory<ToetsrDbContext> dbFactory, QuestionV
         ImagePath = q.ImagePath,
         Points = q.Points,
         Explanation = q.Explanation,
+        Excluded = q.Excluded,
         Options = q.Options.Select(o => new AnswerOption
         {
             Id = o.Id,

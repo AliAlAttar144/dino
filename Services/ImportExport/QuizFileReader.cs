@@ -120,6 +120,7 @@ public class QuizFileReader(QuestionTypeRegistry registry, QuestionValidator val
                 Text = q.Text?.Trim() ?? "",
                 Points = q.Points ?? 1,
                 Explanation = string.IsNullOrWhiteSpace(q.Explanation) ? null : q.Explanation.Trim(),
+                Excluded = q.Excluded ?? false,
                 ImagePath = CheckImage(q.Image, $"{label}", imageExists, preview),
             };
 

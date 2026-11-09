@@ -43,6 +43,9 @@ public class Question
     public double Points { get; set; } = 1;
     public string? Explanation { get; set; }
 
+    /// <summary>Uitgesloten vragen komen niet meer in nieuwe pogingen.</summary>
+    public bool Excluded { get; set; }
+
     public List<AnswerOption> Options { get; set; } = [];
 }
 
