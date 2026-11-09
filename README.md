@@ -318,7 +318,7 @@ De mappen kun je aanpassen in `appsettings.json` (sectie `Toetsr`):
 }
 ```
 
-`App_Data/` en je eigen toetsen staan in `.gitignore`, zodat je resultaten nooit per ongeluk op GitHub komen.
+`App_Data/` staat in `.gitignore`, zodat je resultaten nooit per ongeluk op GitHub komen. De toetsen in `Toetsen/` worden wel mee-gecommit, zodat iedereen die de repo kloont ze heeft.
 
 Afbeeldingen krijgen een naam op basis van hun inhoud (hash). Dezelfde afbeelding wordt dus maar één keer opgeslagen.
 Bij het opstarten worden afbeeldingen opgeruimd waar geen enkele toets of poging meer naar verwijst.

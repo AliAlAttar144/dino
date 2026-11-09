@@ -5,5 +5,5 @@ Zet hier `.json`-bestanden met toetsen. Dino importeert ze automatisch, ook terw
 als bestand te staan; verwijderde toetsen gaan naar `verwijderd/`. Afbeeldingen zet je in `afbeeldingen/` en noem je in de JSON
 alleen bij bestandsnaam, bijvoorbeeld `"image": "kaart.png"`.
 
-Het formaat staat in de README in de hoofdmap. Je eigen toetsen worden niet mee-gecommit (zie `.gitignore`);
-alleen de bestanden die met `voorbeeld-` beginnen horen bij de repo.
+Het formaat staat in de README in de hoofdmap. Alle toetsen en afbeeldingen in deze map worden mee-gecommit,
+zodat iedereen die de repo kloont ze meteen heeft (alleen `verwijderd/` staat in `.gitignore`).

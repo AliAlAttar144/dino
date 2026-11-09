@@ -89,15 +89,9 @@ App_Data/
 *.sqlite-wal
 *.sqlite-journal
 
-# ---------- Eigen toetsen en afbeeldingen ----------
-# Alleen de meegeleverde voorbeeldtoetsen (voorbeeld-*) horen in de repo.
-Toetsen/*
-!Toetsen/voorbeeld-*.json
-!Toetsen/afbeeldingen/
-Toetsen/afbeeldingen/*
-!Toetsen/afbeeldingen/voorbeeld-*
-!Toetsen/afbeeldingen/.gitkeep
-!Toetsen/README.md
+# ---------- Toetsen ----------
+# Alle toetsen en afbeeldingen in Toetsen/ horen in de repo; alleen verwijderde toetsen niet.
+Toetsen/verwijderd/
 
 # Geüploade bestanden
 wwwroot/uploads/

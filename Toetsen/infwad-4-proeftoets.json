@@ -1,0 +1,668 @@
+{
+  "title": "INFWAD – Mix (30 willekeurige vragen)",
+  "description": "30 willekeurige vragen uit beide toetsen, net als het echte tentamen: 8 HTML/CSS/JS, 14 Vue en 8 Express. Nodig voor een 5,5: 20 van de 30 goed.\n\nWil je een nieuwe trekking? Draai `python nieuwe-mix.py` in de map Toetsen/ en klik in Dino op Importeren > Map Toetsen/ > Map nu opnieuw inlezen.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "According to the lessons, what are the two things a frontend framework like Vue or React does for you?",
+      "points": 1,
+      "explanation": "You declare what the screen should look like for the data; the framework does the DOM updates.",
+      "options": [
+        {
+          "text": "It writes your CSS and it hosts your website"
+        },
+        {
+          "text": "It replaces HTML with JavaScript and it compiles your code to C#"
+        },
+        {
+          "text": "It stores your data in a database and handles user logins"
+        },
+        {
+          "text": "It lets you describe the UI as a function of state, and it updates the DOM efficiently when the state changes",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is `@click` in Vue?",
+      "points": 1,
+      "explanation": "`@` is shorthand for `v-on:`, and `:` is shorthand for `v-bind:`.",
+      "options": [
+        {
+          "text": "A shorthand for `v-bind:click`, used to bind a value"
+        },
+        {
+          "text": "A CSS selector for clicked elements"
+        },
+        {
+          "text": "A shorthand for `v-on:click`, used to listen for the click event",
+          "correct": true
+        },
+        {
+          "text": "A decorator that makes a function reactive"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "What does the `?` mean in this interface?\n```ts\ninterface Product {\n  id: number\n  name: string\n  image?: string\n}\n```",
+      "points": 1,
+      "explanation": "Optional properties keep existing objects (without an image) valid.",
+      "options": [
+        {
+          "text": "`image` may be `null` but must be present"
+        },
+        {
+          "text": "`image` is optional: a product can have it but doesn't have to",
+          "correct": true
+        },
+        {
+          "text": "`image` is a private property"
+        },
+        {
+          "text": "`image` is computed automatically"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "What does the `.number` modifier do in `<input v-model.number=\"price\" type=\"number\">`?",
+      "points": 1,
+      "explanation": "Input values are strings by default; `.number` converts them.",
+      "options": [
+        {
+          "text": "It only allows the user to type digits"
+        },
+        {
+          "text": "It rounds the value to a whole number"
+        },
+        {
+          "text": "It converts the input value to a number before it is stored in the ref",
+          "correct": true
+        },
+        {
+          "text": "It formats the value as a price"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "Why are the packages `@types/node` and `@types/express` necessary?",
+      "points": 1,
+      "explanation": "TypeScript doesn't know what's inside Node or Express by default. The `@types` packages only describe them.",
+      "options": [
+        {
+          "text": "They compile TypeScript into JavaScript"
+        },
+        {
+          "text": "They provide type definitions so TypeScript understands the libraries",
+          "correct": true
+        },
+        {
+          "text": "They contain the compiled runtime JavaScript logic required to execute Node and Express modules inside a TypeScript environment"
+        },
+        {
+          "text": "They contain the actual source code for Node and Express"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is the difference between `<% %>` and `<%= %>` in EJS?",
+      "points": 1,
+      "explanation": "Use `<% products.forEach(...) %>` for the loop and `<%= product.name %>` to show a value.",
+      "options": [
+        {
+          "text": "`<% %>` outputs a value; `<%= %>` runs code without output"
+        },
+        {
+          "text": "`<% %>` is for comments, `<%= %>` is for variables"
+        },
+        {
+          "text": "There is no difference"
+        },
+        {
+          "text": "`<% %>` runs JavaScript without output (loops, conditions); `<%= %>` outputs a value into the HTML",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "What does `padding: 16px 24px;` mean?",
+      "points": 1,
+      "explanation": "Two values: top/bottom, then left/right. Four values go clockwise from the top.",
+      "options": [
+        {
+          "text": "16px on the left and right, 24px on the top and bottom"
+        },
+        {
+          "text": "16px on the top, 24px on the bottom"
+        },
+        {
+          "text": "16px on the top and bottom, 24px on the left and right",
+          "correct": true
+        },
+        {
+          "text": "16px of padding and 24px of margin"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nrouter.post('/add-product', (req, res) => {\n  console.log(req.body)\n})\n```\nAfter submitting the HTML form, `req.body` is `undefined`. What is missing?",
+      "points": 1,
+      "explanation": "The body has to be parsed first. HTML forms send `urlencoded` data; the built-in middleware turns it into an object.",
+      "options": [
+        {
+          "text": "`app.use(express.urlencoded({ extended: true }))` before the routers",
+          "correct": true
+        },
+        {
+          "text": "`res.send()` at the end of the handler"
+        },
+        {
+          "text": "`method=\"get\"` on the form"
+        },
+        {
+          "text": "`import body from 'express'`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is the difference between `res.sendFile(...)` and `res.render(...)`?",
+      "points": 1,
+      "explanation": "With EJS set as view engine, `res.render('products', { products })` fills the template on the server.",
+      "options": [
+        {
+          "text": "`sendFile` is for JSON, `render` is for images"
+        },
+        {
+          "text": "`sendFile` sends a static file as-is; `render` processes a template with data and sends the resulting HTML",
+          "correct": true
+        },
+        {
+          "text": "`render` sends the file to another server"
+        },
+        {
+          "text": "There is no difference, `render` is the newer name"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "Where should almost all of the CSS of a real project live?",
+      "points": 1,
+      "explanation": "Separate stylesheets keep structure and styling apart. `<style>` blocks are for small examples and prototypes, inline styles should be avoided.",
+      "options": [
+        {
+          "text": "In `style` attributes on each element"
+        },
+        {
+          "text": "In a `<style>` block at the bottom of the `<body>`"
+        },
+        {
+          "text": "In JavaScript, using `element.style`"
+        },
+        {
+          "text": "In separate `.css` files, linked with a `<link>` tag",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "Which CSS centres a child both horizontally and vertically inside its parent?",
+      "points": 1,
+      "explanation": "With flexbox, `justify-content` centres on the main axis and `align-items` on the cross axis.",
+      "options": [
+        {
+          "text": "`.parent { text-align: center; vertical-align: middle; }`"
+        },
+        {
+          "text": "`.child { margin: center; }`"
+        },
+        {
+          "text": "`.parent { display: flex; justify-content: center; align-items: center; }`",
+          "correct": true
+        },
+        {
+          "text": "`.parent { display: grid; grid-template-columns: center; }`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "What is the difference between a multi-page application and a single-page application (SPA)?",
+      "points": 1,
+      "explanation": "An SPA fetches only the data it needs and updates the page in place, while the URL and back button still work.",
+      "options": [
+        {
+          "text": "In an SPA the browser loads one HTML page and JavaScript updates the DOM on navigation; in a multi-page application the server sends a full new page on every click",
+          "correct": true
+        },
+        {
+          "text": "An SPA has only one page of content; a multi-page application has several"
+        },
+        {
+          "text": "A multi-page application needs a framework, an SPA does not"
+        },
+        {
+          "text": "An SPA can't change the URL in the address bar"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "When should you use an `<a>` element instead of a `<button>`?",
+      "points": 1,
+      "explanation": "Use `<a>` for navigation and `<button>` for actions (save, delete, open a menu).",
+      "options": [
+        {
+          "text": "When the element has to look like a link instead of a button"
+        },
+        {
+          "text": "When the action should work without JavaScript"
+        },
+        {
+          "text": "When the element contains an icon instead of text"
+        },
+        {
+          "text": "When clicking it navigates to another page or location",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is the difference between `v-if` and `v-show`?",
+      "points": 1,
+      "explanation": "`v-show` keeps the element in the DOM and does not support `v-else`.",
+      "options": [
+        {
+          "text": "`v-if` hides the element with CSS; `v-show` removes it from the DOM"
+        },
+        {
+          "text": "`v-if` only works on components; `v-show` only works on HTML elements"
+        },
+        {
+          "text": "There is no difference, `v-show` is the old name"
+        },
+        {
+          "text": "`v-if` adds/removes the element from the DOM; `v-show` always renders it and toggles `display: none`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "In MVC, what is the **model** responsible for?",
+      "points": 1,
+      "explanation": "For example a `Product` class with `addProduct` and `getAllProducts`.",
+      "options": [
+        {
+          "text": "The layout and styling of the page"
+        },
+        {
+          "text": "The data and the rules for creating, reading, updating and deleting it",
+          "correct": true
+        },
+        {
+          "text": "Receiving HTTP requests"
+        },
+        {
+          "text": "Starting the server"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "Why does the lesson use `import type { Product } from '../types/Product'`?",
+      "points": 1,
+      "explanation": "The interface is defined once in `src/types/Product.ts` and imported as a type wherever it is needed.",
+      "options": [
+        {
+          "text": "Only a type is imported, so it is used by TypeScript and doesn't end up in the JavaScript",
+          "correct": true
+        },
+        {
+          "text": "`import type` makes the import load faster at runtime"
+        },
+        {
+          "text": "It converts the interface into a class"
+        },
+        {
+          "text": "It makes the Product interface reactive"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```js\nconsole.log(\"A\");\nPromise.resolve(\"B\").then(() => console.log);\nconsole.log(\"C\");\nPromise.resolve().then(() => console.log(\"D\"));\n```\nGiven the JavaScript code above, what is the correct execution order (and console log output order)?",
+      "points": 1,
+      "explanation": "Synchronous code runs first (A, C), then the promise callbacks. The first callback only *returns* `console.log` without calling it, so B is never logged. Then D.",
+      "options": [
+        {
+          "text": "A, D, C"
+        },
+        {
+          "text": "A, B, C, D"
+        },
+        {
+          "text": "A, C, D",
+          "correct": true
+        },
+        {
+          "text": "A, C, B, D"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "```ts\n// <script setup>\nconsole.log('A')\nonMounted(() => console.log('B'))\nconsole.log('C')\n```\nIn which order are the messages logged?",
+      "points": 1,
+      "explanation": "Code in `<script setup>` runs immediately when the component is created. `onMounted` waits until the component is rendered.",
+      "options": [
+        {
+          "text": "A, B, C"
+        },
+        {
+          "text": "B, A, C"
+        },
+        {
+          "text": "C, A, B"
+        },
+        {
+          "text": "A, C, B",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "You see \"blocked by CORS policy\" in the console when fetching from an external API. What does this mean?",
+      "points": 1,
+      "explanation": "CORS is decided by the server's response headers.",
+      "options": [
+        {
+          "text": "Your Vue code has a syntax error"
+        },
+        {
+          "text": "You forgot `await` before `fetch`"
+        },
+        {
+          "text": "The API returned invalid JSON"
+        },
+        {
+          "text": "The server doesn't allow requests from browser JavaScript on your origin; it is a server-side restriction you can't fix from frontend code",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nconst price = req.body.price\nconst withShipping = price + 10\n```\nFor a submitted price of 5, `withShipping` is `'510'`. Why?",
+      "points": 1,
+      "explanation": "Form values arrive as strings (`{ price: '5' }`). Convert with `Number(...)` first.",
+      "options": [
+        {
+          "text": "Express adds the numbers as text by mistake"
+        },
+        {
+          "text": "`req.body` multiplies numbers by 100"
+        },
+        {
+          "text": "The `urlencoded` parser converts numbers to arrays"
+        },
+        {
+          "text": "All values in a submitted form are strings, so `+` concatenates them",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "In which three states can a Promise be?",
+      "points": 1,
+      "explanation": "Pending = still running, fulfilled = finished with a value, rejected = failed with an error.",
+      "options": [
+        {
+          "text": "Loading, success, error"
+        },
+        {
+          "text": "Pending, fulfilled, rejected",
+          "correct": true
+        },
+        {
+          "text": "Created, mounted, unmounted"
+        },
+        {
+          "text": "Waiting, running, done"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\n// ProductDetailPage.vue\nconst product = getProduct(Number(route.params.id))\n```\nOpening `/products/1` directly (with empty localStorage) shows \"Product Not Found\", although product 1 exists in the API. What is the fix?",
+      "points": 1,
+      "explanation": "Every page that depends on async data must start loading it, and the lookup must be reactive because the data arrives later.",
+      "options": [
+        {
+          "text": "Use `router.push` instead of `useRoute`"
+        },
+        {
+          "text": "Start loading the data on this page too (`initProducts()` in `onMounted`) and make the lookup a `computed`, so it updates when the data arrives",
+          "correct": true
+        },
+        {
+          "text": "Use `v-show` instead of `v-if` for the not-found message"
+        },
+        {
+          "text": "Add `{ deep: true }` to the route"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "Why should an event listener that is added in `onMounted` be removed in `onUnmounted`?",
+      "points": 1,
+      "explanation": "Every resource you allocate (listeners, timers, connections) you should clean up.",
+      "options": [
+        {
+          "text": "Otherwise the listener keeps running after the component is gone, causing a memory leak and bugs",
+          "correct": true
+        },
+        {
+          "text": "Because Vue throws an error when a component has more than one listener"
+        },
+        {
+          "text": "Because listeners are automatically duplicated on every render"
+        },
+        {
+          "text": "Because `onUnmounted` is the only place where `removeEventListener` is allowed"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "What is logged by `console.log(\"5\" + 3)`?",
+      "points": 1,
+      "explanation": "With `+` and a string, JavaScript concatenates: `\"53\"`. This kind of weirdness is one reason the course uses TypeScript.",
+      "options": [
+        {
+          "text": "`\"53\"`",
+          "correct": true
+        },
+        {
+          "text": "`8`"
+        },
+        {
+          "text": "`NaN`"
+        },
+        {
+          "text": "An error, because you can't add a string and a number"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "Several pages call `useProducts()`. The `products` ref is declared **outside** the `useProducts()` function, at the top of the module. What is the effect?",
+      "points": 1,
+      "explanation": "A module-level ref is created once and shared by every call. (Bigger apps use a state management library like Pinia for this.)",
+      "options": [
+        {
+          "text": "All pages share the same products state",
+          "correct": true
+        },
+        {
+          "text": "Every page gets its own copy of the products"
+        },
+        {
+          "text": "The ref is no longer reactive"
+        },
+        {
+          "text": "TypeScript gives an error because refs must be inside a function"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "How does using a separate \"Router\" in the Express backend contribute to the \"Separation of Concerns\" principle?",
+      "points": 1,
+      "explanation": "Instead of one huge `index.ts`, routes are grouped per area in their own files (`home.routes.ts`, `product.routes.ts`).",
+      "options": [
+        {
+          "text": "It separates the TypeScript code from the JavaScript code"
+        },
+        {
+          "text": "It separates the logic of the server from the logic of the client"
+        },
+        {
+          "text": "It separates the middleware from the route handlers"
+        },
+        {
+          "text": "It separates the different functional areas (e.g., home vs. products) of the backend into manageable modules",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "```vue\n<ProductCard name=\"product.name\" price=\"product.price\" />\n```\nWhat does `ProductCard` receive?",
+      "points": 1,
+      "explanation": "Without `:` the prop is a static string. Use `:name=\"product.name\"` to pass the value.",
+      "options": [
+        {
+          "text": "The name and price of the product"
+        },
+        {
+          "text": "Nothing, props must always be passed with `v-model`"
+        },
+        {
+          "text": "An error, because props can't be strings"
+        },
+        {
+          "text": "The literal strings `\"product.name\"` and `\"product.price\"`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\nnav { display: flex; justify-content: space-between; align-items: center; }\n```\nWith the default `flex-direction: row`, what does `align-items: center` do?",
+      "points": 1,
+      "explanation": "`justify-content` works on the main axis (horizontal in a row), `align-items` works on the cross axis (vertical in a row).",
+      "options": [
+        {
+          "text": "It centres the items vertically (on the cross axis)",
+          "correct": true
+        },
+        {
+          "text": "It centres the items horizontally"
+        },
+        {
+          "text": "It puts equal space between the items"
+        },
+        {
+          "text": "It centres the text inside each item"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```html\n<form action=\"\" method=\"post\"> ... </form>\n```\n```ts\nrouter.get('/add-product', showAddProductPage)\n```\nSubmitting the form shows the 404 page. Why?",
+      "points": 1,
+      "explanation": "Add `router.post('/add-product', ...)` to handle the submitted form.",
+      "options": [
+        {
+          "text": "There is only a route for GET; the form sends a POST, which no route handles, so it ends up at the 404 handler",
+          "correct": true
+        },
+        {
+          "text": "The form needs `action=\"/add-product\"` to work"
+        },
+        {
+          "text": "Forms can't be used with Express"
+        },
+        {
+          "text": "The 404 handler catches all POST requests"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "```ts\n// main.ts\nconst app = createApp(App)\napp.mount('#app')\napp.use(router)\n```\nWhat goes wrong?",
+      "points": 1,
+      "explanation": "The order is `createApp` → `app.use(router)` → `app.mount()`.",
+      "options": [
+        {
+          "text": "The router is registered after the app is already mounted, so routing doesn't initialise correctly",
+          "correct": true
+        },
+        {
+          "text": "Nothing, the order doesn't matter"
+        },
+        {
+          "text": "`app.use` can only be used for CSS plugins"
+        },
+        {
+          "text": "The app is mounted twice"
+        }
+      ]
+    }
+  ]
+}

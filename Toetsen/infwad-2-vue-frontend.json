@@ -1,0 +1,2252 @@
+{
+  "title": "INFWAD – Vue & Express",
+  "description": "Theorievragen in de stijl van de sample exam over Vue (les 1 t/m 6) en Express (les 1 en 2). Vragen, antwoorden en uitleg zijn in het Engels.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is meant by **declarative** UI programming in modern frameworks?",
+      "points": 1,
+      "explanation": "Imperative: tell the browser *how* to change the DOM. Declarative: describe *what* it should look like; the framework handles the how.",
+      "options": [
+        {
+          "text": "You write step-by-step DOM instructions such as `createElement` and `appendChild`"
+        },
+        {
+          "text": "You describe what the UI should look like for the current data, and the framework updates the DOM to match",
+          "correct": true
+        },
+        {
+          "text": "You declare all variables at the top of the file before using them"
+        },
+        {
+          "text": "You write the HTML on the server and send it to the browser"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "Which of these is **not** one of the three pillars of modern frontend frameworks named in the lesson?",
+      "points": 1,
+      "explanation": "The three pillars are reactivity, components, and efficient updates via a virtual DOM.",
+      "options": [
+        {
+          "text": "Reactivity"
+        },
+        {
+          "text": "Component-based architecture"
+        },
+        {
+          "text": "Virtual DOM / efficient updates"
+        },
+        {
+          "text": "Server-side database access",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "Why do most frameworks use a virtual DOM?",
+      "points": 1,
+      "explanation": "Changing the real DOM is slow. A lightweight copy in memory makes it possible to update only what changed.",
+      "options": [
+        {
+          "text": "To store the page on the server so it can be shared"
+        },
+        {
+          "text": "To work out in memory what changed and then make only the minimal necessary updates to the real DOM",
+          "correct": true
+        },
+        {
+          "text": "To let users edit the HTML file directly in the browser"
+        },
+        {
+          "text": "To avoid having to use HTML at all"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "```vue\n<script setup lang=\"ts\">\nimport { ref } from 'vue'\nconst count = ref(0)\nfunction increment() {\n  count++\n}\n</script>\n```\nWhat is wrong with `increment()`?",
+      "points": 1,
+      "explanation": "A ref is an object that wraps the value. In the script you read and write it via `.value`.",
+      "options": [
+        {
+          "text": "In the script you must change a ref through `.value`: `count.value++`",
+          "correct": true
+        },
+        {
+          "text": "`ref` must be imported from `vue-reactive`"
+        },
+        {
+          "text": "Functions in `<script setup>` can't change state"
+        },
+        {
+          "text": "`count` must be declared with `let` instead of `const`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "```vue\n<script setup lang=\"ts\">\nconst count = ref(5)\n</script>\n<template>\n  <p>{{ count }}</p>\n</template>\n```\nWhat does the paragraph show?",
+      "points": 1,
+      "explanation": "In the template Vue unwraps refs, so you don't write `.value` there. In the script you do.",
+      "options": [
+        {
+          "text": "`[object Object]`, because you need `count.value` in the template"
+        },
+        {
+          "text": "Nothing, because refs can't be used in the template"
+        },
+        {
+          "text": "`ref(5)`"
+        },
+        {
+          "text": "`5`, because refs are automatically unwrapped in the template",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What does `{{ message }}` in a Vue template do?",
+      "points": 1,
+      "explanation": "Double curly braces are interpolation: they render the value of the expression.",
+      "options": [
+        {
+          "text": "It creates a two-way binding with an input"
+        },
+        {
+          "text": "It declares a new reactive variable called `message`"
+        },
+        {
+          "text": "It comments out the text `message`"
+        },
+        {
+          "text": "It inserts the value of `message` into the HTML (interpolation)",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is `@click` in Vue?",
+      "points": 1,
+      "explanation": "`@` is shorthand for `v-on:`, and `:` is shorthand for `v-bind:`.",
+      "options": [
+        {
+          "text": "A shorthand for `v-bind:click`, used to bind a value"
+        },
+        {
+          "text": "A CSS selector for clicked elements"
+        },
+        {
+          "text": "A shorthand for `v-on:click`, used to listen for the click event",
+          "correct": true
+        },
+        {
+          "text": "A decorator that makes a function reactive"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is the difference between `v-if` and `v-show`?",
+      "points": 1,
+      "explanation": "`v-show` keeps the element in the DOM and does not support `v-else`.",
+      "options": [
+        {
+          "text": "`v-if` hides the element with CSS; `v-show` removes it from the DOM"
+        },
+        {
+          "text": "`v-if` only works on components; `v-show` only works on HTML elements"
+        },
+        {
+          "text": "There is no difference, `v-show` is the old name"
+        },
+        {
+          "text": "`v-if` adds/removes the element from the DOM; `v-show` always renders it and toggles `display: none`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is the correct way to create a v-for?",
+      "points": 1,
+      "explanation": "Always give a unique, stable `:key`, such as a database id. Using the index is a problem when items can be removed or reordered.",
+      "options": [
+        {
+          "text": "`<div v-for=\"(item, index) in items\" :key=\"index\"> </div>`"
+        },
+        {
+          "text": "`<div v-for=\"item in items\"> </div>`"
+        },
+        {
+          "text": "`<div v-for=\"item in items\" :key=\"item.id\"> </div>`",
+          "correct": true
+        },
+        {
+          "text": "`<div v-for=\"item in items\" :index=\"item.id\"> </div>`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "Why should you not use the array index as `:key` in a list where items can be deleted?",
+      "points": 1,
+      "explanation": "The key tells Vue which item is which. An index changes when the list changes, so it is not a stable identity.",
+      "options": [
+        {
+          "text": "Indexes are strings and keys must be numbers"
+        },
+        {
+          "text": "Vue does not allow numbers as keys"
+        },
+        {
+          "text": "It makes the list render in reverse order"
+        },
+        {
+          "text": "After a deletion the indexes shift, so Vue can match the wrong elements and keep state (like input values) on the wrong item",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "```vue\n<div v-for=\"product in products\" key=\"product.id\">\n```\nWhat is wrong here?",
+      "points": 1,
+      "explanation": "`:` (short for `v-bind:`) makes the attribute a JavaScript expression.",
+      "options": [
+        {
+          "text": "`key` must be written as `v-key`"
+        },
+        {
+          "text": "`key` can only be used on components"
+        },
+        {
+          "text": "Nothing, Vue evaluates every attribute as JavaScript"
+        },
+        {
+          "text": "Without the `:`, the key is the literal string `\"product.id\"` instead of the value of the id",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "```vue\n<ProductCard name=\"product.name\" price=\"product.price\" />\n```\nWhat does `ProductCard` receive?",
+      "points": 1,
+      "explanation": "Without `:` the prop is a static string. Use `:name=\"product.name\"` to pass the value.",
+      "options": [
+        {
+          "text": "The name and price of the product"
+        },
+        {
+          "text": "Nothing, props must always be passed with `v-model`"
+        },
+        {
+          "text": "An error, because props can't be strings"
+        },
+        {
+          "text": "The literal strings `\"product.name\"` and `\"product.price\"`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What does `scoped` in `<style scoped>` do?",
+      "points": 1,
+      "explanation": "Vue adds unique attributes to the elements and selectors, so styles stay inside the component.",
+      "options": [
+        {
+          "text": "It makes the styles load only after the component is mounted"
+        },
+        {
+          "text": "It makes the styles apply only to this component, so they don't affect other components",
+          "correct": true
+        },
+        {
+          "text": "It makes the styles apply to this component and all of its children automatically"
+        },
+        {
+          "text": "It turns the CSS into CSS variables"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "A Single File Component (`.vue`) keeps script, template and style together. What is this principle called and why is it used?",
+      "points": 1,
+      "explanation": "Modern frameworks separate by feature instead of by technology.",
+      "options": [
+        {
+          "text": "Separation by technology: all HTML in one place, all CSS in another"
+        },
+        {
+          "text": "Encapsulation: the component can't be imported anywhere else"
+        },
+        {
+          "text": "Colocation: code that belongs to one feature stays together, which makes it easier to understand, reuse and delete",
+          "correct": true
+        },
+        {
+          "text": "Hydration: the component is rendered on the server first"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "How does a child component send information **up** to its parent?",
+      "points": 1,
+      "explanation": "Props down, events up. The child says \"something happened\"; the parent decides what to do.",
+      "options": [
+        {
+          "text": "By changing the props it received"
+        },
+        {
+          "text": "By writing to a global variable"
+        },
+        {
+          "text": "By emitting an event with `emit`, which the parent listens to",
+          "correct": true
+        },
+        {
+          "text": "By calling a function in the parent's `<script setup>` directly"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "Why should the `node_modules` folder never be committed to Git?",
+      "points": 1,
+      "explanation": "`package.json` lists the dependencies; anyone can rebuild `node_modules` with `npm install`.",
+      "options": [
+        {
+          "text": "It is very large and can be recreated at any time with `npm install` from `package.json`",
+          "correct": true
+        },
+        {
+          "text": "It contains passwords and API keys"
+        },
+        {
+          "text": "Git can't store JavaScript files"
+        },
+        {
+          "text": "It is automatically deleted after every build"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What does Vite's Hot Module Replacement (HMR) do during development?",
+      "points": 1,
+      "explanation": "Save a file and the browser updates immediately, without losing state like form input.",
+      "options": [
+        {
+          "text": "It injects your code changes into the running page without a full reload, so the app keeps its state",
+          "correct": true
+        },
+        {
+          "text": "It compresses the code for production"
+        },
+        {
+          "text": "It automatically commits your changes to Git"
+        },
+        {
+          "text": "It restarts the computer when a file changes"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "```vue\n<script setup>\nimport { ref } from 'vue'\nconst productName = ref('Coffee')\n</script>\n<template>\n  <input v-model=\"productName\" />\n</template>\n```\nFrom within the script, how would you change the input value to 'Tea'?",
+      "points": 1,
+      "explanation": "`v-model` binds the input to the ref both ways. Change the ref (via `.value` in the script) and the input updates.",
+      "options": [
+        {
+          "text": "`input.value = 'Tea'`"
+        },
+        {
+          "text": "`productName.value = 'Tea'`",
+          "correct": true
+        },
+        {
+          "text": "`input.productName.value = 'Tea'`"
+        },
+        {
+          "text": "`input.productName = 'Tea'`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "`<input v-model=\"productName\">` is shorthand for which combination?",
+      "points": 1,
+      "explanation": "One binding from data to input (`:value`) and one event from input to data (`@input`): two-way binding.",
+      "options": [
+        {
+          "text": "`v-if=\"productName\"` and `@click=\"productName\"`"
+        },
+        {
+          "text": "`:key=\"productName\"` and `@change=\"productName\"`"
+        },
+        {
+          "text": "`v-show=\"productName\"` and `:value=\"productName\"`"
+        },
+        {
+          "text": "`:value=\"productName\"` and `@input=\"productName = $event.target.value\"`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "What does `.prevent` do in `<form @submit.prevent=\"addProduct\">`?",
+      "points": 1,
+      "explanation": "Modifiers add common behaviour; `.prevent` is the vanilla `event.preventDefault()`.",
+      "options": [
+        {
+          "text": "It prevents `addProduct` from being called twice"
+        },
+        {
+          "text": "It prevents the form from being submitted when an input is empty"
+        },
+        {
+          "text": "It prevents other components from listening to the submit event"
+        },
+        {
+          "text": "It calls `preventDefault()`, so the browser does not reload the page when the form is submitted",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "What does the `.number` modifier do in `<input v-model.number=\"price\" type=\"number\">`?",
+      "points": 1,
+      "explanation": "Input values are strings by default; `.number` converts them.",
+      "options": [
+        {
+          "text": "It only allows the user to type digits"
+        },
+        {
+          "text": "It rounds the value to a whole number"
+        },
+        {
+          "text": "It converts the input value to a number before it is stored in the ref",
+          "correct": true
+        },
+        {
+          "text": "It formats the value as a price"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "What does `computed()` do in Vue?",
+      "points": 1,
+      "explanation": "Side effects belong in a watcher. A computed value is derived and cached.",
+      "options": [
+        {
+          "text": "It creates a new reactive dependency to perform side effects when a value changes"
+        },
+        {
+          "text": "It creates a derived value that is cached and only recalculated when the reactive data it depends on changes",
+          "correct": true
+        },
+        {
+          "text": "It executes a function every time the component re-renders to ensure data accuracy"
+        },
+        {
+          "text": "It manages the synchronization between the Virtual DOM and the real DOM"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "```vue\n<p>Total: {{ getTotal() }}</p>\n```\nWhy does the lesson prefer a `computed` property over calling this function in the template?",
+      "points": 1,
+      "explanation": "Every re-render calls `getTotal()` again. A computed only recalculates when its dependencies change.",
+      "options": [
+        {
+          "text": "Functions can't be called in a template"
+        },
+        {
+          "text": "A computed property runs on the server, which is faster"
+        },
+        {
+          "text": "The function runs on every re-render even when the data hasn't changed; a computed is cached",
+          "correct": true
+        },
+        {
+          "text": "The function can't access refs"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "When should you use a regular function instead of a computed property?",
+      "points": 1,
+      "explanation": "Computed properties don't take arguments; they are for values derived from reactive data.",
+      "options": [
+        {
+          "text": "When the value depends on a ref"
+        },
+        {
+          "text": "When the result is used in the template"
+        },
+        {
+          "text": "Never, computed properties are always better"
+        },
+        {
+          "text": "When you need to pass parameters, or you explicitly want it to run every time",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "What is a composable in Vue?",
+      "points": 1,
+      "explanation": "For example `useProducts()` returns the products and the functions that work with them. React calls this custom hooks.",
+      "options": [
+        {
+          "text": "A component without a template"
+        },
+        {
+          "text": "A CSS file that is shared between components"
+        },
+        {
+          "text": "A special component that wraps other components"
+        },
+        {
+          "text": "A function that contains reactive logic (refs, computed, functions) and returns it so components can reuse it",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "```ts\nexport function useCounter() {\n  const count = ref(0)\n  const increment = () => count.value++\n  return { count, increment }\n}\n```\nComponent A and component B both call `useCounter()`. A clicks increment 3 times. What is `count` in B?",
+      "points": 1,
+      "explanation": "The ref is created inside the function, so every call gets its own instance. To share state, the ref must be declared outside the function.",
+      "options": [
+        {
+          "text": "3, because composables are always shared"
+        },
+        {
+          "text": "`undefined`"
+        },
+        {
+          "text": "1"
+        },
+        {
+          "text": "0, because each call creates its own `count` ref",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "According to the lessons, which logic belongs in the `useProducts` composable and which in the component?",
+      "points": 1,
+      "explanation": "Separation of concerns: the composable handles data, the component handles the user interface.",
+      "options": [
+        {
+          "text": "Validation and form reset in the composable; adding the product in the component"
+        },
+        {
+          "text": "Everything in the composable, the component only has a template"
+        },
+        {
+          "text": "Everything in the component, the composable only has types"
+        },
+        {
+          "text": "Data logic (adding, updating, deleting products) in the composable; UI logic (validation messages, form reset) in the component",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "You run `npm run build` in a Vite project. What do you get?",
+      "points": 1,
+      "explanation": "In production the code is bundled and minified (no whitespace, short variable names) so it downloads faster.",
+      "options": [
+        {
+          "text": "A `dist/` folder with bundled, minified files that are ready to be deployed",
+          "correct": true
+        },
+        {
+          "text": "A running development server with hot reload"
+        },
+        {
+          "text": "A `.vue` file for every page"
+        },
+        {
+          "text": "A backup of the `src` folder"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "You open *View page source* on your running Vue app. What do you see?",
+      "points": 1,
+      "explanation": "Vue builds the DOM in the browser with JavaScript; the HTML from the server is just the shell.",
+      "options": [
+        {
+          "text": "All your product cards as HTML"
+        },
+        {
+          "text": "Your `.vue` components as source code"
+        },
+        {
+          "text": "Only the `index.html` shell: an empty `<div id=\"app\">` and a script tag",
+          "correct": true
+        },
+        {
+          "text": "The compiled CSS of every component"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "`onUnmounted()` gets triggered when…",
+      "points": 1,
+      "explanation": "`onMounted` runs when the component is added to the page, `onUnmounted` when it is removed. A root component only unmounts when the tab closes, but child components unmount whenever they are removed.",
+      "options": [
+        {
+          "text": "The component emits something"
+        },
+        {
+          "text": "Every time the component renders"
+        },
+        {
+          "text": "The component gets removed from the DOM",
+          "correct": true
+        },
+        {
+          "text": "The page closes"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "```ts\n// <script setup>\nconsole.log('A')\nonMounted(() => console.log('B'))\nconsole.log('C')\n```\nIn which order are the messages logged?",
+      "points": 1,
+      "explanation": "Code in `<script setup>` runs immediately when the component is created. `onMounted` waits until the component is rendered.",
+      "options": [
+        {
+          "text": "A, B, C"
+        },
+        {
+          "text": "B, A, C"
+        },
+        {
+          "text": "C, A, B"
+        },
+        {
+          "text": "A, C, B",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "Why should an event listener that is added in `onMounted` be removed in `onUnmounted`?",
+      "points": 1,
+      "explanation": "Every resource you allocate (listeners, timers, connections) you should clean up.",
+      "options": [
+        {
+          "text": "Otherwise the listener keeps running after the component is gone, causing a memory leak and bugs",
+          "correct": true
+        },
+        {
+          "text": "Because Vue throws an error when a component has more than one listener"
+        },
+        {
+          "text": "Because listeners are automatically duplicated on every render"
+        },
+        {
+          "text": "Because `onUnmounted` is the only place where `removeEventListener` is allowed"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "A component starts `setInterval(refresh, 5000)` in `onMounted` and is shown and hidden many times with `v-if`. After a while `refresh` runs many times every 5 seconds. What is missing?",
+      "points": 1,
+      "explanation": "Each mount starts a new timer and none are stopped. Clean up in `onUnmounted`.",
+      "options": [
+        {
+          "text": "`{ deep: true }` on the interval"
+        },
+        {
+          "text": "A `computed` around `refresh`"
+        },
+        {
+          "text": "`v-show` instead of `v-if`"
+        },
+        {
+          "text": "A `clearInterval` in `onUnmounted`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "When should you use a watcher instead of a computed property?",
+      "points": 1,
+      "explanation": "Computed derives values; watchers trigger actions. Prefer computed when you just need a value.",
+      "options": [
+        {
+          "text": "When you want to derive a new value from reactive data"
+        },
+        {
+          "text": "When the value is shown in the template"
+        },
+        {
+          "text": "When you need to perform a side effect (like saving to localStorage or an API call) when data changes",
+          "correct": true
+        },
+        {
+          "text": "When you want the result to be cached"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "```ts\nwatch(products, (latest) => {\n  localStorage.setItem('products', JSON.stringify(latest))\n})\n// elsewhere:\nproducts.value.push(newProduct)\n```\nThe push is not saved. Why?",
+      "points": 1,
+      "explanation": "`deep: true` makes Vue track changes inside the array and inside its objects.",
+      "options": [
+        {
+          "text": "`push` doesn't work on refs"
+        },
+        {
+          "text": "`localStorage` can't store arrays"
+        },
+        {
+          "text": "The watcher only runs once, when the component mounts"
+        },
+        {
+          "text": "Without `{ deep: true }` the watcher only reacts when the whole array is replaced, not when it is changed inside",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "What does the `immediate: true` option do in a watcher?",
+      "points": 1,
+      "explanation": "By default a watcher only runs when the data changes, not at the start.",
+      "options": [
+        {
+          "text": "It makes the watcher run synchronously instead of asynchronously"
+        },
+        {
+          "text": "It runs the callback once right away with the initial value, and then on every change",
+          "correct": true
+        },
+        {
+          "text": "It stops the watcher after the first change"
+        },
+        {
+          "text": "It watches every nested property"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "Why do you use `JSON.stringify()` when saving products to `localStorage`?",
+      "points": 1,
+      "explanation": "Save with `JSON.stringify()`, load with `JSON.parse()`.",
+      "options": [
+        {
+          "text": "Because it encrypts the data"
+        },
+        {
+          "text": "Because it makes the data smaller than the original array"
+        },
+        {
+          "text": "Because localStorage needs the data in XML format"
+        },
+        {
+          "text": "Because localStorage only stores strings",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "```ts\nconst products = ref<Product[]>(JSON.parse(localStorage.getItem('products') || '[]'))\n```\nWhat is `products.value` the first time the app runs, when nothing is stored yet?",
+      "points": 1,
+      "explanation": "`getItem` returns `null` for a missing key, so `|| '[]'` is used and parsed to an empty array.",
+      "options": [
+        {
+          "text": "`null`"
+        },
+        {
+          "text": "`undefined`"
+        },
+        {
+          "text": "An error is thrown"
+        },
+        {
+          "text": "An empty array `[]`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "Several pages call `useProducts()`. The `products` ref is declared **outside** the `useProducts()` function, at the top of the module. What is the effect?",
+      "points": 1,
+      "explanation": "A module-level ref is created once and shared by every call. (Bigger apps use a state management library like Pinia for this.)",
+      "options": [
+        {
+          "text": "All pages share the same products state",
+          "correct": true
+        },
+        {
+          "text": "Every page gets its own copy of the products"
+        },
+        {
+          "text": "The ref is no longer reactive"
+        },
+        {
+          "text": "TypeScript gives an error because refs must be inside a function"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "Modifying props inside the child component is …",
+      "points": 1,
+      "explanation": "Props are meant to be read-only: data flows down. Vue warns when you try to change a prop, and changing the inside of an object prop does technically work, but it breaks one-way data flow. Emit an event and let the parent change its data.",
+      "options": [
+        {
+          "text": "efficient, as it directly emits back up"
+        },
+        {
+          "text": "not possible"
+        },
+        {
+          "text": "possible, but a bad practice",
+          "correct": true
+        },
+        {
+          "text": "allowed only if wrapped in a computed property"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "What is the universal pattern of component communication taught in the lessons?",
+      "points": 1,
+      "explanation": "Parents pass data to children via props; children notify parents via emitted events. React, Angular and Svelte use the same idea.",
+      "options": [
+        {
+          "text": "Events down, props up"
+        },
+        {
+          "text": "Children read and write the parent's state directly"
+        },
+        {
+          "text": "All components share one global variable"
+        },
+        {
+          "text": "Props down, events up",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "`ProductForm` receives `editingProduct` as a prop and copies its values into local refs for the inputs. Why does the lesson use a `watch` on the prop instead of `onMounted`?",
+      "points": 1,
+      "explanation": "Props are reactive, so you can watch them. The form must update every time the user clicks Edit on another product.",
+      "options": [
+        {
+          "text": "`onMounted` can't read props"
+        },
+        {
+          "text": "`watch` is faster than `onMounted`"
+        },
+        {
+          "text": "`onMounted` only runs once; when the parent passes another product later, the form would not update",
+          "correct": true
+        },
+        {
+          "text": "Props can only be read inside a watcher"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "Why does the lesson pass the whole product (`editingProduct`) to the form instead of only its id (`editingId`)?",
+      "points": 1,
+      "explanation": "Give a component exactly the data it needs; that keeps it loosely coupled and reusable.",
+      "options": [
+        {
+          "text": "With only the id, the form would need the whole products array to look it up, which couples it tightly to the parent's data",
+          "correct": true
+        },
+        {
+          "text": "Ids can't be passed as props"
+        },
+        {
+          "text": "Objects are faster to pass than numbers"
+        },
+        {
+          "text": "Because v-model only works with objects"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "When the form is submitted while editing, why does `ProductForm` create a **new** product object to emit instead of changing `props.editingProduct`?",
+      "points": 1,
+      "explanation": "The child emits `update` with a new object; the parent (via the composable) updates its own data.",
+      "options": [
+        {
+          "text": "Because objects can't be emitted"
+        },
+        {
+          "text": "Because props must never be mutated by the child; the parent decides what to do with the new data",
+          "correct": true
+        },
+        {
+          "text": "Because a new object gets a new id automatically"
+        },
+        {
+          "text": "Because the old object is deleted when the form is submitted"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "A child component emits an event, but no parent listens to it. What happens?",
+      "points": 1,
+      "explanation": "Emitting is just tapping the parent on the shoulder. If nobody listens, nothing happens.",
+      "options": [
+        {
+          "text": "Vue throws a runtime error"
+        },
+        {
+          "text": "The event is passed to the root component"
+        },
+        {
+          "text": "The app crashes in production only"
+        },
+        {
+          "text": "Nothing; the event is simply ignored",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "```vue\n<!-- ProductList.vue -->\n<ProductCard\n  v-for=\"product in products\" :key=\"product.id\" :product=\"product\"\n  @delete=\"emit('delete', product.id)\"\n/>\n```\nWhat is happening in `@delete`?",
+      "points": 1,
+      "explanation": "Event re-emitting: ProductCard → ProductList → ProductManagementPage. The page decides what happens.",
+      "options": [
+        {
+          "text": "ProductList deletes the product itself"
+        },
+        {
+          "text": "ProductList re-emits the event, passing it up to its own parent",
+          "correct": true
+        },
+        {
+          "text": "ProductList sends the event back down to ProductCard"
+        },
+        {
+          "text": "It deletes ProductCard from the DOM"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "Which naming convention does the lesson recommend?",
+      "points": 1,
+      "explanation": "PascalCase for component files, kebab-case for props and events in templates.",
+      "options": [
+        {
+          "text": "Files in kebab-case (`product-form.vue`), props in PascalCase"
+        },
+        {
+          "text": "Everything in camelCase"
+        },
+        {
+          "text": "Everything in UPPERCASE"
+        },
+        {
+          "text": "Files in PascalCase (`ProductForm.vue`), props and events in kebab-case in templates (`:editing-product`, `@add-product`)",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Parent/child communication",
+      "text": "Why does the lesson use `import type { Product } from '../types/Product'`?",
+      "points": 1,
+      "explanation": "The interface is defined once in `src/types/Product.ts` and imported as a type wherever it is needed.",
+      "options": [
+        {
+          "text": "Only a type is imported, so it is used by TypeScript and doesn't end up in the JavaScript",
+          "correct": true
+        },
+        {
+          "text": "`import type` makes the import load faster at runtime"
+        },
+        {
+          "text": "It converts the interface into a class"
+        },
+        {
+          "text": "It makes the Product interface reactive"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "```ts\n// Vue Router configuration snippet\n{\n  path: '/admin',\n  component: AdminLayout,\n  children: [\n    { path: '', component: AdminDashboard },\n    { path: 'settings', component: AdminSettings }\n  ]\n}\n```\nUsing Vue Router, what does the child route with `path: ''` do?",
+      "points": 1,
+      "explanation": "Children render in the parent's own `<RouterView />`. An empty child path is what shows at the parent's URL.",
+      "options": [
+        {
+          "text": "It serves as the default child route, rendering AdminDashboard inside AdminLayout's `<RouterView/>` when visiting /admin",
+          "correct": true
+        },
+        {
+          "text": "It triggers a router validation warning because child paths are required to contain at least one character"
+        },
+        {
+          "text": "It automatically redirects the user's browser to the /admin/settings route by default"
+        },
+        {
+          "text": "It acts as a strict catch-all fallback for any invalid sub-paths entered beneath /admin"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "Using Vue Router, what happens when a route path is defined with pattern `/:pathMatch(.*)*`?",
+      "points": 1,
+      "explanation": "It is the catch-all, typically for a 404 page. Because routes are matched top to bottom, it must be last.",
+      "options": [
+        {
+          "text": "It matches any route not handled by previous entries",
+          "correct": true
+        },
+        {
+          "text": "It matches every route except /"
+        },
+        {
+          "text": "It throws a compilation or routing error because regular expression capture groups are restricted in Vue Router path strings"
+        },
+        {
+          "text": "It only matches nested child routes that exceed a depth of two segments beneath the root level"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "```ts\nconst routes = [\n  { path: '/', component: HomePage },\n  { path: '/:pathMatch(.*)*', component: NotFoundPage },\n  { path: '/about', component: AboutPage },\n]\n```\nWhat happens when you visit `/about`?",
+      "points": 1,
+      "explanation": "Routes are matched from top to bottom. The catch-all must be the last entry.",
+      "options": [
+        {
+          "text": "The About page is shown, because exact matches always win"
+        },
+        {
+          "text": "Both pages are shown below each other"
+        },
+        {
+          "text": "The router throws an error about duplicate routes"
+        },
+        {
+          "text": "The Not Found page is shown, because the catch-all is checked before `/about`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "Why should you use `<RouterLink to=\"/products\">` instead of `<a href=\"/products\">` in a Vue SPA?",
+      "points": 1,
+      "explanation": "RouterLink updates the URL via the History API and lets RouterView swap the page. It also gets the `.router-link-active` class.",
+      "options": [
+        {
+          "text": "An `<a>` makes the browser do a full request and reload, losing app state; RouterLink swaps the component without a reload",
+          "correct": true
+        },
+        {
+          "text": "`<a>` tags don't work in Vue templates"
+        },
+        {
+          "text": "RouterLink makes the link open in a new tab"
+        },
+        {
+          "text": "RouterLink is required for SEO"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "What does `<RouterView />` do?",
+      "points": 1,
+      "explanation": "RouterView is the route outlet. Shared layout (like the nav) sits around it in App.vue.",
+      "options": [
+        {
+          "text": "It renders a list of all routes as links"
+        },
+        {
+          "text": "It is the placeholder where the page component that matches the current URL is shown",
+          "correct": true
+        },
+        {
+          "text": "It shows the current URL as text"
+        },
+        {
+          "text": "It reloads the page when the URL changes"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "```ts\n// route: /products/:id   URL: /products/42\nconst route = useRoute()\nconst product = products.value.find(p => p.id === route.params.id)\n```\nThe product with id 42 exists, but `product` is `undefined`. Why?",
+      "points": 1,
+      "explanation": "Convert params to the type you need before comparing.",
+      "options": [
+        {
+          "text": "`useRoute()` only works inside `onMounted`"
+        },
+        {
+          "text": "Route params are always strings, and `\"42\" === 42` is false; use `Number(route.params.id)`",
+          "correct": true
+        },
+        {
+          "text": "The param should be read with `route.query.id`"
+        },
+        {
+          "text": "`find` doesn't work on reactive arrays"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "```ts\n// main.ts\nconst app = createApp(App)\napp.mount('#app')\napp.use(router)\n```\nWhat goes wrong?",
+      "points": 1,
+      "explanation": "The order is `createApp` → `app.use(router)` → `app.mount()`.",
+      "options": [
+        {
+          "text": "The router is registered after the app is already mounted, so routing doesn't initialise correctly",
+          "correct": true
+        },
+        {
+          "text": "Nothing, the order doesn't matter"
+        },
+        {
+          "text": "`app.use` can only be used for CSS plugins"
+        },
+        {
+          "text": "The app is mounted twice"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "What does `createWebHistory()` give you, compared to `createWebHashHistory()`?",
+      "points": 1,
+      "explanation": "Hash-based URLs are an older technique that needs no server configuration; clean URLs are the modern standard.",
+      "options": [
+        {
+          "text": "Clean URLs like `/products` instead of `/#/products`",
+          "correct": true
+        },
+        {
+          "text": "A history of all pages the user has ever visited"
+        },
+        {
+          "text": "Faster page loads because pages are cached"
+        },
+        {
+          "text": "Routing that works without JavaScript"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "After a successful login you navigate to `/dashboard`. Pressing Back should **not** return to the login page. What do you use?",
+      "points": 1,
+      "explanation": "`push` adds a history entry; `replace` replaces the current one, so Back skips the login page.",
+      "options": [
+        {
+          "text": "`router.push('/dashboard')`"
+        },
+        {
+          "text": "`router.back()`"
+        },
+        {
+          "text": "`router.replace('/dashboard')`",
+          "correct": true
+        },
+        {
+          "text": "`<a href=\"/dashboard\">`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "```ts\nconst AboutPage = () => import('../pages/AboutPage.vue')\n```\nWhat is the effect of defining the route component like this?",
+      "points": 1,
+      "explanation": "Lazy loading. Good for rarely visited pages; not for the home page, which everyone sees first.",
+      "options": [
+        {
+          "text": "The About page is loaded before all other pages"
+        },
+        {
+          "text": "The About page is rendered on the server"
+        },
+        {
+          "text": "The About page code is put in a separate file that is only downloaded when someone navigates to it",
+          "correct": true
+        },
+        {
+          "text": "The About page can no longer use props"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "Refreshing `/products/5` works with the Vite dev server, but returns a 404 on the production server. What is the cause?",
+      "points": 1,
+      "explanation": "On a refresh the browser asks the server for `/products/5`. The server has no such file, unless it is set up to always serve the SPA.",
+      "options": [
+        {
+          "text": "The route is missing from the router"
+        },
+        {
+          "text": "The production server must be configured to return `index.html` for all routes so Vue Router can take over",
+          "correct": true
+        },
+        {
+          "text": "Dynamic routes only work in development"
+        },
+        {
+          "text": "`createWebHistory` must be replaced by `createRouter`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Client-side routing",
+      "text": "Why should the current page live in the URL instead of in a ref with `v-if`?",
+      "points": 1,
+      "explanation": "With a ref, refreshing resets the view and the URL never describes what the user sees.",
+      "options": [
+        {
+          "text": "So users can share and bookmark the URL, refresh without losing the page, and use the back and forward buttons",
+          "correct": true
+        },
+        {
+          "text": "Because refs can't hold strings"
+        },
+        {
+          "text": "Because `v-if` is slower than routing"
+        },
+        {
+          "text": "Because the server needs to know which page is active"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```js\nconsole.log(\"A\");\nPromise.resolve(\"B\").then(() => console.log);\nconsole.log(\"C\");\nPromise.resolve().then(() => console.log(\"D\"));\n```\nGiven the JavaScript code above, what is the correct execution order (and console log output order)?",
+      "points": 1,
+      "explanation": "Synchronous code runs first (A, C), then the promise callbacks. The first callback only *returns* `console.log` without calling it, so B is never logged. Then D.",
+      "options": [
+        {
+          "text": "A, D, C"
+        },
+        {
+          "text": "A, B, C, D"
+        },
+        {
+          "text": "A, C, D",
+          "correct": true
+        },
+        {
+          "text": "A, C, B, D"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```js\nconsole.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');\n```\nWhat is the output order?",
+      "points": 1,
+      "explanation": "First all synchronous code (A, D), then promise callbacks (C), then timers (B), even with a 0 ms delay.",
+      "options": [
+        {
+          "text": "A, B, C, D"
+        },
+        {
+          "text": "A, D, B, C"
+        },
+        {
+          "text": "A, C, D, B"
+        },
+        {
+          "text": "A, D, C, B",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "In which three states can a Promise be?",
+      "points": 1,
+      "explanation": "Pending = still running, fulfilled = finished with a value, rejected = failed with an error.",
+      "options": [
+        {
+          "text": "Loading, success, error"
+        },
+        {
+          "text": "Pending, fulfilled, rejected",
+          "correct": true
+        },
+        {
+          "text": "Created, mounted, unmounted"
+        },
+        {
+          "text": "Waiting, running, done"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\nasync function getData() {\n  return 42\n}\nconst x = getData()\nconsole.log(x)\n```\nWhat is logged?",
+      "points": 1,
+      "explanation": "An `async` function always returns a Promise. You need `await getData()` (inside an async function) to get 42.",
+      "options": [
+        {
+          "text": "`42`"
+        },
+        {
+          "text": "A Promise",
+          "correct": true
+        },
+        {
+          "text": "`undefined`"
+        },
+        {
+          "text": "An error, because `await` is missing"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\nonMounted(() => {\n  await initProducts()\n})\n```\nWhy does this fail to compile?",
+      "points": 1,
+      "explanation": "Mark the callback as `async`, or call `initProducts()` without `await` if you don't need to wait.",
+      "options": [
+        {
+          "text": "`onMounted` can't call functions from a composable"
+        },
+        {
+          "text": "`initProducts` must be called without parentheses"
+        },
+        {
+          "text": "`await` can't be used in Vue components"
+        },
+        {
+          "text": "`await` can only be used inside an `async` function; the callback must be `async () => { ... }`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\nconst res = await fetch('/api/products')\nproducts.value = await res.json()\n```\nThe server responds with status 500. What happens?",
+      "points": 1,
+      "explanation": "`fetch` only rejects on network failures. A 404 or 500 is still a response; `res.ok` is `false` for anything outside 200–299.",
+      "options": [
+        {
+          "text": "`fetch` throws an error, so the second line never runs"
+        },
+        {
+          "text": "`fetch` does not throw on HTTP error codes; you have to check `res.ok` yourself",
+          "correct": true
+        },
+        {
+          "text": "`products.value` is automatically set to an empty array"
+        },
+        {
+          "text": "The browser retries the request until it succeeds"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "In `fetchProducts`, why does `loading.value = false` belong in a `finally` block?",
+      "points": 1,
+      "explanation": "If it is only at the end of `try`, a failed request skips it and the page keeps showing \"Loading…\".",
+      "options": [
+        {
+          "text": "Because `finally` runs before `try`"
+        },
+        {
+          "text": "Because refs can only be changed in `finally`"
+        },
+        {
+          "text": "Because `finally` runs both on success and on failure, so the loading message never stays on screen forever",
+          "correct": true
+        },
+        {
+          "text": "Because it makes the request faster"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```vue\n<div v-if=\"loading\">Loading…</div>\n<div v-else-if=\"error\" class=\"error\">{{ error }}</div>\n<div v-else><ProductList :products=\"products\" /></div>\n```\nWhat does this pattern guarantee?",
+      "points": 1,
+      "explanation": "The three-state pattern is used for every async operation, in every framework.",
+      "options": [
+        {
+          "text": "That exactly one of the three states (loading, error, success) is visible at a time",
+          "correct": true
+        },
+        {
+          "text": "That the data is fetched only once"
+        },
+        {
+          "text": "That errors are automatically retried"
+        },
+        {
+          "text": "That the list is shown while it is loading"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "An external API returns `title`, but your `Product` interface uses `name`. What is the recommended approach?",
+      "points": 1,
+      "explanation": "Transform data at the boundary of your system; the rest of the app only sees your own types.",
+      "options": [
+        {
+          "text": "Rename `name` to `title` everywhere in your app"
+        },
+        {
+          "text": "Use `any` so both names work"
+        },
+        {
+          "text": "Ask the API owner to rename the field"
+        },
+        {
+          "text": "Map the response to your own `Product` shape right where you fetch it (`name: item.title`)",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "What does the `?` mean in this interface?\n```ts\ninterface Product {\n  id: number\n  name: string\n  image?: string\n}\n```",
+      "points": 1,
+      "explanation": "Optional properties keep existing objects (without an image) valid.",
+      "options": [
+        {
+          "text": "`image` may be `null` but must be present"
+        },
+        {
+          "text": "`image` is optional: a product can have it but doesn't have to",
+          "correct": true
+        },
+        {
+          "text": "`image` is a private property"
+        },
+        {
+          "text": "`image` is computed automatically"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\n// ProductDetailPage.vue\nconst product = getProduct(Number(route.params.id))\n```\nOpening `/products/1` directly (with empty localStorage) shows \"Product Not Found\", although product 1 exists in the API. What is the fix?",
+      "points": 1,
+      "explanation": "Every page that depends on async data must start loading it, and the lookup must be reactive because the data arrives later.",
+      "options": [
+        {
+          "text": "Use `router.push` instead of `useRoute`"
+        },
+        {
+          "text": "Start loading the data on this page too (`initProducts()` in `onMounted`) and make the lookup a `computed`, so it updates when the data arrives",
+          "correct": true
+        },
+        {
+          "text": "Use `v-show` instead of `v-if` for the not-found message"
+        },
+        {
+          "text": "Add `{ deep: true }` to the route"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "In a `catch (err)` block, why does the lesson check `err instanceof Error` before using `err.message`?",
+      "points": 1,
+      "explanation": "It keeps TypeScript happy and the code robust.",
+      "options": [
+        {
+          "text": "Because `catch` only receives strings"
+        },
+        {
+          "text": "Because `instanceof` retries the request"
+        },
+        {
+          "text": "Because the caught value is of type `unknown`; anything can be thrown, so you only read `.message` when it really is an Error",
+          "correct": true
+        },
+        {
+          "text": "Because errors from `fetch` don't have a message"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "You see \"blocked by CORS policy\" in the console when fetching from an external API. What does this mean?",
+      "points": 1,
+      "explanation": "CORS is decided by the server's response headers.",
+      "options": [
+        {
+          "text": "Your Vue code has a syntax error"
+        },
+        {
+          "text": "You forgot `await` before `fetch`"
+        },
+        {
+          "text": "The API returned invalid JSON"
+        },
+        {
+          "text": "The server doesn't allow requests from browser JavaScript on your origin; it is a server-side restriction you can't fix from frontend code",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "What is Node.js?",
+      "points": 1,
+      "explanation": "Node.js is the engine. Express is a framework built on top of it.",
+      "options": [
+        {
+          "text": "A frontend framework, like Vue"
+        },
+        {
+          "text": "A database for storing JSON"
+        },
+        {
+          "text": "A browser extension for debugging JavaScript"
+        },
+        {
+          "text": "A JavaScript runtime that lets you run JavaScript outside the browser, for example on a server",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "Node.js already has an `http` module to create a web server. What does Express add?",
+      "points": 1,
+      "explanation": "With plain Node.js you check `req.url` and write headers yourself; Express does that for you.",
+      "options": [
+        {
+          "text": "A database and a login system"
+        },
+        {
+          "text": "Simple functions for routing, sending responses and middleware, so you don't handle the low-level details yourself",
+          "correct": true
+        },
+        {
+          "text": "The ability to run TypeScript without compiling"
+        },
+        {
+          "text": "A visual editor for building web pages"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "Why are the packages `@types/node` and `@types/express` necessary?",
+      "points": 1,
+      "explanation": "TypeScript doesn't know what's inside Node or Express by default. The `@types` packages only describe them.",
+      "options": [
+        {
+          "text": "They compile TypeScript into JavaScript"
+        },
+        {
+          "text": "They provide type definitions so TypeScript understands the libraries",
+          "correct": true
+        },
+        {
+          "text": "They contain the compiled runtime JavaScript logic required to execute Node and Express modules inside a TypeScript environment"
+        },
+        {
+          "text": "They contain the actual source code for Node and Express"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "What is the difference between `npm install express` and `npm install -D typescript`?",
+      "points": 1,
+      "explanation": "Express is needed at runtime. TypeScript, tsx and the `@types` packages are development tools.",
+      "options": [
+        {
+          "text": "`-D` installs the package globally on your computer"
+        },
+        {
+          "text": "`-D` downloads the documentation of the package"
+        },
+        {
+          "text": "There is no difference"
+        },
+        {
+          "text": "`-D` installs it as a dev dependency: only needed during development, not to run the app",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "What does `tsx watch ./src/index.ts` (the `dev` script) do?",
+      "points": 1,
+      "explanation": "For production you run `npm run build` (`tsc`) and then `npm start` (`node ./dist/index.js`).",
+      "options": [
+        {
+          "text": "It runs the TypeScript directly without compiling first, and restarts the server whenever you save a file",
+          "correct": true
+        },
+        {
+          "text": "It compiles the project into the `dist` folder for production"
+        },
+        {
+          "text": "It checks the code for type errors without running it"
+        },
+        {
+          "text": "It opens the server in the browser"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```ts\napp.get('/', (req: Request, res: Response) => {\n  res.send('Hello!')\n})\n```\nWhat does this code do?",
+      "points": 1,
+      "explanation": "`req` holds what the client asked for, `res` is used to reply. `res.send` sets the headers for you.",
+      "options": [
+        {
+          "text": "It defines a route: when a GET request for `/` comes in, the server responds with `Hello!`",
+          "correct": true
+        },
+        {
+          "text": "It sends a GET request to `/` when the server starts"
+        },
+        {
+          "text": "It reads the text `Hello!` from the request body"
+        },
+        {
+          "text": "It redirects every request to `/`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "How does using a separate \"Router\" in the Express backend contribute to the \"Separation of Concerns\" principle?",
+      "points": 1,
+      "explanation": "Instead of one huge `index.ts`, routes are grouped per area in their own files (`home.routes.ts`, `product.routes.ts`).",
+      "options": [
+        {
+          "text": "It separates the TypeScript code from the JavaScript code"
+        },
+        {
+          "text": "It separates the logic of the server from the logic of the client"
+        },
+        {
+          "text": "It separates the middleware from the route handlers"
+        },
+        {
+          "text": "It separates the different functional areas (e.g., home vs. products) of the backend into manageable modules",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```ts\napp.use('/shop', productRouter)\n// in productRouter:\nrouter.get('/add-product', showAddProductPage)\n```\nOn which URL is the add-product page available?",
+      "points": 1,
+      "explanation": "The first argument of `app.use` is a prefix for all routes in that router.",
+      "options": [
+        {
+          "text": "`/shop/add-product`",
+          "correct": true
+        },
+        {
+          "text": "`/add-product`"
+        },
+        {
+          "text": "`/add-product/shop`"
+        },
+        {
+          "text": "`/shop`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "What is middleware in Express?",
+      "points": 1,
+      "explanation": "Middleware is registered with `app.use(...)` and calls `next()` to pass the request on.",
+      "options": [
+        {
+          "text": "A function that runs before the route handlers, for example for logging, authentication or parsing data",
+          "correct": true
+        },
+        {
+          "text": "A database layer between the server and the client"
+        },
+        {
+          "text": "The HTML template that is sent to the browser"
+        },
+        {
+          "text": "A second server that sits between Express and Node"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```ts\napp.use((req: Request, res: Response, next: NextFunction) => {\n  console.log(`${req.method} ${req.url}`)\n})\napp.use(homeRouter)\n```\nThe log appears, but the browser never gets a response. Why?",
+      "points": 1,
+      "explanation": "Without `next()` (or sending a response) the request stays hanging in the middleware.",
+      "options": [
+        {
+          "text": "`console.log` is not allowed in middleware"
+        },
+        {
+          "text": "`homeRouter` must be registered before the middleware"
+        },
+        {
+          "text": "The middleware never calls `next()`, so the request stops there",
+          "correct": true
+        },
+        {
+          "text": "`req.url` is undefined in middleware"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```ts\napp.use((req, res) => {\n  res.status(404).send('Not found')\n})\napp.use(homeRouter)\n```\nWhy does every page return 'Not found'?",
+      "points": 1,
+      "explanation": "The 404 handler must be the last route, just before `app.listen()`.",
+      "options": [
+        {
+          "text": "`status(404)` is applied to all routes globally"
+        },
+        {
+          "text": "The router must be imported with `require`"
+        },
+        {
+          "text": "An `app.use` without a path handles every request; because it comes first, the router is never reached",
+          "correct": true
+        },
+        {
+          "text": "`send` always returns 404"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```html\n<form action=\"\" method=\"post\"> ... </form>\n```\n```ts\nrouter.get('/add-product', showAddProductPage)\n```\nSubmitting the form shows the 404 page. Why?",
+      "points": 1,
+      "explanation": "Add `router.post('/add-product', ...)` to handle the submitted form.",
+      "options": [
+        {
+          "text": "There is only a route for GET; the form sends a POST, which no route handles, so it ends up at the 404 handler",
+          "correct": true
+        },
+        {
+          "text": "The form needs `action=\"/add-product\"` to work"
+        },
+        {
+          "text": "Forms can't be used with Express"
+        },
+        {
+          "text": "The 404 handler catches all POST requests"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "```ts\nres.sendFile(path.join(__dirname, '..', 'views', 'products.html'))\n```\nWhat does `path.join` do here?",
+      "points": 1,
+      "explanation": "Windows uses `\\` and Mac/Linux use `/`; `path.join` handles that.",
+      "options": [
+        {
+          "text": "It builds the file path from the parts, with the correct separators for the operating system",
+          "correct": true
+        },
+        {
+          "text": "It reads the file and returns its contents"
+        },
+        {
+          "text": "It joins all HTML files in the views folder into one"
+        },
+        {
+          "text": "It converts the HTML file into EJS"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "The backend uses ES modules (`\"type\": \"module\"` in `package.json`). Why do relative imports in the TypeScript code end with `.js`, for example `import homeRouter from './routes/home.routes.js'`?",
+      "points": 1,
+      "explanation": "TypeScript doesn't rewrite import paths when compiling, so you write the path of the file that will exist after the build.",
+      "options": [
+        {
+          "text": "Because TypeScript files can't be imported"
+        },
+        {
+          "text": "Because `.js` imports are faster than `.ts` imports"
+        },
+        {
+          "text": "Because Express can only load JavaScript routers"
+        },
+        {
+          "text": "Because Node runs the compiled `.js` files in `dist`, so the path must match what exists at runtime; tsx maps it to the `.ts` file during development",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is a primary advantage of Server-Side Rendering (SSR)?",
+      "points": 1,
+      "explanation": "The server sends complete HTML, so search engines can read the content and the first display is fast. Smooth navigation without reloads is an SPA advantage.",
+      "options": [
+        {
+          "text": "It reduces the amount of work the server has to do"
+        },
+        {
+          "text": "It provides a smoother, more fluid navigation experience without page reloads"
+        },
+        {
+          "text": "It is better for search engine optimization (SEO)",
+          "correct": true
+        },
+        {
+          "text": "It gives the server more control over the content"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "Which statement about SSR and SPA is correct?",
+      "points": 1,
+      "explanation": "SSR: server-rendered content and quick first display. SPA: client-side interactivity and fluid navigation, often fetching JSON from an API.",
+      "options": [
+        {
+          "text": "An SPA sends fully rendered HTML for every page; SSR renders pages with JavaScript in the browser"
+        },
+        {
+          "text": "SSR can't use data from a database"
+        },
+        {
+          "text": "SSR generates the HTML on the server for each request; an SPA loads a minimal page and renders and updates content in the browser",
+          "correct": true
+        },
+        {
+          "text": "An SPA can't communicate with a server"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is the difference between GET and POST?",
+      "points": 1,
+      "explanation": "A search form can use GET; a form that creates something or logs in uses POST.",
+      "options": [
+        {
+          "text": "GET sends data in the body, POST puts data in the URL"
+        },
+        {
+          "text": "GET is only for images, POST is only for HTML"
+        },
+        {
+          "text": "POST is faster than GET"
+        },
+        {
+          "text": "GET requests something from the server (data can be visible in the URL); POST sends data to the server in the body of the request",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "A login form uses `method=\"get\"`. What is the problem?",
+      "points": 1,
+      "explanation": "Form data of a GET request is put in the URL; use POST to send it in the body.",
+      "options": [
+        {
+          "text": "The server can't read GET requests"
+        },
+        {
+          "text": "GET requests can't contain more than one field"
+        },
+        {
+          "text": "The username and password end up visible in the URL (and in the browser history)",
+          "correct": true
+        },
+        {
+          "text": "The form will be sent twice"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nrouter.post('/add-product', (req, res) => {\n  console.log(req.body)\n})\n```\nAfter submitting the HTML form, `req.body` is `undefined`. What is missing?",
+      "points": 1,
+      "explanation": "The body has to be parsed first. HTML forms send `urlencoded` data; the built-in middleware turns it into an object.",
+      "options": [
+        {
+          "text": "`app.use(express.urlencoded({ extended: true }))` before the routers",
+          "correct": true
+        },
+        {
+          "text": "`res.send()` at the end of the handler"
+        },
+        {
+          "text": "`method=\"get\"` on the form"
+        },
+        {
+          "text": "`import body from 'express'`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nconst price = req.body.price\nconst withShipping = price + 10\n```\nFor a submitted price of 5, `withShipping` is `'510'`. Why?",
+      "points": 1,
+      "explanation": "Form values arrive as strings (`{ price: '5' }`). Convert with `Number(...)` first.",
+      "options": [
+        {
+          "text": "Express adds the numbers as text by mistake"
+        },
+        {
+          "text": "`req.body` multiplies numbers by 100"
+        },
+        {
+          "text": "The `urlencoded` parser converts numbers to arrays"
+        },
+        {
+          "text": "All values in a submitted form are strings, so `+` concatenates them",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "In the Express MVC structure, what is the responsibility of the **controller**?",
+      "points": 1,
+      "explanation": "Routes direct traffic, controllers manage the logic, models handle data, views provide presentation.",
+      "options": [
+        {
+          "text": "Storing the data and defining its structure"
+        },
+        {
+          "text": "Showing the data as HTML"
+        },
+        {
+          "text": "Mapping URLs to functions"
+        },
+        {
+          "text": "Handling the request, asking the model for data, and choosing which view to render with that data",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "In an Express MVC application, what should a **route** file contain?",
+      "points": 1,
+      "explanation": "Routes act as a traffic director; they don't contain business logic.",
+      "options": [
+        {
+          "text": "The business logic for each page"
+        },
+        {
+          "text": "Only the mapping of an HTTP method and path to a controller function",
+          "correct": true
+        },
+        {
+          "text": "The HTML templates"
+        },
+        {
+          "text": "The data array of the application"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "In MVC, what is the **model** responsible for?",
+      "points": 1,
+      "explanation": "For example a `Product` class with `addProduct` and `getAllProducts`.",
+      "options": [
+        {
+          "text": "The layout and styling of the page"
+        },
+        {
+          "text": "The data and the rules for creating, reading, updating and deleting it",
+          "correct": true
+        },
+        {
+          "text": "Receiving HTTP requests"
+        },
+        {
+          "text": "Starting the server"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nrouter.get('/products', showProducts())\n```\nWhat goes wrong?",
+      "points": 1,
+      "explanation": "Pass the function itself (`showProducts`); Express calls it with `req` and `res` for every request.",
+      "options": [
+        {
+          "text": "Nothing, Express calls the function with the parentheses"
+        },
+        {
+          "text": "`showProducts` is executed immediately while the routes are set up, instead of being passed as a handler for when a request comes in",
+          "correct": true
+        },
+        {
+          "text": "The route only works for POST requests"
+        },
+        {
+          "text": "The products are shown twice"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is the difference between `<% %>` and `<%= %>` in EJS?",
+      "points": 1,
+      "explanation": "Use `<% products.forEach(...) %>` for the loop and `<%= product.name %>` to show a value.",
+      "options": [
+        {
+          "text": "`<% %>` outputs a value; `<%= %>` runs code without output"
+        },
+        {
+          "text": "`<% %>` is for comments, `<%= %>` is for variables"
+        },
+        {
+          "text": "There is no difference"
+        },
+        {
+          "text": "`<% %>` runs JavaScript without output (loops, conditions); `<%= %>` outputs a value into the HTML",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ejs\n<% products.forEach(product => { %>\n  <li><% product.name %></li>\n<% }) %>\n```\nThe list items are empty. What is wrong?",
+      "points": 1,
+      "explanation": "Only the `<%= %>` tag writes the value into the HTML.",
+      "options": [
+        {
+          "text": "`forEach` doesn't work in EJS"
+        },
+        {
+          "text": "The arrow function must be a normal function"
+        },
+        {
+          "text": "`<% %>` runs code but doesn't output anything; it should be `<%= product.name %>`",
+          "correct": true
+        },
+        {
+          "text": "The `<li>` must be outside the loop"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nres.render('products', { items: getAllProducts() })\n```\n```ejs\n<% products.forEach(p => { %> ... <% }) %>\n```\nThe page fails with *products is not defined*. Why?",
+      "points": 1,
+      "explanation": "Pass `{ products: getAllProducts() }` or use `items` in the template.",
+      "options": [
+        {
+          "text": "The view engine is not set to EJS"
+        },
+        {
+          "text": "`getAllProducts` must be awaited"
+        },
+        {
+          "text": "EJS templates can't receive arrays"
+        },
+        {
+          "text": "The template can only use the property names of the object passed to `render`; here that is `items`, not `products`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is the difference between `res.sendFile(...)` and `res.render(...)`?",
+      "points": 1,
+      "explanation": "With EJS set as view engine, `res.render('products', { products })` fills the template on the server.",
+      "options": [
+        {
+          "text": "`sendFile` is for JSON, `render` is for images"
+        },
+        {
+          "text": "`sendFile` sends a static file as-is; `render` processes a template with data and sends the resulting HTML",
+          "correct": true
+        },
+        {
+          "text": "`render` sends the file to another server"
+        },
+        {
+          "text": "There is no difference, `render` is the newer name"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "How do MVC and the three-layer architecture differ?",
+      "points": 1,
+      "explanation": "Both separate concerns, but with a different emphasis. The View corresponds to the presentation layer.",
+      "options": [
+        {
+          "text": "MVC focuses on the flow of user interaction (input → logic → output); three-layer focuses on technical boundaries (UI, business logic, data access)",
+          "correct": true
+        },
+        {
+          "text": "MVC is for frontends only, three-layer is for backends only"
+        },
+        {
+          "text": "Three-layer has no presentation layer"
+        },
+        {
+          "text": "They are two names for exactly the same thing"
+        }
+      ]
+    }
+  ]
+}

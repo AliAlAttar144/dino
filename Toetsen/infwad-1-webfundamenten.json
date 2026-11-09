@@ -1,0 +1,1174 @@
+{
+  "title": "INFWAD – HTML, CSS & JavaScript",
+  "description": "Theorievragen in de stijl van de sample exam over de lesstof Fundamentals 1 t/m 4: HTML en de DOM, CSS, layout en JavaScript. Vragen, antwoorden en uitleg zijn in het Engels.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "What is the primary function of HTML?",
+      "points": 1,
+      "explanation": "HTML structures content (headings, paragraphs, links, forms). CSS handles style and layout, JavaScript handles interactivity.",
+      "options": [
+        {
+          "text": "To structure content on a web page",
+          "correct": true
+        },
+        {
+          "text": "To determine the visual style and layout of a page"
+        },
+        {
+          "text": "To add interactivity to a web page"
+        },
+        {
+          "text": "To manage the database of a website"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "Which statement about HTML is correct?",
+      "points": 1,
+      "explanation": "HTML is not a programming language. It uses elements to tell the browser what the content is: text, images, links, inputs, and so on.",
+      "options": [
+        {
+          "text": "HTML is a programming language that the browser compiles before showing the page"
+        },
+        {
+          "text": "HTML is a styling language that decides colours, fonts and spacing"
+        },
+        {
+          "text": "HTML is a markup language that uses elements (tags) to describe the structure of content",
+          "correct": true
+        },
+        {
+          "text": "HTML is a scripting language that runs on the server before the page is sent"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "Which markup is the most semantic way to build the main navigation of a site?",
+      "points": 1,
+      "explanation": "`<header>` and `<nav>` describe what the block is, the list groups related links, and `<a>` is the element for navigation.",
+      "options": [
+        {
+          "text": "`<header><nav><ul><li><a href=\"/\">Home</a></li></ul></nav></header>`",
+          "correct": true
+        },
+        {
+          "text": "`<div class=\"nav\"><span><a href=\"/\">Home</a></span></div>`"
+        },
+        {
+          "text": "`<section><div><a href=\"/\">Home</a></div></section>`"
+        },
+        {
+          "text": "`<nav><div onclick=\"go('/')\">Home</div></nav>`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "Which of the following is **not** a benefit of using semantic HTML elements like `<nav>`, `<main>` and `<footer>`?",
+      "points": 1,
+      "explanation": "Semantic elements help accessibility, search engines and maintainability. They do not change how fast CSS is parsed.",
+      "options": [
+        {
+          "text": "Screen readers can announce the structure of the page to the user"
+        },
+        {
+          "text": "The page renders faster because the browser can skip parsing the CSS",
+          "correct": true
+        },
+        {
+          "text": "Search engines can better understand what is important on the page"
+        },
+        {
+          "text": "Other developers can understand the structure of the code at a glance"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "```html\n<div class=\"btn\" onclick=\"save()\">Save</div>\n```\nWhat is the main problem with this element?",
+      "points": 1,
+      "explanation": "For something interactive you should use `<button>`. A clickable `<div>` works with a mouse, but keyboard users and screen readers lose out.",
+      "options": [
+        {
+          "text": "A `<div>` cannot have a click handler, so `save()` never runs"
+        },
+        {
+          "text": "The class name `btn` is reserved by the browser for native buttons"
+        },
+        {
+          "text": "Text inside a `<div>` cannot be styled, so the button will be invisible"
+        },
+        {
+          "text": "It is not a real button, so it is not reachable with the keyboard and screen readers don't announce it as a button",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "When should you use an `<a>` element instead of a `<button>`?",
+      "points": 1,
+      "explanation": "Use `<a>` for navigation and `<button>` for actions (save, delete, open a menu).",
+      "options": [
+        {
+          "text": "When the element has to look like a link instead of a button"
+        },
+        {
+          "text": "When the action should work without JavaScript"
+        },
+        {
+          "text": "When the element contains an icon instead of text"
+        },
+        {
+          "text": "When clicking it navigates to another page or location",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "```html\n<label for=\"email\">Email</label>\n<input id=\"email\" type=\"email\" placeholder=\"you@example.com\">\n```\nWhat does connecting the label to the input (`for` + `id`) do?",
+      "points": 1,
+      "explanation": "A connected label makes the input easier to use and accessible. A placeholder does neither of these things.",
+      "options": [
+        {
+          "text": "It validates that the user typed a valid email address"
+        },
+        {
+          "text": "It hides the placeholder as soon as the label is visible"
+        },
+        {
+          "text": "It sends the label text along with the form data to the server"
+        },
+        {
+          "text": "Clicking the label focuses the input, and screen readers read the label when the input gets focus",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "Why is it a good idea to place the links of a navigation menu inside a `<ul>` with `<li>` items?",
+      "points": 1,
+      "explanation": "Grouping related items in a list gives them meaning: a screen reader says e.g. \"list, 3 items\".",
+      "options": [
+        {
+          "text": "Because links outside a list are not clickable in some browsers"
+        },
+        {
+          "text": "Because a screen reader announces it as a list with a number of items, so the user knows how many links there are",
+          "correct": true
+        },
+        {
+          "text": "Because `<ul>` automatically places the links horizontally next to each other"
+        },
+        {
+          "text": "Because search engines ignore links that are not inside a list"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "What is the DOM?",
+      "points": 1,
+      "explanation": "The browser parses the HTML into a tree of nodes: the Document Object Model. It lives in memory and is how JavaScript talks to the page.",
+      "options": [
+        {
+          "text": "A tree of objects in memory that the browser builds from the HTML, which JavaScript can read and change",
+          "correct": true
+        },
+        {
+          "text": "The HTML file as it is stored on the server"
+        },
+        {
+          "text": "A copy of the CSS that the browser uses to calculate the layout"
+        },
+        {
+          "text": "A browser cache that stores pages so they load faster next time"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "You run `document.querySelector('h1').textContent = 'Changed!'` in the console. The page updates. Then you open *View page source*. What do you see in the `<h1>`?",
+      "points": 1,
+      "explanation": "View page source shows the file from the server. The Elements tab shows the live DOM. JavaScript never changes the file on the server.",
+      "options": [
+        {
+          "text": "The original text, because JavaScript changes the DOM in memory, not the HTML file",
+          "correct": true
+        },
+        {
+          "text": "`Changed!`, because the DOM and the source are the same thing"
+        },
+        {
+          "text": "Nothing, because the `<h1>` was removed and replaced by a new element"
+        },
+        {
+          "text": "An error, because the source can't be shown after the DOM has been changed"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "In which order does the browser roughly turn an HTML response into something you can see?",
+      "points": 1,
+      "explanation": "Parse, style, layout, paint.",
+      "options": [
+        {
+          "text": "Parse HTML into the DOM → apply CSS → calculate where every box goes → paint pixels",
+          "correct": true
+        },
+        {
+          "text": "Paint pixels → apply CSS → parse HTML → calculate layout"
+        },
+        {
+          "text": "Apply CSS → parse HTML → paint pixels → calculate layout"
+        },
+        {
+          "text": "Calculate layout → parse HTML → paint pixels → apply CSS"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "According to the lessons, what is the basic shape of every interactive web page?",
+      "points": 1,
+      "explanation": "Find a node (`querySelector`), listen for an event (`addEventListener`), change a node (`textContent`, `classList`, ...). Frameworks build on top of this loop.",
+      "options": [
+        {
+          "text": "Load the data, compile the page, send it to the server"
+        },
+        {
+          "text": "Create a component, mount it, unmount it"
+        },
+        {
+          "text": "Find a node, listen for an event, change a node",
+          "correct": true
+        },
+        {
+          "text": "Request a page, reload the page, cache the page"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "What is the difference between `document.querySelector('.item')` and `document.querySelectorAll('.item')`?",
+      "points": 1,
+      "explanation": "Both use CSS selector syntax. `querySelector` gives the first match (or `null`), `querySelectorAll` gives a list of all matches.",
+      "options": [
+        {
+          "text": "`querySelector` returns the first matching element, `querySelectorAll` returns all matching elements",
+          "correct": true
+        },
+        {
+          "text": "`querySelector` searches by class, `querySelectorAll` searches by id"
+        },
+        {
+          "text": "`querySelector` returns a copy of the element, `querySelectorAll` returns the real elements"
+        },
+        {
+          "text": "There is no difference, `querySelectorAll` is the older name"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "```html\n<button id=\"calculate\">Calculate</button>\n<script>\n  const button = document.querySelector('#calc');\n  button.addEventListener('click', calculate);\n</script>\n```\nWhat happens?",
+      "points": 1,
+      "explanation": "There is no element with id `calc`, so `button` is `null`, and `null.addEventListener(...)` throws a TypeError in the console.",
+      "options": [
+        {
+          "text": "The button works, because `#calc` is a partial match of `calculate`"
+        },
+        {
+          "text": "The click handler is added to the whole document instead"
+        },
+        {
+          "text": "Nothing, the browser silently ignores selectors that don't match"
+        },
+        {
+          "text": "`querySelector` returns `null`, so calling `addEventListener` throws an error",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 1 – HTML & DOM",
+      "text": "Why is `element.addEventListener('click', handler)` preferred over `<button onclick=\"handler()\">`?",
+      "points": 1,
+      "explanation": "`onclick` still works, but keeping behaviour out of the HTML is the modern, more maintainable way.",
+      "options": [
+        {
+          "text": "Mixing event handlers into HTML attributes makes the code harder to read and refactor",
+          "correct": true
+        },
+        {
+          "text": "`onclick` attributes no longer work in modern browsers"
+        },
+        {
+          "text": "`addEventListener` is faster because it runs on the server"
+        },
+        {
+          "text": "`onclick` can only be used on `<a>` elements"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "```css\np { color: blue; }\n.intro { color: green; }\n#welcome { color: red; }\n```\n```html\n<p id=\"welcome\" class=\"intro\">Hi</p>\n```\nWhich colour is the text?",
+      "points": 1,
+      "explanation": "Specificity from low to high: type → class → ID → inline style → `!important`. The ID selector wins.",
+      "options": [
+        {
+          "text": "Blue, because the type selector comes first"
+        },
+        {
+          "text": "Green, because classes are meant for styling"
+        },
+        {
+          "text": "Blue, green and red are mixed"
+        },
+        {
+          "text": "Red, because the ID selector has the highest specificity here",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "```css\n.card { background: white; }\n.card { background: grey; }\n```\nWhat background does an element with class `card` get?",
+      "points": 1,
+      "explanation": "When two rules have the same specificity, the one that comes last wins.",
+      "options": [
+        {
+          "text": "White, because the first rule wins"
+        },
+        {
+          "text": "Neither, the conflict makes the browser ignore both rules"
+        },
+        {
+          "text": "Grey, because with equal specificity the last rule wins",
+          "correct": true
+        },
+        {
+          "text": "White, because `white` is a named colour and `grey` is not"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "What does the lesson say about using `!important`?",
+      "points": 1,
+      "explanation": "`!important` overrides everything, but it is a sledgehammer. Find the conflicting rule in DevTools and fix it properly instead.",
+      "options": [
+        {
+          "text": "It is the recommended way to make sure a style is always applied"
+        },
+        {
+          "text": "It is a bad smell: it usually means another rule is more specific than you realised",
+          "correct": true
+        },
+        {
+          "text": "It only works on ID selectors"
+        },
+        {
+          "text": "It makes the rule apply only on mobile devices"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "Where should almost all of the CSS of a real project live?",
+      "points": 1,
+      "explanation": "Separate stylesheets keep structure and styling apart. `<style>` blocks are for small examples and prototypes, inline styles should be avoided.",
+      "options": [
+        {
+          "text": "In `style` attributes on each element"
+        },
+        {
+          "text": "In a `<style>` block at the bottom of the `<body>`"
+        },
+        {
+          "text": "In JavaScript, using `element.style`"
+        },
+        {
+          "text": "In separate `.css` files, linked with a `<link>` tag",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "Why should inline styles (`<p style=\"color: red\">`) be avoided?",
+      "points": 1,
+      "explanation": "Changing a colour would mean editing every element by hand. Copy-pasting styles is where bugs and inconsistencies come from.",
+      "options": [
+        {
+          "text": "Browsers ignore inline styles when a stylesheet is present"
+        },
+        {
+          "text": "Inline styles have the lowest specificity, so they never apply"
+        },
+        {
+          "text": "There is no separation between structure and styling, and the same style has to be duplicated on every element",
+          "correct": true
+        },
+        {
+          "text": "Inline styles only work in `<div>` elements"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "Which class name follows the naming advice from the lesson best?",
+      "points": 1,
+      "explanation": "Name things by what they are, not how they look (`.warning` survives a redesign, `.red-text` does not). Use lowercase with dashes, and class names can't start with a number.",
+      "options": [
+        {
+          "text": "`.redText`"
+        },
+        {
+          "text": "`.box2`"
+        },
+        {
+          "text": "`.warning`",
+          "correct": true
+        },
+        {
+          "text": "`.4-warning`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "```css\n:root { --main-color: #2563eb; }\nbutton { background: var(main-color); }\n```\nThe button doesn't get the colour. Why?",
+      "points": 1,
+      "explanation": "Custom properties always start with `--`, also when you read them with `var(--name)`.",
+      "options": [
+        {
+          "text": "CSS variables can't be used for backgrounds"
+        },
+        {
+          "text": "Variables in `:root` are only available to the `<html>` element"
+        },
+        {
+          "text": "The name inside `var()` must include the dashes: `var(--main-color)`",
+          "correct": true
+        },
+        {
+          "text": "The variable must be declared inside the `button` rule"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "What is the main advantage of defining colours and spacing as CSS variables in `:root`?",
+      "points": 1,
+      "explanation": "Variables are the basis of a design system: one source for colours, spacing and typography.",
+      "options": [
+        {
+          "text": "The page loads faster because variables are cached by the browser"
+        },
+        {
+          "text": "Variables make CSS work in browsers without JavaScript"
+        },
+        {
+          "text": "Variables give rules a higher specificity"
+        },
+        {
+          "text": "You change a value in one place and everything that uses it updates, which keeps the design consistent",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "```css\n.tabledemo .tabledemo-cell { padding: 10px 16px; }\n```\nWhich elements get the padding?",
+      "points": 1,
+      "explanation": "A space between two selectors is a descendant combinator: the second element must sit inside the first.",
+      "options": [
+        {
+          "text": "Elements with class `tabledemo-cell` that are inside an element with class `tabledemo`",
+          "correct": true
+        },
+        {
+          "text": "Every element that has both classes `tabledemo` and `tabledemo-cell`"
+        },
+        {
+          "text": "Elements with class `tabledemo` and all elements with class `tabledemo-cell`"
+        },
+        {
+          "text": "Only the first `tabledemo-cell` on the page"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "What does `padding: 16px 24px;` mean?",
+      "points": 1,
+      "explanation": "Two values: top/bottom, then left/right. Four values go clockwise from the top.",
+      "options": [
+        {
+          "text": "16px on the left and right, 24px on the top and bottom"
+        },
+        {
+          "text": "16px on the top, 24px on the bottom"
+        },
+        {
+          "text": "16px on the top and bottom, 24px on the left and right",
+          "correct": true
+        },
+        {
+          "text": "16px of padding and 24px of margin"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 2 – CSS",
+      "text": "What is the difference between `padding` and `margin`?",
+      "points": 1,
+      "explanation": "Padding is part of the box, margin is the space between boxes.",
+      "options": [
+        {
+          "text": "Padding is space inside the border (it gets the background colour), margin is space outside the border between elements",
+          "correct": true
+        },
+        {
+          "text": "Padding is space outside the border, margin is space inside it"
+        },
+        {
+          "text": "Padding is only for text, margin is only for images"
+        },
+        {
+          "text": "There is no difference, they are aliases"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "What is the main difference between Flexbox and Grid?",
+      "points": 1,
+      "explanation": "Flex arranges children in one direction; grid arranges them in rows and columns at the same time.",
+      "options": [
+        {
+          "text": "Flexbox handles vertical alignment exclusively, while Grid handles horizontal alignment exclusively."
+        },
+        {
+          "text": "Flexbox is used exclusively for legacy browsers, whereas Grid is exclusively supported on modern mobile devices."
+        },
+        {
+          "text": "Flexbox is designed for one-dimensional layouts (either a row or a column), whereas Grid is designed for two-dimensional layouts (rows and columns simultaneously).",
+          "correct": true
+        },
+        {
+          "text": "Flexbox requires an external JavaScript library to calculate element sizes, whereas Grid is a native CSS specification."
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "You set `display: flex` on an element. Which elements are arranged by it?",
+      "points": 1,
+      "explanation": "A layout mode is set on the parent and arranges its direct children. That is why your HTML structure decides which layouts are possible.",
+      "options": [
+        {
+          "text": "The element itself and all of its siblings"
+        },
+        {
+          "text": "All descendants of the element, at every level"
+        },
+        {
+          "text": "The direct children of the element",
+          "correct": true
+        },
+        {
+          "text": "Only the first child of the element"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\n.highlight { width: 300px; height: 100px; background: navy; }\n```\n```html\n<p>Some <span class=\"highlight\">text</span> here</p>\n```\nThe span stays as wide as its text. Why?",
+      "points": 1,
+      "explanation": "Inline elements flow with the text. Use `display: inline-block` (or `block`) to make width and height apply.",
+      "options": [
+        {
+          "text": "The `<p>` element overrides the width of all its children"
+        },
+        {
+          "text": "`height` only works when `width` is given in percent"
+        },
+        {
+          "text": "The background colour hides the extra width"
+        },
+        {
+          "text": "A `<span>` is an inline element, and inline elements ignore `width` and `height`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\n.box { width: 300px; padding: 20px; border: 2px solid; }\n```\nWithout any `box-sizing` rule, how wide is the box on screen?",
+      "points": 1,
+      "explanation": "By default `width` is only the content: 300 + 2×20 padding + 2×2 border = 344px.",
+      "options": [
+        {
+          "text": "300px"
+        },
+        {
+          "text": "344px",
+          "correct": true
+        },
+        {
+          "text": "322px"
+        },
+        {
+          "text": "340px"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "What does `box-sizing: border-box` do?",
+      "points": 1,
+      "explanation": "With `border-box`, `width: 300px` means the whole box is 300px; the content area shrinks to make room.",
+      "options": [
+        {
+          "text": "It adds a border to every element"
+        },
+        {
+          "text": "It removes the margin from every element"
+        },
+        {
+          "text": "It makes `width` include the padding and the border, so the whole box is exactly that width",
+          "correct": true
+        },
+        {
+          "text": "It makes elements behave as block elements"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\nnav { display: flex; justify-content: space-between; align-items: center; }\n```\nWith the default `flex-direction: row`, what does `align-items: center` do?",
+      "points": 1,
+      "explanation": "`justify-content` works on the main axis (horizontal in a row), `align-items` works on the cross axis (vertical in a row).",
+      "options": [
+        {
+          "text": "It centres the items vertically (on the cross axis)",
+          "correct": true
+        },
+        {
+          "text": "It centres the items horizontally"
+        },
+        {
+          "text": "It puts equal space between the items"
+        },
+        {
+          "text": "It centres the text inside each item"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "Which CSS centres a child both horizontally and vertically inside its parent?",
+      "points": 1,
+      "explanation": "With flexbox, `justify-content` centres on the main axis and `align-items` on the cross axis.",
+      "options": [
+        {
+          "text": "`.parent { text-align: center; vertical-align: middle; }`"
+        },
+        {
+          "text": "`.child { margin: center; }`"
+        },
+        {
+          "text": "`.parent { display: flex; justify-content: center; align-items: center; }`",
+          "correct": true
+        },
+        {
+          "text": "`.parent { display: grid; grid-template-columns: center; }`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\n.layout { display: grid; grid-template-columns: 200px 1fr; }\n```\nWhat is the result?",
+      "points": 1,
+      "explanation": "`1fr` means one fraction of the remaining space.",
+      "options": [
+        {
+          "text": "Two rows: one of 200px and one that fills the rest"
+        },
+        {
+          "text": "Two columns of 200px each"
+        },
+        {
+          "text": "Two columns: a fixed 200px column and a column that takes the remaining space",
+          "correct": true
+        },
+        {
+          "text": "One column of 200px; `1fr` is ignored"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\n.cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n}\n```\nWhat does this do?",
+      "points": 1,
+      "explanation": "The browser works out how many columns fit. It is responsive without a single media query.",
+      "options": [
+        {
+          "text": "It always creates exactly 4 columns of 250px"
+        },
+        {
+          "text": "It creates one column of 250px and puts the rest of the cards in a second row"
+        },
+        {
+          "text": "It only works when there is a media query for mobile"
+        },
+        {
+          "text": "It creates as many columns as fit, each at least 250px wide and stretching to fill the row",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "A row of navigation links in a flex container overflows the screen on mobile. Which property lets the items continue on the next line?",
+      "points": 1,
+      "explanation": "By default flex items stay on one line. `flex-wrap: wrap` allows them to wrap.",
+      "options": [
+        {
+          "text": "`flex-direction: row`"
+        },
+        {
+          "text": "`align-items: stretch`"
+        },
+        {
+          "text": "`justify-content: space-around`"
+        },
+        {
+          "text": "`flex-wrap: wrap`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "What does working **mobile-first** mean?",
+      "points": 1,
+      "explanation": "Default = small viewport. Media queries add complexity as the screen gets bigger.",
+      "options": [
+        {
+          "text": "You write the default styles for small screens and add styles for larger screens in `min-width` media queries",
+          "correct": true
+        },
+        {
+          "text": "You build a separate website for mobile devices"
+        },
+        {
+          "text": "You write styles for desktop and hide elements on mobile with `display: none`"
+        },
+        {
+          "text": "You only test on a phone and never on a desktop"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\n@media (min-width: 768px) {\n  .cards { grid-template-columns: repeat(2, 1fr); }\n}\n```\nWhen does this rule apply?",
+      "points": 1,
+      "explanation": "`min-width: 768px` means: this CSS applies when the viewport is 768px or wider.",
+      "options": [
+        {
+          "text": "When the viewport is at most 768px wide"
+        },
+        {
+          "text": "Only on devices with exactly 768px"
+        },
+        {
+          "text": "Only when the page is printed"
+        },
+        {
+          "text": "When the viewport is at least 768px wide",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "The root font size is 16px. How large is `1.5rem`?",
+      "points": 1,
+      "explanation": "`rem` is relative to the root font size: 1.5 × 16 = 24px. (`em` is the one that depends on the current element.)",
+      "options": [
+        {
+          "text": "1.5px"
+        },
+        {
+          "text": "16px"
+        },
+        {
+          "text": "Depends on the font size of the parent element"
+        },
+        {
+          "text": "24px",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "What is the main difference between Bootstrap and Tailwind?",
+      "points": 1,
+      "explanation": "Bootstrap = component library (`btn`, `card`). Tailwind = utility-first (`flex`, `pt-4`, `text-gray-700`).",
+      "options": [
+        {
+          "text": "Bootstrap gives pre-styled components and a grid, Tailwind gives small single-purpose utility classes that you combine in the HTML",
+          "correct": true
+        },
+        {
+          "text": "Bootstrap is for CSS, Tailwind is for JavaScript"
+        },
+        {
+          "text": "Bootstrap only works with Vue, Tailwind only works with React"
+        },
+        {
+          "text": "There is no difference, Tailwind is the new name of Bootstrap"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "Which method would you use if you wanted to create a new array containing only the items that satisfy a specific condition?",
+      "points": 1,
+      "explanation": "`filter` keeps the elements that pass a test and returns a new, possibly shorter array.",
+      "options": [
+        {
+          "text": "map()"
+        },
+        {
+          "text": "forEach()"
+        },
+        {
+          "text": "reduce()"
+        },
+        {
+          "text": "filter()",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "```js\nconst names = products.map(p => p.name);\n```\nWhat is `names`?",
+      "points": 1,
+      "explanation": "`map` transforms every element and returns a new array of the same length. The original array is not changed.",
+      "options": [
+        {
+          "text": "The `products` array, with every product changed to its name"
+        },
+        {
+          "text": "The name of the first product"
+        },
+        {
+          "text": "`undefined`, because `map` does not return anything"
+        },
+        {
+          "text": "A new array with the same length as `products`, containing the names",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "```js\nconst total = products.reduce((sum, p) => sum + p.price, 0);\n```\nWhat is the purpose of the `0`?",
+      "points": 1,
+      "explanation": "`reduce` boils the array down to one value. The second argument is the starting value of the running total. Always provide it.",
+      "options": [
+        {
+          "text": "It is the index where reduce starts"
+        },
+        {
+          "text": "It is the value returned when the array is empty and otherwise ignored"
+        },
+        {
+          "text": "It limits the result to positive numbers"
+        },
+        {
+          "text": "It is the starting value of the accumulator (`sum`)",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "```js\nconst products = [\n  { name: 'Laptop', price: 1200, inStock: true },\n  { name: 'Phone', price: 800, inStock: false },\n  { name: 'Tablet', price: 600, inStock: true },\n];\nconst result = products\n  .filter(p => p.inStock)\n  .filter(p => p.price < 1000)\n  .reduce((total, p) => total + p.price, 0);\n```\nWhat is `result`?",
+      "points": 1,
+      "explanation": "In stock: Laptop and Tablet. Under 1000: Tablet. Sum of prices: 600.",
+      "options": [
+        {
+          "text": "1400"
+        },
+        {
+          "text": "1800"
+        },
+        {
+          "text": "600",
+          "correct": true
+        },
+        {
+          "text": "2600"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "What is a higher-order function?",
+      "points": 1,
+      "explanation": "`map`, `filter` and `reduce` are higher-order functions: you pass them a function.",
+      "options": [
+        {
+          "text": "A function that is declared at the top of a file"
+        },
+        {
+          "text": "A function that runs before all other functions"
+        },
+        {
+          "text": "A function with more than three parameters"
+        },
+        {
+          "text": "A function that takes another function as an argument (or returns one)",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "Which statement describes a **pure function**?",
+      "points": 1,
+      "explanation": "No side effects (no global variables, no DOM changes) and the result depends only on the input.",
+      "options": [
+        {
+          "text": "A function that has no parameters"
+        },
+        {
+          "text": "A function written with the arrow syntax"
+        },
+        {
+          "text": "A function that only works on numbers"
+        },
+        {
+          "text": "A function that always returns the same output for the same input and changes nothing outside itself",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "```js\nconst numbers = [1, 2, 3];\nconst doubled = numbers.map(n => n * 2);\n```\nWhat is `numbers` afterwards?",
+      "points": 1,
+      "explanation": "`map` does not mutate the original array (immutability). It returns a new array.",
+      "options": [
+        {
+          "text": "`[1, 2, 3]`",
+          "correct": true
+        },
+        {
+          "text": "`[2, 4, 6]`"
+        },
+        {
+          "text": "`[1, 2, 3, 2, 4, 6]`"
+        },
+        {
+          "text": "`undefined`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "```js\nconst toObject = (n) => { value: n };\nconsole.log(toObject(5));\n```\nWhat is logged?",
+      "points": 1,
+      "explanation": "The braces are read as a function body, not as an object, and there is no `return`. To return an object literal, wrap it in parentheses: `(n) => ({ value: n })`.",
+      "options": [
+        {
+          "text": "`{ value: 5 }`"
+        },
+        {
+          "text": "`undefined`",
+          "correct": true
+        },
+        {
+          "text": "`5`"
+        },
+        {
+          "text": "A syntax error"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "```js\nfunction factorial(n) {\n  return n * factorial(n - 1);\n}\n```\nWhat is wrong with this recursive function?",
+      "points": 1,
+      "explanation": "Every recursive function needs a base case, such as `if (n <= 0) return 1;`.",
+      "options": [
+        {
+          "text": "Functions are not allowed to call themselves"
+        },
+        {
+          "text": "It has no stopping case, so it keeps calling itself until the program crashes",
+          "correct": true
+        },
+        {
+          "text": "It should use `map` instead of `*`"
+        },
+        {
+          "text": "Nothing, it correctly returns the factorial"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "What is logged by `console.log(\"5\" + 3)`?",
+      "points": 1,
+      "explanation": "With `+` and a string, JavaScript concatenates: `\"53\"`. This kind of weirdness is one reason the course uses TypeScript.",
+      "options": [
+        {
+          "text": "`\"53\"`",
+          "correct": true
+        },
+        {
+          "text": "`8`"
+        },
+        {
+          "text": "`NaN`"
+        },
+        {
+          "text": "An error, because you can't add a string and a number"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "What is the difference between a multi-page application and a single-page application (SPA)?",
+      "points": 1,
+      "explanation": "An SPA fetches only the data it needs and updates the page in place, while the URL and back button still work.",
+      "options": [
+        {
+          "text": "In an SPA the browser loads one HTML page and JavaScript updates the DOM on navigation; in a multi-page application the server sends a full new page on every click",
+          "correct": true
+        },
+        {
+          "text": "An SPA has only one page of content; a multi-page application has several"
+        },
+        {
+          "text": "A multi-page application needs a framework, an SPA does not"
+        },
+        {
+          "text": "An SPA can't change the URL in the address bar"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "According to the lessons, what are the two things a frontend framework like Vue or React does for you?",
+      "points": 1,
+      "explanation": "You declare what the screen should look like for the data; the framework does the DOM updates.",
+      "options": [
+        {
+          "text": "It writes your CSS and it hosts your website"
+        },
+        {
+          "text": "It replaces HTML with JavaScript and it compiles your code to C#"
+        },
+        {
+          "text": "It stores your data in a database and handles user logins"
+        },
+        {
+          "text": "It lets you describe the UI as a function of state, and it updates the DOM efficiently when the state changes",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "Why does a modern frontend project need a build step (a tool like Vite)?",
+      "points": 1,
+      "explanation": "The build tool follows the imports, converts TypeScript to JavaScript and produces a small set of optimised files.",
+      "options": [
+        {
+          "text": "Because browsers can only run one JavaScript file per page"
+        },
+        {
+          "text": "Because HTML must be converted to JavaScript before a browser can show it"
+        },
+        {
+          "text": "Because the build step uploads the code to the server"
+        },
+        {
+          "text": "Because the browser doesn't understand TypeScript, and loading hundreds of separate files would be too slow",
+          "correct": true
+        }
+      ]
+    }
+  ]
+}

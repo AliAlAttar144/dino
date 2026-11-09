@@ -1,0 +1,178 @@
+{
+  "title": "INFWAD – Oefentoets 2: HTML, CSS, JavaScript & TypeScript",
+  "description": "The HTML, CSS, JavaScript and TypeScript questions from the second practice exam (13 questions). The React and ASP.NET Core questions are left out.",
+  "shuffleQuestions": false,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "CSS – Specificity",
+      "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>CSS Specificity Example</title>\n    <style>\n        p {\n            color: blue !important;\n        }\n\n        #main p {\n            color: red;\n        }\n\n        p.content {\n            color: yellow;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"wrapper\" id=\"main\">\n        <p class=\"content\" style=\"color: yellow;\">Example</p>\n    </div>\n</body>\n</html>\n```\n\nWhat will be the color of the text in the paragraph?",
+      "points": 1,
+      "explanation": "A declaration with `!important` wins over all normal declarations, even over an id selector and an inline `style` attribute. So `color: blue !important` wins.",
+      "options": [
+        { "text": "Green" },
+        { "text": "Blue", "correct": true },
+        { "text": "Red" },
+        { "text": "Yellow" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "HTML – Headings",
+      "text": "What is the correct element for the most important text heading?",
+      "points": 1,
+      "explanation": "`<h1>` is the most important heading and `<h6>` the least important. `<header>` is a section container and `<head>` holds metadata, not visible content.",
+      "options": [
+        { "text": "`<header>`" },
+        { "text": "`<h1>`", "correct": true },
+        { "text": "`<head>`" },
+        { "text": "`<h6>`" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "HTML – Valid documents",
+      "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>HTML Example</title>\n</head>\n<body>\n    <div>\n        <p>This is a paragraph with <strong>bold text</p></strong>\n        <p>\n            This is another paragraph,\n            with a <link href=\"page.html\">link to another page</link>\n        </p>\n    </div>\n</body>\n</html>\n```\n\nWhich part(s) of this HTML5 document contain(s) mistakes?",
+      "points": 1,
+      "explanation": "First paragraph: the tags are closed in the wrong order (`</p></strong>` must be `</strong></p>`). Second paragraph: `<link>` is a void element for the `<head>` (e.g. stylesheets); a clickable link is `<a href=\"page.html\">`.",
+      "options": [
+        { "text": "The second paragraph" },
+        { "text": "The first paragraph" },
+        { "text": "Everything is correct" },
+        { "text": "Both the first and second paragraph", "correct": true }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "HTML – Document structure",
+      "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>HTML Example</title>\n</head>\n<section id=\"contact\">\n    <h1>Contact Us</h1>\n    <form>\n        <label for=\"name\">Name:</label>\n        <input type=\"text\" id=\"name\" name=\"name\">\n        <br>\n        <label for=\"email\">Email:</label>\n        <input type=\"email\" id=\"email\" name=\"email\">\n        <br>\n        <label for=\"message\">Message:</label>\n        <textarea id=\"message\" name=\"message\"></textarea>\n        <br>\n        <button type=\"submit\">Send</button>\n    </form>\n</section>\n</html>\n```\n\nWhat is incorrect about this HTML5 document?",
+      "points": 1,
+      "explanation": "The visible content (`<section>`) must be inside a `<body>` element, which is missing. `<textarea>` is supported by all browsers and `<br>` is a void element that needs no closing tag in HTML5.",
+      "options": [
+        { "text": "The textarea is not supported by current browsers" },
+        { "text": "All the answers are correct" },
+        { "text": "The body is missing", "correct": true },
+        { "text": "The br tags are not closed correctly" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "CSS – Selectors",
+      "text": "Which CSS selector is correct for targeting an element with `class=\"header\"`?",
+      "points": 1,
+      "explanation": "A dot selects by class (`.header`), a hash selects by id (`#header`). `@` starts an at-rule such as `@media`.",
+      "options": [
+        { "text": "`#header`" },
+        { "text": "`element.header`" },
+        { "text": "`.header`", "correct": true },
+        { "text": "`@header`" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "HTML & CSS – Semantics",
+      "text": "Why is it important to use semantic names with HTML and CSS?",
+      "points": 1,
+      "explanation": "Semantic elements and class names help screen readers, search engines and developers, and make later changes less error-prone. All the statements are true.",
+      "options": [
+        { "text": "All the answers are true", "correct": true },
+        { "text": "It improves accessibility" },
+        { "text": "It's good for SEO" },
+        { "text": "It lowers the risk of mistakes when changing code later" },
+        { "text": "It makes the code easier to read for developers" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "JavaScript – The DOM",
+      "text": "Which statement is true?",
+      "points": 1,
+      "explanation": "The DOM is a browser API (a W3C/WHATWG standard), not part of the JavaScript language. It is a tree of nodes, including text and comment nodes, and you can change it at any time after the page loads.",
+      "options": [
+        { "text": "The DOM is part of the JavaScript language specification." },
+        { "text": "The DOM cannot be modified once the page is loaded." },
+        { "text": "The DOM is an API that represents the document as a node tree and is independent of JavaScript.", "correct": true },
+        { "text": "The DOM only contains element nodes, not text or comment nodes." }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "JavaScript – The DOM",
+      "text": "Which method is used to create a new HTML element using JavaScript?",
+      "points": 1,
+      "explanation": "`document.createElement('input')` creates the element; you then add it to the page with e.g. `appendChild` or `append`. The other methods do not exist.",
+      "options": [
+        { "text": "`document.newElement('input')`" },
+        { "text": "`document.createElement('input')`", "correct": true },
+        { "text": "`document.insertElement('input')`" },
+        { "text": "`document.addElement('input')`" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "TypeScript – Arrays",
+      "text": "```ts\ntype Admin = {\n  kind: \"admin\";\n  id: number;\n  name: string;\n  permissions: string;\n}\n\ntype Member = {\n  kind: \"member\", id: number, name: string, points: number;\n}\n\ntype User = Admin | Member;\n\nconst apiUsers: Array<User> = [\n  { kind: \"member\", id: 1, name: \"Alice\", points: 42 },\n  { kind: \"admin\", id: 2, name: \"Bob\", permissions: [\"read\", \"write\"] },\n  { kind: \"member\", id: 3, name: \"Charlie\", points: 5 }\n];\n```\n\nLook at the TypeScript code above. What would you do if you wanted to use only the names of users in your component?",
+      "points": 1,
+      "explanation": "`map` turns every element into something new, so `map(x => x.name)` gives an array of names. `map` and `reduce` need a function, not `name`, and `filter` only keeps or drops elements (it would return the user objects).",
+      "options": [
+        { "text": "`const onlyNames = apiUsers.map(name);`" },
+        { "text": "`const onlyNames = apiUsers.reduce(name);`" },
+        { "text": "`const onlyNames = apiUsers.filter(x=>x.name);`" },
+        { "text": "`const onlyNames = apiUsers.map(x=>x.name);`", "correct": true }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "TypeScript – Block scope",
+      "text": "```ts\nconst x = 1;\nconsole.log(x)\n{\n  let x = 2;\n  console.log(x)\n}\nconsole.log(x)\n```\n\nWhat will be the order of the console output for the TypeScript code above?",
+      "points": 1,
+      "explanation": "`let` is block-scoped: the inner `x` only exists inside `{ }` and shadows the outer one there. After the block, the outer `x` (1) is used again.",
+      "options": [
+        { "text": "1 2" },
+        { "text": "1 2 2" },
+        { "text": "2 1 2" },
+        { "text": "1 2 1", "correct": true }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "JavaScript – Asynchronous code",
+      "text": "What is the main reason JavaScript can handle asynchronous tasks despite being single-threaded?",
+      "points": 1,
+      "explanation": "Web APIs (timers, fetch, events) do the waiting outside the JavaScript thread. When they finish, their callbacks go into a queue, and the event loop runs them once the call stack is empty.",
+      "options": [
+        { "text": "It secretly spawns multiple JavaScript threads" },
+        { "text": "The JavaScript engine uses the Event Loop to coordinate tasks handled by Web APIs", "correct": true },
+        { "text": "All asynchronous tasks are executed in parallel on the CPU" },
+        { "text": "JavaScript pauses synchronous code until asynchronous tasks finish" }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "JavaScript – Event loop",
+      "text": "```js\nconsole.log(\"A\")\n\nsetTimeout(() => console.log(\"B\"), 10)\n\nconsole.log(\"C\")\n```\n\nWhat is the correct console.log output order for the JavaScript code above?",
+      "points": 1,
+      "explanation": "All synchronous code runs first (A, then C). The `setTimeout` callback is only run by the event loop after the timer is done and the call stack is empty, so B comes last.",
+      "options": [
+        { "text": "B A C" },
+        { "text": "A B C" },
+        { "text": "C A B" },
+        { "text": "A C B", "correct": true }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "TypeScript – Generics",
+      "text": "```ts\ntype Success<T> = {\n  status: 'OK';\n  result: T;\n};\n\ntype Fail = {\n  status: 'Fail';\n  reason: string;\n};\n\ntype ReturnType<T> = Success<T> | Fail;\n\nfunction MysteryFunction<T, R>(\n  arr: Array<T>,\n  fn: (val: T, index: number) => R\n): ReturnType<R[]> {\n  if (arr.length <= 0) return { status: 'Fail', reason: 'Empty array' };\n\n  const result: Array<R> = [];\n\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] == undefined)\n      return { status: 'Fail', reason: `Empty at index ${i}` };\n    result.push(fn(arr[i]!, i));\n  }\n\n  return { status: 'OK', result: result };\n}\n\n// Example usage\nconst res = MysteryFunction([1, 2, 3], (x) => x + 1);\n\nif (res.status == 'Fail') {\n  console.log(res.reason);\n} else {\n  console.log(res.result);\n}\n```\n\nWhat is the console output of the TypeScript code above?",
+      "points": 1,
+      "explanation": "The array is not empty and has no `undefined` values, so `fn` (x + 1) is applied to every element, like `map`. The result is `{ status: 'OK', result: [2, 3, 4] }`, so `[2, 3, 4]` is logged.",
+      "options": [
+        { "text": "`[1, 2, 3]`" },
+        { "text": "`[2, 3, 4]`", "correct": true },
+        { "text": "`Fail`" },
+        { "text": "`Empty array`" }
+      ]
+    }
+  ]
+}
