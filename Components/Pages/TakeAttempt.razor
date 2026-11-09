@@ -50,7 +50,7 @@ else
                     var q = questions[i];
                     var isAnswered = IsAnswered(q);
                     var flagged = _session.IsFlagged(q.Id);
-                    <button type="button" class="qnav-item @(isAnswered ? "answered" : "") @(index == _current ? "current" : "")"
+                    <button type="button" class="qnav-item @NavClass(q, isAnswered) @(index == _current ? "current" : "")"
                             aria-current="@(index == _current ? "step" : null)"
                             aria-label="@($"Vraag {index + 1}{(isAnswered ? ", beantwoord" : ", niet beantwoord")}{(flagged ? ", gemarkeerd" : "")}")"
                             @onclick="() => GoToAsync(index)">
@@ -79,6 +79,9 @@ else
                             {
                                 var q = questions[i];
                                 <QuestionView @key="q.Id" Question="q" Number="i + 1" Selected="_session.Selected(q.Id)" IdPrefix="t"
+                                              Review="IsRevealed(q)" Feedback="true" Result="LiveResult(q)"
+                                              OnCheck="() => Reveal(q)" CanCheck="IsAnswered(q)"
+                                              CursorOptionId="CursorFor(q)" KeyHint="@(i == _current ? KeyHintFor(q) : null)"
                                               Flagged="_session.IsFlagged(q.Id)"
                                               StatusText="@StatusFor(q.Id)"
                                               OnSelect="s => SelectAsync(q, s)"
@@ -90,6 +93,9 @@ else
                         {
                             var q = questions[_current];
                             <QuestionView @key="q.Id" Question="q" Number="_current + 1" Selected="_session.Selected(q.Id)" IdPrefix="t"
+                                          Review="IsRevealed(q)" Feedback="true" Result="LiveResult(q)"
+                                          OnCheck="() => Reveal(q)" CanCheck="IsAnswered(q)"
+                                          CursorOptionId="CursorFor(q)" KeyHint="@KeyHintFor(q)"
                                           Flagged="_session.IsFlagged(q.Id)"
                                           StatusText="@StatusFor(q.Id)"
                                           OnSelect="s => SelectAsync(q, s)"
@@ -175,6 +181,13 @@ else
     private readonly SemaphoreSlim _gate = new(1, 1);
     private Timer? _timer;
 
+    // Directe feedback: vragen waarvan het antwoord al is getoond (antwoord ligt dan vast).
+    private readonly HashSet<int> _revealed = [];
+    // Toetsenbord: index van de aangewezen optie binnen de huidige vraag.
+    private int _cursor;
+    private string? _scrollAfterRender;
+    private DotNetObjectReference<TakeAttempt>? _selfRef;
+
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
@@ -190,6 +203,10 @@ else
             // Begin bij de eerste onbeantwoorde vraag bij hervatten.
             var first = _session.Questions.FindIndex(q => !IsAnswered(q));
             _current = first < 0 ? 0 : first;
+            // Bij hervatten zijn eerder beantwoorde vragen al nagekeken.
+            _revealed.Clear();
+            foreach (var q in _session.Questions.Where(IsAnswered)) _revealed.Add(q.Id);
+            ResetCursor();
             // Ververs "Bijgewerkt zojuist" elke halve minuut.
             _timer ??= new Timer(_ => InvokeAsync(StateHasChanged), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
         }
@@ -211,6 +228,7 @@ else
     {
         if (_session is null || index < 0 || index >= _session.Questions.Count) return;
         _current = index;
+        ResetCursor();
         if (_showAll)
             await JS.InvokeVoidAsync("toetsr.scrollToId", $"t-vraag-{index + 1}", true);
         else
@@ -228,18 +246,141 @@ else
 
     private async Task SelectAsync(Question q, OptionSelection selection)
     {
-        if (_session is null) return;
+        if (_session is null || IsRevealed(q)) return;
         var index = _session.Questions.IndexOf(q);
-        if (index >= 0) _current = index;
+        if (index >= 0 && index != _current) { _current = index; ResetCursor(); }
+        var optionIndex = q.Options.FindIndex(o => o.Id == selection.OptionId);
+        if (optionIndex >= 0) _cursor = optionIndex;
 
         // Direct tonen, daarna opslaan.
         var answer = EnsureAnswer(q.Id);
         answer.SelectedOptionIds = Registry.Get(q.Type).ApplySelection(q, answer.SelectedOptionIds, selection.OptionId, selection.Selected);
         await SaveAsync(q.Id, () => AttemptService.SelectOptionAsync(Id, q, selection.OptionId, selection.Selected));
+        // Eén goed antwoord: meteen laten zien of het klopt.
+        if (q.Type == QuestionType.SingleChoice && selection.Selected) Reveal(q);
+    }
+
+    private bool IsRevealed(Question q) => _revealed.Contains(q.Id);
+
+    private QuestionResult? LiveResult(Question q)
+    {
+        if (!IsRevealed(q)) return null;
+        var selected = _session!.Selected(q.Id);
+        var handler = Registry.Get(q.Type);
+        var score = handler.Score(q, selected);
+        var state = !handler.IsAnswered(q, selected) ? ResultState.Unanswered
+            : score >= q.Points - 0.0001 ? ResultState.Correct
+            : score > 0 ? ResultState.Partial
+            : ResultState.Wrong;
+        return new QuestionResult(score, q.Points, state);
+    }
+
+    private string NavClass(Question q, bool isAnswered) => LiveResult(q)?.State switch
+    {
+        ResultState.Correct => "correct",
+        ResultState.Partial => "partial",
+        ResultState.Wrong or ResultState.Unanswered => "wrong",
+        _ => isAnswered ? "answered" : "",
+    };
+
+    private void Reveal(Question q)
+    {
+        if (!IsAnswered(q) || !_revealed.Add(q.Id)) return;
+        _scrollAfterRender = $"#t-vraag-{_session!.Questions.IndexOf(q) + 1} .explanation, #t-vraag-{_session.Questions.IndexOf(q) + 1} .feedback";
+        StateHasChanged();
+    }
+
+    private static bool HasCursor(Question q) => q.Type != QuestionType.Dropdown && q.Options.Count > 0;
+
+    private int? CursorFor(Question q)
+    {
+        var questions = _session!.Questions;
+        if (_current >= questions.Count || questions[_current].Id != q.Id || !HasCursor(q) || IsRevealed(q)) return null;
+        return q.Options[Math.Clamp(_cursor, 0, q.Options.Count - 1)].Id;
+    }
+
+    private void ResetCursor()
+    {
+        _cursor = 0;
+        if (_session is null || _current >= _session.Questions.Count) return;
+        var q = _session.Questions[_current];
+        var selected = _session.Selected(q.Id);
+        var i = q.Options.FindIndex(o => selected.Contains(o.Id));
+        if (i >= 0) _cursor = i;
+    }
+
+    private string KeyHintFor(Question q)
+    {
+        if (IsRevealed(q))
+            return _current == _session!.Questions.Count - 1
+                ? "<kbd>Enter</kbd> inleveren"
+                : "<kbd>Enter</kbd> volgende vraag";
+        return q.Type switch
+        {
+            QuestionType.SingleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Enter</kbd> controleren",
+            QuestionType.MultipleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Spatie</kbd> aan/uit · <kbd>Enter</kbd> controleren",
+            _ => "Vul alle gaten in · <kbd>Enter</kbd> controleren",
+        };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_session is null) return;
+        if (_selfRef is null)
+        {
+            _selfRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("toetsr.registerExamKeys", _selfRef);
+        }
+        if (_scrollAfterRender is { } selector)
+        {
+            _scrollAfterRender = null;
+            await JS.InvokeVoidAsync("toetsr.scrollIntoViewIfNeeded", selector);
+        }
+    }
+
+    /// <summary>Toetsenbord: up/down = optie aanwijzen, toggle = aan/uit (meerdere), enter = controleren of volgende, prev/next = vraag.</summary>
+    [JSInvokable]
+    public async Task OnExamKey(string key)
+    {
+        if (_session is null || _submitOpen || _session.Questions.Count == 0) return;
+        var q = _session.Questions[_current];
+        switch (key)
+        {
+            case "up" or "down" when HasCursor(q) && !IsRevealed(q):
+                _cursor = Math.Clamp(_cursor + (key == "down" ? 1 : -1), 0, q.Options.Count - 1);
+                _scrollAfterRender = "#exam-main .option.cursor";
+                break;
+            case "toggle" when q.Type == QuestionType.MultipleChoice && !IsRevealed(q):
+            {
+                var option = q.Options[Math.Clamp(_cursor, 0, q.Options.Count - 1)];
+                await SelectAsync(q, new OptionSelection(option.Id, !_session.Selected(q.Id).Contains(option.Id)));
+                break;
+            }
+            case "enter" when IsRevealed(q):
+                if (_current < _session.Questions.Count - 1) await GoToAsync(_current + 1);
+                else _submitOpen = true;
+                break;
+            case "enter" when q.Type == QuestionType.SingleChoice && HasCursor(q):
+                await SelectAsync(q, new OptionSelection(q.Options[Math.Clamp(_cursor, 0, q.Options.Count - 1)].Id, true));
+                break;
+            case "enter":
+                Reveal(q);
+                break;
+            case "prev":
+                await GoToAsync(_current - 1);
+                break;
+            case "next":
+                await GoToAsync(_current + 1);
+                break;
+            default:
+                return;
+        }
+        StateHasChanged();
     }
 
     private async Task ClearAsync(Question q)
     {
+        if (IsRevealed(q)) return;
         EnsureAnswer(q.Id).SelectedOptionIds = [];
         await SaveAsync(q.Id, () => AttemptService.ClearAnswerAsync(Id, q.Id));
     }
@@ -303,6 +444,12 @@ else
 
     public void Dispose()
     {
+        if (_selfRef is not null)
+        {
+            try { _ = JS.InvokeVoidAsync("toetsr.unregisterExamKeys").AsTask().ContinueWith(_ => { }); }
+            catch (JSDisconnectedException) { }
+            _selfRef.Dispose();
+        }
         _timer?.Dispose();
         _gate.Dispose();
     }

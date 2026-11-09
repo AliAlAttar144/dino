@@ -19,6 +19,9 @@ public abstract class QuestionInputBase : ComponentBase
     [Parameter] public bool Disabled { get; set; }
 
     [Parameter] public bool ShowOptionPoints { get; set; }
+
+    /// <summary>Optie die met het toetsenbord is aangewezen (pijltjes / W en S).</summary>
+    [Parameter] public int? CursorOptionId { get; set; }
     [Parameter] public string IdPrefix { get; set; } = "q";
     [Parameter] public EventCallback<OptionSelection> OnSelect { get; set; }
 

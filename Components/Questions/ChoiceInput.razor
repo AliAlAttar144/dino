@@ -16,7 +16,7 @@
             var selected = IsSelected(option);
             var id = $"{InputName}-o{option.Id}";
             <li @key="option.Id">
-                <label class="option @(selected ? "selected" : "") @ReviewClass(option, selected) @(Review || Disabled ? "readonly" : "")" for="@id">
+                <label class="option @(selected ? "selected" : "") @(!Review && CursorOptionId == option.Id ? "cursor" : "") @ReviewClass(option, selected) @(Review || Disabled ? "readonly" : "")" for="@id">
                     @if (multi)
                     {
                         <input id="@id" type="checkbox" name="@InputName" checked="@selected" disabled="@(Review || Disabled)"

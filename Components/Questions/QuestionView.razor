@@ -10,6 +10,7 @@
         [nameof(QuestionInputBase.ShowOptionPoints)] = ShowOptionPoints,
         [nameof(QuestionInputBase.IdPrefix)] = IdPrefix,
         [nameof(QuestionInputBase.OnSelect)] = OnSelect,
+        [nameof(QuestionInputBase.CursorOptionId)] = CursorOptionId,
     };
     var anchor = $"{IdPrefix}-vraag-{Number}";
 }
@@ -33,7 +34,17 @@
 
             <DynamicComponent Type="entry.Component" Parameters="parameters" />
 
-            @if (Review && Result is not null)
+            @if (Review && Result is not null && Feedback)
+            {
+                var ok = Result.State == ResultState.Correct;
+                var partial = Result.State == ResultState.Partial;
+                <div class="feedback @(ok ? "ok" : partial ? "partial" : "bad")" role="status" aria-live="polite">
+                    <Icon Name="@(ok ? "check" : "x")" />
+                    <strong>@(ok ? "Goed!" : partial ? "Deels goed" : Result.State == ResultState.Unanswered ? "Niet beantwoord" : "Fout")</strong>
+                    <span class="subtle">@Result.Score.ToString("0.0#") / @Result.MaxScore.ToString("0.0#") punten</span>
+                </div>
+            }
+            else if (Review && Result is not null)
             {
                 <div class="row mt-1">
                     <ResultBadge State="Result.State" />
@@ -46,6 +57,16 @@
                     <strong class="label-sm">Uitleg</strong>
                     <Markdown Text="@Question.Explanation" />
                 </div>
+            }
+            @if (!Review && OnCheck.HasDelegate)
+            {
+                <div class="row mt-1">
+                    <button type="button" class="btn btn-primary btn-sm" disabled="@(!CanCheck)" @onclick="OnCheck">Controleer antwoord</button>
+                </div>
+            }
+            @if (KeyHint is not null)
+            {
+                <div class="key-hint">@((MarkupString)KeyHint)</div>
             }
             @if (!Review && OnClear.HasDelegate && Selected.Count > 0)
             {
@@ -86,4 +107,12 @@
     [Parameter] public EventCallback<OptionSelection> OnSelect { get; set; }
     [Parameter] public EventCallback OnToggleFlag { get; set; }
     [Parameter] public EventCallback OnClear { get; set; }
+
+    /// <summary>Directe feedback tijdens de toets: grote goed/fout-melding i.p.v. het kleine label.</summary>
+    [Parameter] public bool Feedback { get; set; }
+    [Parameter] public EventCallback OnCheck { get; set; }
+    [Parameter] public bool CanCheck { get; set; }
+    [Parameter] public int? CursorOptionId { get; set; }
+    /// <summary>Korte uitleg van de toetsen (HTML met &lt;kbd&gt;).</summary>
+    [Parameter] public string? KeyHint { get; set; }
 }
