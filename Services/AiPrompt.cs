@@ -66,4 +66,44 @@ public static class AiPrompt
         - Maak 10 vragen, met een mix van alle drie de types.
         - Schrijf in het Nederlands, tenzij de leerstof in een andere taal is.
         """;
+
+    /// <summary>Minimale tekst om één vraag in ChatGPT/Claude te plakken, met verzoek om uitleg.
+    /// Het goede antwoord staat er alleen bij als <paramref name="includeAnswer"/> waar is.</summary>
+    public static string ForQuestion(Toetsr.Domain.Question q, bool includeAnswer)
+    {
+        var sb = new System.Text.StringBuilder();
+        static string Letter(int i) => ((char)('A' + i)).ToString();
+
+        switch (q.Type)
+        {
+            case Toetsr.Domain.QuestionType.Dropdown:
+                sb.AppendLine("Fill in each gap ({{n}}) by choosing one option:").AppendLine();
+                sb.AppendLine(q.Text.Trim()).AppendLine();
+                foreach (var gap in q.Options.Where(o => o.GapNumber is not null).GroupBy(o => o.GapNumber!.Value).OrderBy(g => g.Key))
+                    sb.AppendLine($"{{{{{gap.Key}}}}}: {string.Join(" / ", gap.Select(o => o.Text.Trim()))}");
+                if (includeAnswer)
+                {
+                    var answers = q.Options.Where(o => o.IsCorrect && o.GapNumber is not null).OrderBy(o => o.GapNumber)
+                        .Select(o => $"{{{{{o.GapNumber}}}}} = {o.Text.Trim()}");
+                    sb.AppendLine().AppendLine($"Correct answer: {string.Join(", ", answers)}");
+                }
+                break;
+            default:
+                sb.AppendLine(q.Type == Toetsr.Domain.QuestionType.MultipleChoice
+                    ? "Multiple choice (one or more answers are correct):"
+                    : "Multiple choice (exactly one answer is correct):").AppendLine();
+                sb.AppendLine(q.Text.Trim()).AppendLine();
+                for (var i = 0; i < q.Options.Count; i++)
+                    sb.AppendLine($"{Letter(i)}. {q.Options[i].Text.Trim()}");
+                if (includeAnswer)
+                {
+                    var correct = q.Options.Select((o, i) => (o, i)).Where(x => x.o.IsCorrect).Select(x => Letter(x.i));
+                    sb.AppendLine().AppendLine($"Correct answer: {string.Join(", ", correct)}");
+                }
+                break;
+        }
+
+        sb.AppendLine().Append("Give a short but complete explanation.");
+        return sb.ToString();
+    }
 }

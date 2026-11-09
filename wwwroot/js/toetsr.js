@@ -37,7 +37,8 @@ window.toetsr = {
             ArrowDown: "down", s: "down", S: "down",
             Enter: "enter", " ": "toggle",
             ArrowLeft: "prev", ArrowRight: "next",
-            x: "exclude", X: "exclude"
+            x: "exclude", X: "exclude",
+            c: "copy", C: "copy"
         };
         // In de uitsluit-dialoog: links/rechts (of A/D) kiezen, Enter bevestigen, Esc annuleren.
         const dialogKeys = {

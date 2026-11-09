@@ -350,13 +350,13 @@ else
     {
         if (IsRevealed(q))
             return _current == _session!.Questions.Count - 1
-                ? "<kbd>Enter</kbd> inleveren · <kbd>X</kbd> uitsluiten"
-                : "<kbd>Enter</kbd> volgende vraag · <kbd>X</kbd> uitsluiten";
+                ? "<kbd>Enter</kbd> inleveren · <kbd>X</kbd> uitsluiten · <kbd>C</kbd> kopiëren voor AI"
+                : "<kbd>Enter</kbd> volgende vraag · <kbd>X</kbd> uitsluiten · <kbd>C</kbd> kopiëren voor AI";
         return q.Type switch
         {
-            QuestionType.SingleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten",
-            QuestionType.MultipleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Spatie</kbd> aan/uit · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten",
-            _ => "Vul alle gaten in · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten",
+            QuestionType.SingleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten · <kbd>C</kbd> kopiëren voor AI",
+            QuestionType.MultipleChoice => "<kbd>↑</kbd><kbd>↓</kbd> of <kbd>W</kbd><kbd>S</kbd> kiezen · <kbd>Spatie</kbd> aan/uit · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten · <kbd>C</kbd> kopiëren voor AI",
+            _ => "Vul alle gaten in · <kbd>Enter</kbd> controleren · <kbd>X</kbd> uitsluiten · <kbd>C</kbd> kopiëren voor AI",
         };
     }
 
@@ -423,6 +423,9 @@ else
             case "exclude":
                 AskExclude(q);
                 break;
+            case "copy":
+                await CopyForAiAsync(q);
+                return;
             case "prev":
                 await GoToAsync(_current - 1);
                 break;
@@ -433,6 +436,15 @@ else
                 return;
         }
         StateHasChanged();
+    }
+
+    private async Task CopyForAiAsync(Question q)
+    {
+        var text = AiPrompt.ForQuestion(q, includeAnswer: IsRevealed(q));
+        if (await JS.InvokeAsync<bool>("toetsr.copyText", text))
+            Toast.Success($"Vraag {_current + 1} gekopieerd – plak hem in ChatGPT of Claude.");
+        else
+            Toast.Error("Kopiëren mislukt.");
     }
 
     private void AskExclude(Question q)
