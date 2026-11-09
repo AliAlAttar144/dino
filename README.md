@@ -1,5 +1,14 @@
 # Dino
 
+TL DR New Features:
+Bookmark only exams
+Keyboard only use possible
+Copy questions with [C] to ask AI
+Direct feedback per question
+
+
+|
+
 **Dino** is een open-source app om oefentoetsen te maken en te oefenen, helemaal lokaal op je eigen computer.
 Maak zelf vragen, of laat ChatGPT of Claude een toets genereren en plak die erin. Maak de toets zo vaak als je wilt;
 elke poging wordt bewaard met je score en antwoorden.
