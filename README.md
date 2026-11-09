@@ -1,9 +1,9 @@
 # Dino
 
 TL DR New Features:
-Bookmark only exams
-Keyboard only use possible
-Copy questions with [C] to ask AI
+Bookmark only exams;
+Keyboard only use possible;
+Copy questions with [C] to ask AI;
 Direct feedback per question
 
 
