@@ -1,0 +1,683 @@
+{
+  "title": "INFWAD – Mix alles (30 vragen)",
+  "description": "30 willekeurige vragen uit alle toetsen, inclusief de Vue- en Express-stickers, net als het echte tentamen: 8 HTML/CSS/JavaScript/TypeScript, 14 Vue en 8 Express. Nodig voor een 5,5: 20 van de 30 goed.\n\nWil je een nieuwe trekking? Draai `python nieuwe-mix-alles.py` in de map Toetsen/.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "Express 1 – Basics",
+      "text": "Node.js already has an `http` module to create a web server. What does Express add?",
+      "points": 1,
+      "explanation": "With plain Node.js you check `req.url` and write headers yourself; Express does that for you.",
+      "options": [
+        {
+          "text": "A database and a login system"
+        },
+        {
+          "text": "Simple functions for routing, sending responses and middleware, so you don't handle the low-level details yourself",
+          "correct": true
+        },
+        {
+          "text": "The ability to run TypeScript without compiling"
+        },
+        {
+          "text": "A visual editor for building web pages"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is a primary advantage of Server-Side Rendering (SSR)?",
+      "points": 1,
+      "explanation": "The server sends complete HTML, so search engines can read the content and the first display is fast. Smooth navigation without reloads is an SPA advantage.",
+      "options": [
+        {
+          "text": "It reduces the amount of work the server has to do"
+        },
+        {
+          "text": "It provides a smoother, more fluid navigation experience without page reloads"
+        },
+        {
+          "text": "It is better for search engine optimization (SEO)",
+          "correct": true
+        },
+        {
+          "text": "It gives the server more control over the content"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "How do you tell Express to use EJS?",
+      "points": 1,
+      "explanation": "And app.set(\"views\", path.join(__dirname, \"views\")) says where the templates are.",
+      "options": [
+        {
+          "text": "`app.set(\"view engine\", \"ejs\")`",
+          "correct": true
+        },
+        {
+          "text": "`app.use(ejs)`"
+        },
+        {
+          "text": "`app.render(\"ejs\")`"
+        },
+        {
+          "text": "`import \"ejs\"` is enough"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "JavaScript – The DOM",
+      "text": "Which method is used to create a new HTML element using JavaScript?",
+      "points": 1,
+      "explanation": "`document.createElement('input')` creates the element; you then add it to the page with e.g. `appendChild` or `append`. The other methods do not exist.",
+      "options": [
+        {
+          "text": "`document.newElement('input')`"
+        },
+        {
+          "text": "`document.createElement('input')`",
+          "correct": true
+        },
+        {
+          "text": "`document.insertElement('input')`"
+        },
+        {
+          "text": "`document.addElement('input')`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\nonMounted(() => {\n  await initProducts()\n})\n```\nWhy does this fail to compile?",
+      "points": 1,
+      "explanation": "Mark the callback as `async`, or call `initProducts()` without `await` if you don't need to wait.",
+      "options": [
+        {
+          "text": "`onMounted` can't call functions from a composable"
+        },
+        {
+          "text": "`initProducts` must be called without parentheses"
+        },
+        {
+          "text": "`await` can't be used in Vue components"
+        },
+        {
+          "text": "`await` can only be used inside an `async` function; the callback must be `async () => { ... }`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "`data` shows as `Promise {<pending>}` instead of the products:\n\n```ts\nconst response = await fetch('https://fakestoreapi.com/products')\nconst data = response.json()\n```",
+      "points": 1,
+      "explanation": "response.json() reads the body and also returns a Promise.",
+      "options": [
+        {
+          "text": "Add `await` before `response.json()`",
+          "correct": true
+        },
+        {
+          "text": "Remove `await` before `fetch`"
+        },
+        {
+          "text": "Use `JSON.parse(response)`"
+        },
+        {
+          "text": "Call `response.text()` instead"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "You open *View page source* on your running Vue app. What do you see?",
+      "points": 1,
+      "explanation": "Vue builds the DOM in the browser with JavaScript; the HTML from the server is just the shell.",
+      "options": [
+        {
+          "text": "All your product cards as HTML"
+        },
+        {
+          "text": "Your `.vue` components as source code"
+        },
+        {
+          "text": "Only the `index.html` shell: an empty `<div id=\"app\">` and a script tag",
+          "correct": true
+        },
+        {
+          "text": "The compiled CSS of every component"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "What does working **mobile-first** mean?",
+      "points": 1,
+      "explanation": "Default = small viewport. Media queries add complexity as the screen gets bigger.",
+      "options": [
+        {
+          "text": "You write the default styles for small screens and add styles for larger screens in `min-width` media queries",
+          "correct": true
+        },
+        {
+          "text": "You build a separate website for mobile devices"
+        },
+        {
+          "text": "You write styles for desktop and hide elements on mobile with `display: none`"
+        },
+        {
+          "text": "You only test on a phone and never on a desktop"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – v-model, computed & composables",
+      "text": "What does the `.number` modifier do in `<input v-model.number=\"price\" type=\"number\">`?",
+      "points": 1,
+      "explanation": "Input values are strings by default; `.number` converts them.",
+      "options": [
+        {
+          "text": "It only allows the user to type digits"
+        },
+        {
+          "text": "It rounds the value to a whole number"
+        },
+        {
+          "text": "It converts the input value to a number before it is stored in the ref",
+          "correct": true
+        },
+        {
+          "text": "It formats the value as a price"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "Which statement about SSR and SPA is correct?",
+      "points": 1,
+      "explanation": "SSR: server-rendered content and quick first display. SPA: client-side interactivity and fluid navigation, often fetching JSON from an API.",
+      "options": [
+        {
+          "text": "An SPA sends fully rendered HTML for every page; SSR renders pages with JavaScript in the browser"
+        },
+        {
+          "text": "SSR can't use data from a database"
+        },
+        {
+          "text": "SSR generates the HTML on the server for each request; an SPA loads a minimal page and renders and updates content in the browser",
+          "correct": true
+        },
+        {
+          "text": "An SPA can't communicate with a server"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "Where should you load data or touch the DOM?",
+      "points": 1,
+      "explanation": "onMounted runs once the component is rendered. Before that, `document.querySelector('h1')` finds nothing.",
+      "options": [
+        {
+          "text": "In `onMounted`",
+          "correct": true
+        },
+        {
+          "text": "Directly in `<script setup>`"
+        },
+        {
+          "text": "In `onUnmounted`"
+        },
+        {
+          "text": "In the template"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "TypeScript – Block scope",
+      "text": "```ts\nconst x = 1;\nconsole.log(x)\n{\n  let x = 2;\n  console.log(x)\n}\nconsole.log(x)\n```\n\nWhat will be the order of the console output for the TypeScript code above?",
+      "points": 1,
+      "explanation": "`let` is block-scoped: the inner `x` only exists inside `{ }` and shadows the outer one there. After the block, the outer `x` (1) is used again.",
+      "options": [
+        {
+          "text": "1 2"
+        },
+        {
+          "text": "1 2 2"
+        },
+        {
+          "text": "2 1 2"
+        },
+        {
+          "text": "1 2 1",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "HTML – Document structure",
+      "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>HTML Example</title>\n</head>\n<section id=\"contact\">\n    <h1>Contact Us</h1>\n    <form>\n        <label for=\"name\">Name:</label>\n        <input type=\"text\" id=\"name\" name=\"name\">\n        <br>\n        <label for=\"email\">Email:</label>\n        <input type=\"email\" id=\"email\" name=\"email\">\n        <br>\n        <label for=\"message\">Message:</label>\n        <textarea id=\"message\" name=\"message\"></textarea>\n        <br>\n        <button type=\"submit\">Send</button>\n    </form>\n</section>\n</html>\n```\n\nWhat is incorrect about this HTML5 document?",
+      "points": 1,
+      "explanation": "The visible content (`<section>`) must be inside a `<body>` element, which is missing. `<textarea>` is supported by all browsers and `<br>` is a void element that needs no closing tag in HTML5.",
+      "options": [
+        {
+          "text": "The textarea is not supported by current browsers"
+        },
+        {
+          "text": "All the answers are correct"
+        },
+        {
+          "text": "The body is missing",
+          "correct": true
+        },
+        {
+          "text": "The br tags are not closed correctly"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 4 – JavaScript",
+      "text": "What is logged by `console.log(\"5\" + 3)`?",
+      "points": 1,
+      "explanation": "With `+` and a string, JavaScript concatenates: `\"53\"`. This kind of weirdness is one reason the course uses TypeScript.",
+      "options": [
+        {
+          "text": "`\"53\"`",
+          "correct": true
+        },
+        {
+          "text": "`8`"
+        },
+        {
+          "text": "`NaN`"
+        },
+        {
+          "text": "An error, because you can't add a string and a number"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "What does the `?` mean in this interface?\n```ts\ninterface Product {\n  id: number\n  name: string\n  image?: string\n}\n```",
+      "points": 1,
+      "explanation": "Optional properties keep existing objects (without an image) valid.",
+      "options": [
+        {
+          "text": "`image` may be `null` but must be present"
+        },
+        {
+          "text": "`image` is optional: a product can have it but doesn't have to",
+          "correct": true
+        },
+        {
+          "text": "`image` is a private property"
+        },
+        {
+          "text": "`image` is computed automatically"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Vue 1 – Vue basics",
+      "text": "In the **script** you write {{1}} to show a ref's value, in the **template** you write {{2}}.",
+      "points": 2,
+      "explanation": "Script: count.value. Template: just count, because Vue unwraps refs in the template.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "count.value",
+              "correct": true
+            },
+            {
+              "text": "count"
+            },
+            {
+              "text": "this.count"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "count",
+              "correct": true
+            },
+            {
+              "text": "count.value"
+            },
+            {
+              "text": "this.count"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Fundamentals 3 – CSS layout",
+      "text": "```css\n.highlight { width: 300px; height: 100px; background: navy; }\n```\n```html\n<p>Some <span class=\"highlight\">text</span> here</p>\n```\nThe span stays as wide as its text. Why?",
+      "points": 1,
+      "explanation": "Inline elements flow with the text. Use `display: inline-block` (or `block`) to make width and height apply.",
+      "options": [
+        {
+          "text": "The `<p>` element overrides the width of all its children"
+        },
+        {
+          "text": "`height` only works when `width` is given in percent"
+        },
+        {
+          "text": "The background colour hides the extra width"
+        },
+        {
+          "text": "A `<span>` is an inline element, and inline elements ignore `width` and `height`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "When should you use `computed()` instead of a normal function?",
+      "points": 1,
+      "explanation": "A computed only recalculates when what it uses changes. A function runs on every render but can take parameters.",
+      "options": [
+        {
+          "text": "For a value worked out from reactive data that you want cached",
+          "correct": true
+        },
+        {
+          "text": "When you need to pass parameters"
+        },
+        {
+          "text": "When you want it to run every time"
+        },
+        {
+          "text": "For saving to localStorage"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle hooks & watchers",
+      "text": "A component starts `setInterval(refresh, 5000)` in `onMounted` and is shown and hidden many times with `v-if`. After a while `refresh` runs many times every 5 seconds. What is missing?",
+      "points": 1,
+      "explanation": "Each mount starts a new timer and none are stopped. Clean up in `onUnmounted`.",
+      "options": [
+        {
+          "text": "`{ deep: true }` on the interval"
+        },
+        {
+          "text": "A `computed` around `refresh`"
+        },
+        {
+          "text": "`v-show` instead of `v-if`"
+        },
+        {
+          "text": "A `clearInterval` in `onUnmounted`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "The template crashes with \"totalValue is not a function\":\n\n```html\n<p>Total Value: ${{ totalValue() }}</p>\n```\n\nHow do you fix it?",
+      "points": 1,
+      "explanation": "A computed property is a value, not a function.",
+      "options": [
+        {
+          "text": "Write `{{ totalValue }}`: use a computed like a variable, without `()`",
+          "correct": true
+        },
+        {
+          "text": "Write `{{ totalValue.value() }}`"
+        },
+        {
+          "text": "Change `computed` to `watch`"
+        },
+        {
+          "text": "Add `async` to the computed"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What is the difference between `v-if` and `v-show`?",
+      "points": 1,
+      "explanation": "`v-show` keeps the element in the DOM and does not support `v-else`.",
+      "options": [
+        {
+          "text": "`v-if` hides the element with CSS; `v-show` removes it from the DOM"
+        },
+        {
+          "text": "`v-if` only works on components; `v-show` only works on HTML elements"
+        },
+        {
+          "text": "There is no difference, `v-show` is the old name"
+        },
+        {
+          "text": "`v-if` adds/removes the element from the DOM; `v-show` always renders it and toggles `display: none`",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "This watcher never saves after `products.value.push(...)`. Why?\n\n```ts\nwatch(products, (latest) => {\n  localStorage.setItem('products', JSON.stringify(latest))\n})\n```",
+      "points": 1,
+      "explanation": "By default Vue only notices when you replace the whole array, not when you push into it or edit a product.",
+      "options": [
+        {
+          "text": "It needs `{ deep: true }` to notice changes inside the array",
+          "correct": true
+        },
+        {
+          "text": "watch only works with computed"
+        },
+        {
+          "text": "localStorage is full"
+        },
+        {
+          "text": "push doesn't work on refs"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "TypeORM says \"No metadata for Product\" and doesn't create the table. What's the likely fix?",
+      "points": 1,
+      "explanation": "Forget an entity in the list and its table isn't made.",
+      "options": [
+        {
+          "text": "Add `Product` to `entities: [ … ]` in the DataSource",
+          "correct": true
+        },
+        {
+          "text": "Set `synchronize: false`"
+        },
+        {
+          "text": "Rename the class to products"
+        },
+        {
+          "text": "Remove @Entity()"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "Where must the 404 handler go?",
+      "points": 1,
+      "explanation": "Express checks top to bottom, so the 404 catches only what nothing else answered. Put it above app.get(\"/\") and even / gives a 404.",
+      "options": [
+        {
+          "text": "At the end, after all other routes",
+          "correct": true
+        },
+        {
+          "text": "At the top"
+        },
+        {
+          "text": "Before the middleware"
+        },
+        {
+          "text": "In a separate file only"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "What is the difference between GET and POST?",
+      "points": 1,
+      "explanation": "A search form can use GET; a form that creates something or logs in uses POST.",
+      "options": [
+        {
+          "text": "GET sends data in the body, POST puts data in the URL"
+        },
+        {
+          "text": "GET is only for images, POST is only for HTML"
+        },
+        {
+          "text": "POST is faster than GET"
+        },
+        {
+          "text": "GET requests something from the server (data can be visible in the URL); POST sends data to the server in the body of the request",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC & EJS",
+      "text": "```ts\nrouter.get('/products', showProducts())\n```\nWhat goes wrong?",
+      "points": 1,
+      "explanation": "Pass the function itself (`showProducts`); Express calls it with `req` and `res` for every request.",
+      "options": [
+        {
+          "text": "Nothing, Express calls the function with the parentheses"
+        },
+        {
+          "text": "`showProducts` is executed immediately while the routes are set up, instead of being passed as a handler for when a request comes in",
+          "correct": true
+        },
+        {
+          "text": "The route only works for POST requests"
+        },
+        {
+          "text": "The products are shown twice"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Reactivity & components",
+      "text": "What does Vite's Hot Module Replacement (HMR) do during development?",
+      "points": 1,
+      "explanation": "Save a file and the browser updates immediately, without losing state like form input.",
+      "options": [
+        {
+          "text": "It injects your code changes into the running page without a full reload, so the app keeps its state",
+          "correct": true
+        },
+        {
+          "text": "It compresses the code for production"
+        },
+        {
+          "text": "It automatically commits your changes to Git"
+        },
+        {
+          "text": "It restarts the computer when a file changes"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "CSS – Specificity",
+      "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>CSS Specificity Example</title>\n    <style>\n        p {\n            color: blue !important;\n        }\n\n        #main p {\n            color: red;\n        }\n\n        p.content {\n            color: yellow;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"wrapper\" id=\"main\">\n        <p class=\"content\" style=\"color: yellow;\">Example</p>\n    </div>\n</body>\n</html>\n```\n\nWhat will be the color of the text in the paragraph?",
+      "points": 1,
+      "explanation": "A declaration with `!important` wins over all normal declarations, even over an id selector and an inline `style` attribute. So `color: blue !important` wins.",
+      "options": [
+        {
+          "text": "Green"
+        },
+        {
+          "text": "Blue",
+          "correct": true
+        },
+        {
+          "text": "Red"
+        },
+        {
+          "text": "Yellow"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "TypeScript – Generics",
+      "text": "```ts\ntype Success<T> = {\n  status: 'OK';\n  result: T;\n};\n\ntype Fail = {\n  status: 'Fail';\n  reason: string;\n};\n\ntype ReturnType<T> = Success<T> | Fail;\n\nfunction MysteryFunction<T, R>(\n  arr: Array<T>,\n  fn: (val: T, index: number) => R\n): ReturnType<R[]> {\n  if (arr.length <= 0) return { status: 'Fail', reason: 'Empty array' };\n\n  const result: Array<R> = [];\n\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] == undefined)\n      return { status: 'Fail', reason: `Empty at index ${i}` };\n    result.push(fn(arr[i]!, i));\n  }\n\n  return { status: 'OK', result: result };\n}\n\n// Example usage\nconst res = MysteryFunction([1, 2, 3], (x) => x + 1);\n\nif (res.status == 'Fail') {\n  console.log(res.reason);\n} else {\n  console.log(res.result);\n}\n```\n\nWhat is the console output of the TypeScript code above?",
+      "points": 1,
+      "explanation": "The array is not empty and has no `undefined` values, so `fn` (x + 1) is applied to every element, like `map`. The result is `{ status: 'OK', result: [2, 3, 4] }`, so `[2, 3, 4]` is logged.",
+      "options": [
+        {
+          "text": "`[1, 2, 3]`"
+        },
+        {
+          "text": "`[2, 3, 4]`",
+          "correct": true
+        },
+        {
+          "text": "`Fail`"
+        },
+        {
+          "text": "`Empty array`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "```ts\nconst res = await fetch('/api/products')\nproducts.value = await res.json()\n```\nThe server responds with status 500. What happens?",
+      "points": 1,
+      "explanation": "`fetch` only rejects on network failures. A 404 or 500 is still a response; `res.ok` is `false` for anything outside 200–299.",
+      "options": [
+        {
+          "text": "`fetch` throws an error, so the second line never runs"
+        },
+        {
+          "text": "`fetch` does not throw on HTTP error codes; you have to check `res.ok` yourself",
+          "correct": true
+        },
+        {
+          "text": "`products.value` is automatically set to an empty array"
+        },
+        {
+          "text": "The browser retries the request until it succeeds"
+        }
+      ]
+    }
+  ]
+}
