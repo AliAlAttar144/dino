@@ -1,0 +1,697 @@
+{
+  "title": "INFWAD – Express stickers",
+  "description": "De belangrijkste onderwerpen van de Express-stickers (Express les 1 t/m 3, inclusief de ORM-les), uit de uitleg, de quizvragen, de oefentaken en de woordenlijst. Vragen, antwoorden en uitleg zijn in het Engels.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "What is **Express**?",
+      "points": 1,
+      "explanation": "Node is the engine, Express the car around it, TypeScript the lane assist.",
+      "options": [
+        {
+          "text": "A framework on top of Node.js that makes routing, responses and middleware simple",
+          "correct": true
+        },
+        {
+          "text": "A JavaScript runtime"
+        },
+        {
+          "text": "A database"
+        },
+        {
+          "text": "A front-end framework like Vue"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "In the Express project (ESM) you write `import homeRouter from \"./routes/home.routes.js\"`, although the file is `home.routes.ts`. Why `.js`?",
+      "points": 1,
+      "explanation": "ESM = the modern import/export module system, switched on with \"type\": \"module\" in package.json.",
+      "options": [
+        {
+          "text": "With ESM, local imports end in `.js`, even for `.ts` files",
+          "correct": true
+        },
+        {
+          "text": "It's a typo: it should be `.ts`"
+        },
+        {
+          "text": "Express can only import JavaScript"
+        },
+        {
+          "text": "tsx renames the files"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "What does `app.listen(3000)` do?",
+      "points": 1,
+      "explanation": "Without it, nothing can connect. The port is the door into the server.",
+      "options": [
+        {
+          "text": "It starts the server so it can receive requests on port 3000",
+          "correct": true
+        },
+        {
+          "text": "It adds a route for /3000"
+        },
+        {
+          "text": "It opens a browser"
+        },
+        {
+          "text": "It logs all requests"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Express 1 – Express basics",
+      "text": "In `app.get(\"/\", (req, res) => { ... })`, {{1}} holds what the browser asked, and {{2}} is how you answer.",
+      "points": 2,
+      "explanation": "req: req.method, req.url, req.params, req.body. res: res.send, res.status, res.sendFile, res.render.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "req",
+              "correct": true
+            },
+            {
+              "text": "res"
+            },
+            {
+              "text": "app"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "res",
+              "correct": true
+            },
+            {
+              "text": "req"
+            },
+            {
+              "text": "next"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "Where must the 404 handler go?",
+      "points": 1,
+      "explanation": "Express checks top to bottom, so the 404 catches only what nothing else answered. Put it above app.get(\"/\") and even / gives a 404.",
+      "options": [
+        {
+          "text": "At the end, after all other routes",
+          "correct": true
+        },
+        {
+          "text": "At the top"
+        },
+        {
+          "text": "Before the middleware"
+        },
+        {
+          "text": "In a separate file only"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "The 404 page says \"404 - Page Not Found\", but the browser gets status 200:\n\n```ts\napp.use((req: Request, res: Response) => {\n  res.send(\"<h1>404 - Page Not Found</h1>\");\n});\n```",
+      "points": 1,
+      "explanation": "Chain it: res.status(404).send(…). The status code tells the browser it wasn't found.",
+      "options": [
+        {
+          "text": "Add `res.status(404)` before `.send(...)`",
+          "correct": true
+        },
+        {
+          "text": "Use `res.json` instead of `res.send`"
+        },
+        {
+          "text": "Move it to the top of the file"
+        },
+        {
+          "text": "Add `next()`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "Every request now hangs forever. Why?\n\n```ts\napp.use((req, res, next) => {\n  console.log(`Request: ${req.method} ${req.url}`);\n});\n```",
+      "points": 1,
+      "explanation": "Without next(), the request stops in the middleware and the browser keeps waiting.",
+      "options": [
+        {
+          "text": "The middleware never calls `next()`",
+          "correct": true
+        },
+        {
+          "text": "console.log blocks the server"
+        },
+        {
+          "text": "Middleware can't use req.method"
+        },
+        {
+          "text": "app.use needs a path"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "A routes file gives \"app is not defined\":\n\n```ts\nimport express from \"express\";\nconst router = express.Router();\n\napp.get(\"/bye\", (req, res) => {\n  res.send(\"Goodbye!\");\n});\n\nexport default router;\n```",
+      "points": 1,
+      "explanation": "In a routes file you use the router, not the app.",
+      "options": [
+        {
+          "text": "Use `router.get(...)` instead of `app.get(...)`",
+          "correct": true
+        },
+        {
+          "text": "Import `app` from index.ts"
+        },
+        {
+          "text": "Add `app.listen()` to this file"
+        },
+        {
+          "text": "Rename the file to app.ts"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "With `app.use(\"/shop\", productRouter)`, which URL reaches `router.get(\"/products\")`?",
+      "points": 1,
+      "explanation": "The first argument of app.use is a prefix for all routes in that router: the street name, the route is the house number.",
+      "options": [
+        {
+          "text": "`/shop/products`",
+          "correct": true
+        },
+        {
+          "text": "`/products`"
+        },
+        {
+          "text": "`/products/shop`"
+        },
+        {
+          "text": "`/shop`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "What does `path.join(__dirname, \"..\", \"views\", \"products.html\")` do?",
+      "points": 1,
+      "explanation": "path.join glues folder names into a path the right way for every operating system.",
+      "options": [
+        {
+          "text": "It builds the full path to the file, one folder up and then into views",
+          "correct": true
+        },
+        {
+          "text": "It reads the file"
+        },
+        {
+          "text": "It sends the file"
+        },
+        {
+          "text": "It creates the views folder"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 1 – Express basics",
+      "text": "```ts\nconst products = [{ id: 1, name: \"Pen\" }, { id: 2, name: \"Book\" }];\n\napp.get(\"/products/:id\", (req, res) => {\n  const product = products.find(p => p.id === req.params.id);\n  ...\n});\n```\nWhy is `/products/2` never found?",
+      "points": 1,
+      "explanation": "Params are always strings.",
+      "options": [
+        {
+          "text": "`req.params.id` is the string \"2\"; compare with `Number(req.params.id)`",
+          "correct": true
+        },
+        {
+          "text": "`find` doesn't work on arrays"
+        },
+        {
+          "text": "The route must be `/products/id`"
+        },
+        {
+          "text": "The products need to be in a database"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "What's **server-side rendering (SSR)**?",
+      "points": 1,
+      "explanation": "Express with EJS is SSR. A Vue app is a SPA. SSR = the kitchen plates your food.",
+      "options": [
+        {
+          "text": "The server builds the full HTML page for each request",
+          "correct": true
+        },
+        {
+          "text": "The browser builds the page with JavaScript"
+        },
+        {
+          "text": "The server only sends JSON"
+        },
+        {
+          "text": "Pages are built once, at install time"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "What's the difference between GET and POST?",
+      "points": 1,
+      "explanation": "GET = asking a question (form data shows in the URL, like a search). POST = handing in a form (like a login).",
+      "options": [
+        {
+          "text": "GET asks the server for something; POST sends data to the server in the body of the request",
+          "correct": true
+        },
+        {
+          "text": "GET is for images, POST for HTML"
+        },
+        {
+          "text": "POST is faster than GET"
+        },
+        {
+          "text": "GET sends data in the body, POST in the URL"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "Submitting a form with `method=\"post\"` gives \"Cannot POST /add-product\". Why?",
+      "points": 1,
+      "explanation": "Add router.post(\"/add-product\", …) for the same path.",
+      "options": [
+        {
+          "text": "There's only a GET route for /add-product",
+          "correct": true
+        },
+        {
+          "text": "Forms can't send POST"
+        },
+        {
+          "text": "The form needs an action"
+        },
+        {
+          "text": "res.send is missing"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "`req.body` is undefined after a form POST. What's missing?",
+      "points": 1,
+      "explanation": "The body has to be parsed before routes can read it.",
+      "options": [
+        {
+          "text": "`app.use(express.urlencoded({ extended: true }))`",
+          "correct": true
+        },
+        {
+          "text": "`app.use(express.static())`"
+        },
+        {
+          "text": "`res.render()`"
+        },
+        {
+          "text": "`router.get()`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "What type are the values in `req.body` from a form?",
+      "points": 1,
+      "explanation": "Even a number input arrives as \"12\". Convert with Number().",
+      "options": [
+        {
+          "text": "Strings",
+          "correct": true
+        },
+        {
+          "text": "Numbers"
+        },
+        {
+          "text": "Whatever the input type was"
+        },
+        {
+          "text": "Booleans"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Express 2 – MVC and EJS",
+      "text": "In MVC, the {{1}} manages the data, the {{2}} is what the user sees, and the {{3}} handles the request in between.",
+      "points": 3,
+      "explanation": "Model = the storeroom, View = the presentation, Controller = does the work.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "Model",
+              "correct": true
+            },
+            {
+              "text": "View"
+            },
+            {
+              "text": "Controller"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "View",
+              "correct": true
+            },
+            {
+              "text": "Model"
+            },
+            {
+              "text": "Router"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "Controller",
+              "correct": true
+            },
+            {
+              "text": "Model"
+            },
+            {
+              "text": "View"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "Which order matches the MVC flow?",
+      "points": 1,
+      "explanation": "The controller asks the model for data and picks the view.",
+      "options": [
+        {
+          "text": "Request → route → controller → model → controller → view → response",
+          "correct": true
+        },
+        {
+          "text": "Request → model → view → controller → response"
+        },
+        {
+          "text": "Request → view → route → model → response"
+        },
+        {
+          "text": "Request → controller → route → view → model"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "What's wrong with this route?\n\n```ts\nrouter.get(\"/products\", showProducts());\n```",
+      "points": 1,
+      "explanation": "Express should call the function later, when a request comes in. With () the server even crashes at startup.",
+      "options": [
+        {
+          "text": "`showProducts()` runs immediately during setup; write `showProducts` without `()`",
+          "correct": true
+        },
+        {
+          "text": "router.get needs three arguments"
+        },
+        {
+          "text": "Routes can't call controllers"
+        },
+        {
+          "text": "Nothing"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "How do you tell Express to use EJS?",
+      "points": 1,
+      "explanation": "And app.set(\"views\", path.join(__dirname, \"views\")) says where the templates are.",
+      "options": [
+        {
+          "text": "`app.set(\"view engine\", \"ejs\")`",
+          "correct": true
+        },
+        {
+          "text": "`app.use(ejs)`"
+        },
+        {
+          "text": "`app.render(\"ejs\")`"
+        },
+        {
+          "text": "`import \"ejs\"` is enough"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "Which EJS tag prints a value?",
+      "points": 1,
+      "explanation": "<% %> = do something (loops, ifs). <%= %> = show something, safely escaped.",
+      "options": [
+        {
+          "text": "`<%= %>`",
+          "correct": true
+        },
+        {
+          "text": "`<% %>`"
+        },
+        {
+          "text": "`<%# %>`"
+        },
+        {
+          "text": "`{{ }}`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 2 – MVC and EJS",
+      "text": "The page says \"products is not defined\". Why?\n\n```ts\nres.render(\"products\");\n\n// products.ejs\n<% products.forEach(product => { %>\n  <p><%= product.name %></p>\n<% }) %>\n```",
+      "points": 1,
+      "explanation": "Use res.render(\"products\", { products: getAllProducts() }). The object's properties become variables in the template.",
+      "options": [
+        {
+          "text": "`res.render` didn't pass `products` to the template",
+          "correct": true
+        },
+        {
+          "text": "EJS can't loop"
+        },
+        {
+          "text": "products must be a string"
+        },
+        {
+          "text": "The view engine is wrong"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "What is an **ORM**?",
+      "points": 1,
+      "explanation": "TypeORM is the TypeScript ORM of the course.",
+      "options": [
+        {
+          "text": "An Object-Relational Mapper: it translates between objects in your code and rows in database tables, and writes the SQL for you",
+          "correct": true
+        },
+        {
+          "text": "A template engine"
+        },
+        {
+          "text": "A front-end router"
+        },
+        {
+          "text": "A JSON parser"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "TypeORM says \"No metadata for Product\" and doesn't create the table. What's the likely fix?",
+      "points": 1,
+      "explanation": "Forget an entity in the list and its table isn't made.",
+      "options": [
+        {
+          "text": "Add `Product` to `entities: [ … ]` in the DataSource",
+          "correct": true
+        },
+        {
+          "text": "Set `synchronize: false`"
+        },
+        {
+          "text": "Rename the class to products"
+        },
+        {
+          "text": "Remove @Entity()"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "Why is `synchronize: true` dangerous in production?",
+      "points": 1,
+      "explanation": "Handy in development. Production uses migrations: controlled, reviewed database changes.",
+      "options": [
+        {
+          "text": "It changes tables automatically from your entities and can delete data",
+          "correct": true
+        },
+        {
+          "text": "It makes the database read-only"
+        },
+        {
+          "text": "It disables logging"
+        },
+        {
+          "text": "It only works with SQLite"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "The decorator {{1}} marks a class as a table, {{2}} makes a property a column, and {{3}} makes the auto-numbered primary key.",
+      "points": 3,
+      "explanation": "A decorator is a @label that adds behaviour to a class or property.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "@Entity()",
+              "correct": true
+            },
+            {
+              "text": "@Column()"
+            },
+            {
+              "text": "@Table()"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "@Column()",
+              "correct": true
+            },
+            {
+              "text": "@Entity()"
+            },
+            {
+              "text": "@Field()"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "@PrimaryGeneratedColumn()",
+              "correct": true
+            },
+            {
+              "text": "@Column(\"id\")"
+            },
+            {
+              "text": "@Key()"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "What's the difference between `find()` and `findOneBy({ id: 1 })`?",
+      "points": 1,
+      "explanation": "With { where: { … } } find filters like SQL WHERE.",
+      "options": [
+        {
+          "text": "`find()` always returns an array; `findOneBy` returns one object",
+          "correct": true
+        },
+        {
+          "text": "`find()` returns one object; `findOneBy` an array"
+        },
+        {
+          "text": "They are the same"
+        },
+        {
+          "text": "`findOneBy` only works for strings"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Express 3 – ORM (TypeORM)",
+      "text": "`products.length` is undefined here. Fix it.\n\n```ts\nexport async function showProducts(req: Request, res: Response) {\n  const products = productRepository.find();\n  console.log(products.length);\n}\n```",
+      "points": 1,
+      "explanation": "Database calls are asynchronous: without await you get a Promise.",
+      "options": [
+        {
+          "text": "Add `await`: `const products = await productRepository.find()`",
+          "correct": true
+        },
+        {
+          "text": "Use `findOneBy` instead"
+        },
+        {
+          "text": "Remove `async`"
+        },
+        {
+          "text": "Wrap it in `JSON.parse`"
+        }
+      ]
+    }
+  ]
+}

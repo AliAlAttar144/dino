@@ -1,0 +1,1030 @@
+{
+  "title": "INFWAD – Vue stickers",
+  "description": "De belangrijkste onderwerpen van de Vue-stickers (Vue les 1 t/m 6), uit de uitleg, de quizvragen, de oefentaken en de woordenlijst. Vragen, antwoorden en uitleg zijn in het Engels.",
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "questions": [
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "Why do modern frameworks like Vue use **reactivity**?",
+      "points": 1,
+      "explanation": "Reactivity connects data and page, like a spreadsheet: change a cell and every formula that uses it updates.",
+      "options": [
+        {
+          "text": "So the page updates by itself when the data changes",
+          "correct": true
+        },
+        {
+          "text": "So pages load without JavaScript"
+        },
+        {
+          "text": "So you can skip writing HTML"
+        },
+        {
+          "text": "So CSS only affects one component"
+        }
+      ]
+    },
+    {
+      "type": "multiple",
+      "title": "Vue 1 – Vue basics",
+      "text": "Which parts can a `.vue` **Single File Component** contain?",
+      "points": 2,
+      "explanation": "One file, three rooms: script is the brain, template is the body, style is the clothes.",
+      "options": [
+        {
+          "text": "`<script setup>` for the logic",
+          "correct": true
+        },
+        {
+          "text": "`<template>` for the HTML",
+          "correct": true
+        },
+        {
+          "text": "`<style scoped>` for the CSS",
+          "correct": true
+        },
+        {
+          "text": "`<router>` for the routes"
+        },
+        {
+          "text": "`<data>` for the reactive variables"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "What does this button show after 3 clicks?\n\n```vue\n<script setup lang=\"ts\">\nlet count = 0\n</script>\n\n<template>\n  <button @click=\"count++\">{{ count }}</button>\n</template>\n```",
+      "points": 1,
+      "explanation": "`let count = 0` is a normal variable. Vue only tracks reactive values such as `ref()`.",
+      "options": [
+        {
+          "text": "Nothing changes: count is not reactive",
+          "correct": true
+        },
+        {
+          "text": "3"
+        },
+        {
+          "text": "An error"
+        },
+        {
+          "text": "0, then 3 after a reload"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Vue 1 – Vue basics",
+      "text": "In the **script** you write {{1}} to show a ref's value, in the **template** you write {{2}}.",
+      "points": 2,
+      "explanation": "Script: count.value. Template: just count, because Vue unwraps refs in the template.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "count.value",
+              "correct": true
+            },
+            {
+              "text": "count"
+            },
+            {
+              "text": "this.count"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "count",
+              "correct": true
+            },
+            {
+              "text": "count.value"
+            },
+            {
+              "text": "this.count"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Vue 1 – Vue basics",
+      "text": "`:` is short for {{1}} and `@` is short for {{2}}.",
+      "points": 2,
+      "explanation": ": = \"this is JavaScript, not text\" (v-bind). @ = \"when this happens\" (v-on).",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "v-bind:",
+              "correct": true
+            },
+            {
+              "text": "v-on:"
+            },
+            {
+              "text": "v-model:"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "v-on:",
+              "correct": true
+            },
+            {
+              "text": "v-bind:"
+            },
+            {
+              "text": "v-if:"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "When `count` is 0 you see \"Start counting!\" **and** \"Negative\". What's the fix?\n\n```html\n<p v-if=\"count === 0\">Start counting!</p>\n<p v-if=\"count > 0\">Positive</p>\n<p v-else>Negative</p>\n```",
+      "points": 1,
+      "explanation": "Now there are two chains. The second `v-if` is false at 0, so its `v-else` shows. One chain shows exactly one message.",
+      "options": [
+        {
+          "text": "Change the second `v-if` to `v-else-if`, so the three form one chain",
+          "correct": true
+        },
+        {
+          "text": "Change `v-else` to `v-show`"
+        },
+        {
+          "text": "Change `===` to `==`"
+        },
+        {
+          "text": "Add `:key` to every `<p>`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "What's the difference between `v-if` and `v-show`?",
+      "points": 1,
+      "explanation": "v-if = build it or tear it down. v-show = put a blanket over it (display: none).",
+      "options": [
+        {
+          "text": "`v-if` removes the element from the DOM, `v-show` only hides it with CSS",
+          "correct": true
+        },
+        {
+          "text": "They are exactly the same"
+        },
+        {
+          "text": "`v-show` removes it, `v-if` hides it"
+        },
+        {
+          "text": "`v-show` supports `v-else`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "What's wrong with this list?\n\n```html\n<li v-for=\"product in products\" key=\"product.id\">\n  {{ product.name }}\n</li>\n```",
+      "points": 1,
+      "explanation": "Without `:` the attribute is plain text, so every item gets the same key. Write `:key=\"product.id\"`.",
+      "options": [
+        {
+          "text": "The key is the text \"product.id\", because the colon is missing",
+          "correct": true
+        },
+        {
+          "text": "`v-for` should be `v-each`"
+        },
+        {
+          "text": "`product in products` should be `products in product`"
+        },
+        {
+          "text": "Nothing"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "How does data flow between components?",
+      "points": 1,
+      "explanation": "One-way data flow: the parent owns the data, so changes are easy to follow.",
+      "options": [
+        {
+          "text": "Props go down to the child, events go up to the parent",
+          "correct": true
+        },
+        {
+          "text": "Events go down, props go up"
+        },
+        {
+          "text": "Children change the parent's data directly"
+        },
+        {
+          "text": "Both directions through props"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "How do you declare that a component can emit a `delete` event with a number?",
+      "points": 1,
+      "explanation": "defineEmits declares which events a component can emit and what they carry.",
+      "options": [
+        {
+          "text": "`const emit = defineEmits<{ delete: [id: number] }>()`",
+          "correct": true
+        },
+        {
+          "text": "`defineProps<{ delete: number }>()`"
+        },
+        {
+          "text": "`const emit = ref<'delete'>()`"
+        },
+        {
+          "text": "`@delete=\"id\"` in the child's template"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 1 – Vue basics",
+      "text": "ProductCard emits `delete` with the id. How does the parent run `deleteProduct` when that happens?",
+      "points": 1,
+      "explanation": "The parent listens with `@` plus the event name. The emitted id arrives as the function's argument.",
+      "options": [
+        {
+          "text": "`<ProductCard ... @delete=\"deleteProduct\" />`",
+          "correct": true
+        },
+        {
+          "text": "`<ProductCard ... :delete=\"deleteProduct\" />`"
+        },
+        {
+          "text": "`<ProductCard ... v-model=\"deleteProduct\" />`"
+        },
+        {
+          "text": "`<ProductCard ... emit=\"deleteProduct\" />`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "What does `v-model` do?",
+      "points": 1,
+      "explanation": "Typing changes the variable, and changing the variable in code changes the input.",
+      "options": [
+        {
+          "text": "It keeps an input and a variable in sync in both directions",
+          "correct": true
+        },
+        {
+          "text": "It only shows a value"
+        },
+        {
+          "text": "It validates the form"
+        },
+        {
+          "text": "It sends the form to a server"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "Why does the price become a string here?\n\n```html\n<input v-model=\"price\" type=\"number\">\n```",
+      "points": 1,
+      "explanation": "v-model.number converts what's typed into a number.",
+      "options": [
+        {
+          "text": "Inputs always give text: use `v-model.number`",
+          "correct": true
+        },
+        {
+          "text": "`ref()` turns numbers into strings"
+        },
+        {
+          "text": "`type=\"number\"` is wrong"
+        },
+        {
+          "text": "The form is missing `.prevent`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "Why use `@submit.prevent` on a form?",
+      "points": 1,
+      "explanation": ".prevent calls preventDefault() on the submit event, so your function can handle the form.",
+      "options": [
+        {
+          "text": "To stop the page from reloading",
+          "correct": true
+        },
+        {
+          "text": "To clear the inputs"
+        },
+        {
+          "text": "To validate the inputs"
+        },
+        {
+          "text": "To send the data faster"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "When should you use `computed()` instead of a normal function?",
+      "points": 1,
+      "explanation": "A computed only recalculates when what it uses changes. A function runs on every render but can take parameters.",
+      "options": [
+        {
+          "text": "For a value worked out from reactive data that you want cached",
+          "correct": true
+        },
+        {
+          "text": "When you need to pass parameters"
+        },
+        {
+          "text": "When you want it to run every time"
+        },
+        {
+          "text": "For saving to localStorage"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "The template crashes with \"totalValue is not a function\":\n\n```html\n<p>Total Value: ${{ totalValue() }}</p>\n```\n\nHow do you fix it?",
+      "points": 1,
+      "explanation": "A computed property is a value, not a function.",
+      "options": [
+        {
+          "text": "Write `{{ totalValue }}`: use a computed like a variable, without `()`",
+          "correct": true
+        },
+        {
+          "text": "Write `{{ totalValue.value() }}`"
+        },
+        {
+          "text": "Change `computed` to `watch`"
+        },
+        {
+          "text": "Add `async` to the computed"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "What is a **composable**?",
+      "points": 1,
+      "explanation": "It returns refs, computed values and functions that any component can use. A toolbox you can lend to any component.",
+      "options": [
+        {
+          "text": "A function, usually named `useSomething`, that holds reusable logic",
+          "correct": true
+        },
+        {
+          "text": "A component without a template"
+        },
+        {
+          "text": "A CSS file for components"
+        },
+        {
+          "text": "A Vue Router page"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 2 – Forms and reusable logic",
+      "text": "A component does `const { count, increment } = useCounter()`, but `increment` is undefined. What's the likely bug in `useCounter`?",
+      "points": 1,
+      "explanation": "A composable only shares what it returns: `return { count, increment, decrement }`.",
+      "options": [
+        {
+          "text": "`increment` is not in the object it returns",
+          "correct": true
+        },
+        {
+          "text": "`increment` must be a computed"
+        },
+        {
+          "text": "Composables can't contain functions"
+        },
+        {
+          "text": "The component must call `useCounter.increment()`"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "```vue\n<script setup lang=\"ts\">\nimport { onMounted } from 'vue'\nconsole.log('A')\nonMounted(() => console.log('B'))\nconsole.log('C')\n</script>\n```\nIn which order are the letters logged?",
+      "points": 1,
+      "explanation": "Code in script setup runs right away when the component is created. onMounted runs later, once the HTML is on the page.",
+      "options": [
+        {
+          "text": "A, C, B",
+          "correct": true
+        },
+        {
+          "text": "A, B, C"
+        },
+        {
+          "text": "B, A, C"
+        },
+        {
+          "text": "C, A, B"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "Where should you load data or touch the DOM?",
+      "points": 1,
+      "explanation": "onMounted runs once the component is rendered. Before that, `document.querySelector('h1')` finds nothing.",
+      "options": [
+        {
+          "text": "In `onMounted`",
+          "correct": true
+        },
+        {
+          "text": "Directly in `<script setup>`"
+        },
+        {
+          "text": "In `onUnmounted`"
+        },
+        {
+          "text": "In the template"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "What goes wrong without `onUnmounted` here?\n\n```ts\nonMounted(() => {\n  window.addEventListener('keydown', handleKey)\n})\n```",
+      "points": 1,
+      "explanation": "That's a memory leak. Remove the listener in onUnmounted.",
+      "options": [
+        {
+          "text": "The keydown listener keeps running after the component is gone",
+          "correct": true
+        },
+        {
+          "text": "Nothing, Vue removes it"
+        },
+        {
+          "text": "The component never mounts"
+        },
+        {
+          "text": "The page reloads"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "localStorage: {{1}} saves, {{2}} loads. Before saving an array you use {{3}}, after loading you use {{4}}.",
+      "points": 4,
+      "explanation": "setItem = save, getItem = load. Objects go through JSON first.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "setItem",
+              "correct": true
+            },
+            {
+              "text": "getItem"
+            },
+            {
+              "text": "removeItem"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "getItem",
+              "correct": true
+            },
+            {
+              "text": "setItem"
+            },
+            {
+              "text": "loadItem"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "JSON.stringify",
+              "correct": true
+            },
+            {
+              "text": "JSON.parse"
+            },
+            {
+              "text": "toString"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "JSON.parse",
+              "correct": true
+            },
+            {
+              "text": "JSON.stringify"
+            },
+            {
+              "text": "Number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "This watcher never saves after `products.value.push(...)`. Why?\n\n```ts\nwatch(products, (latest) => {\n  localStorage.setItem('products', JSON.stringify(latest))\n})\n```",
+      "points": 1,
+      "explanation": "By default Vue only notices when you replace the whole array, not when you push into it or edit a product.",
+      "options": [
+        {
+          "text": "It needs `{ deep: true }` to notice changes inside the array",
+          "correct": true
+        },
+        {
+          "text": "watch only works with computed"
+        },
+        {
+          "text": "localStorage is full"
+        },
+        {
+          "text": "push doesn't work on refs"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "What does `{ immediate: true }` do on a watcher?",
+      "points": 1,
+      "explanation": "Handy when a form must fill in from a prop that already has a value at the start.",
+      "options": [
+        {
+          "text": "It also runs the watcher once right away, not only after the first change",
+          "correct": true
+        },
+        {
+          "text": "It makes the watcher run synchronously"
+        },
+        {
+          "text": "It watches inside arrays"
+        },
+        {
+          "text": "It stops the watcher after one run"
+        }
+      ]
+    },
+    {
+      "type": "multiple",
+      "title": "Vue 3 – Lifecycle and watchers",
+      "text": "Which of these are **side effects** (a job for `watch`, not `computed`)?",
+      "points": 2,
+      "explanation": "A side effect is an action besides returning a value. Deriving a value is a job for computed.",
+      "options": [
+        {
+          "text": "Saving products to localStorage",
+          "correct": true
+        },
+        {
+          "text": "Logging to the console",
+          "correct": true
+        },
+        {
+          "text": "Calling an API",
+          "correct": true
+        },
+        {
+          "text": "Working out the total price of all products"
+        },
+        {
+          "text": "Counting how many products there are"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Component communication",
+      "text": "What happens when a child component runs `props.price = 0`?",
+      "points": 1,
+      "explanation": "Props are a library book: read it, don't write in it. Emit an event and let the parent change its own data.",
+      "options": [
+        {
+          "text": "Vue blocks it and shows a warning: props are read-only",
+          "correct": true
+        },
+        {
+          "text": "The parent's price becomes 0"
+        },
+        {
+          "text": "Only the child shows 0"
+        },
+        {
+          "text": "The page reloads"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Component communication",
+      "text": "A form component must not change its `editingProduct` prop. What does it do instead when the user saves?",
+      "points": 1,
+      "explanation": "The child copies the values into its own refs and emits the result. The parent updates its own data.",
+      "options": [
+        {
+          "text": "Build a new product object from its own refs and emit it, like `emit('update', updated)`",
+          "correct": true
+        },
+        {
+          "text": "Change `props.editingProduct.name` directly"
+        },
+        {
+          "text": "Use `v-model` on the prop"
+        },
+        {
+          "text": "Store it in a global variable"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 4 – Component communication",
+      "text": "ProductCard emits `delete`. ProductList sits between ProductCard and the page. How does ProductList pass it up?",
+      "points": 1,
+      "explanation": "Event re-emitting: ProductCard → ProductList → ProductManagementPage.",
+      "options": [
+        {
+          "text": "`@delete=\"emit('delete', product.id)\"`",
+          "correct": true
+        },
+        {
+          "text": "It doesn't need to: events bubble up automatically"
+        },
+        {
+          "text": "`:delete=\"product.id\"`"
+        },
+        {
+          "text": "It calls the page's function directly"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Routing",
+      "text": "What does `<RouterView />` do?",
+      "points": 1,
+      "explanation": "The router swaps whatever component matches the URL into RouterView.",
+      "options": [
+        {
+          "text": "It's the placeholder where the current page's component appears",
+          "correct": true
+        },
+        {
+          "text": "It lists all routes"
+        },
+        {
+          "text": "It shows the URL"
+        },
+        {
+          "text": "It creates links"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Routing",
+      "text": "Links do nothing. What's wrong with this `main.ts`?\n\n```ts\nconst app = createApp(App)\napp.mount('#app')\napp.use(router)\n```",
+      "points": 1,
+      "explanation": "A plugin is registered on the app before mounting: createApp → app.use(router) → app.mount.",
+      "options": [
+        {
+          "text": "`app.use(router)` must come before `app.mount('#app')`",
+          "correct": true
+        },
+        {
+          "text": "`createApp` must come last"
+        },
+        {
+          "text": "The router must be imported in App.vue instead"
+        },
+        {
+          "text": "Nothing"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Routing",
+      "text": "Why use `RouterLink` instead of `<a>`?",
+      "points": 1,
+      "explanation": "A full reload restarts your app and loses its state: the counter in App.vue goes back to 0.",
+      "options": [
+        {
+          "text": "`<a>` reloads the whole page; RouterLink swaps the page without reloading",
+          "correct": true
+        },
+        {
+          "text": "`<a>` doesn't work in Vue"
+        },
+        {
+          "text": "RouterLink is faster to type"
+        },
+        {
+          "text": "RouterLink only works for external sites"
+        }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Vue 5 – Routing",
+      "text": "{{1}} tells you where you are (like `route.params.id`); {{2}} lets code take you somewhere (like `router.push('/products')`).",
+      "points": 2,
+      "explanation": "useRoute() = where am I? useRouter() = take me somewhere.",
+      "gaps": [
+        {
+          "options": [
+            {
+              "text": "useRoute()",
+              "correct": true
+            },
+            {
+              "text": "useRouter()"
+            },
+            {
+              "text": "useParams()"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "text": "useRouter()",
+              "correct": true
+            },
+            {
+              "text": "useRoute()"
+            },
+            {
+              "text": "useNavigate()"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Routing",
+      "text": "This detail page always says \"not found\". Why?\n\n```ts\nconst route = useRoute()\nconst product = products.value.find(p => p.id === route.params.id)\n```",
+      "points": 1,
+      "explanation": "\"2\" === 2 is false, so nothing matches.",
+      "options": [
+        {
+          "text": "Route params are strings, so compare with `Number(route.params.id)`",
+          "correct": true
+        },
+        {
+          "text": "`useRoute()` only works in App.vue"
+        },
+        {
+          "text": "`find()` doesn't work on refs"
+        },
+        {
+          "text": "The route needs a `*` at the end"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Routing",
+      "text": "What does the route `/:pathMatch(.*)*` do?",
+      "points": 1,
+      "explanation": "Point it to a NotFoundPage so unknown URLs show a friendly 404. Without it, RouterView shows nothing.",
+      "options": [
+        {
+          "text": "It catches every URL that no other route matched",
+          "correct": true
+        },
+        {
+          "text": "It matches only the home page"
+        },
+        {
+          "text": "It loads pages lazily"
+        },
+        {
+          "text": "It redirects to /"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 5 – Routing",
+      "text": "What does `component: () => import('../pages/AboutPage.vue')` do?",
+      "points": 1,
+      "explanation": "That's lazy loading: a dynamic import makes a separate .js file that's downloaded on demand.",
+      "options": [
+        {
+          "text": "It loads the About page only when someone visits it",
+          "correct": true
+        },
+        {
+          "text": "It loads the page twice"
+        },
+        {
+          "text": "It makes the page load first"
+        },
+        {
+          "text": "It imports the page into every route"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "What are the three states of a Promise?",
+      "points": 1,
+      "explanation": "Loading, error and success are the three **UI** states you show for async data.",
+      "options": [
+        {
+          "text": "Pending, fulfilled, rejected",
+          "correct": true
+        },
+        {
+          "text": "Start, middle, end"
+        },
+        {
+          "text": "Loading, error, success"
+        },
+        {
+          "text": "Open, closed, waiting"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "What's wrong here?\n\n```ts\nfunction loadProducts() {\n  const response = await fetch(url)\n  products.value = await response.json()\n}\n```",
+      "points": 1,
+      "explanation": "Write `async function loadProducts() { … }`. async = this function is allowed to wait.",
+      "options": [
+        {
+          "text": "`await` only works inside a function marked `async`",
+          "correct": true
+        },
+        {
+          "text": "fetch needs a second argument"
+        },
+        {
+          "text": "`response.json()` isn't a Promise"
+        },
+        {
+          "text": "Nothing"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "`data` shows as `Promise {<pending>}` instead of the products:\n\n```ts\nconst response = await fetch('https://fakestoreapi.com/products')\nconst data = response.json()\n```",
+      "points": 1,
+      "explanation": "response.json() reads the body and also returns a Promise.",
+      "options": [
+        {
+          "text": "Add `await` before `response.json()`",
+          "correct": true
+        },
+        {
+          "text": "Remove `await` before `fetch`"
+        },
+        {
+          "text": "Use `JSON.parse(response)`"
+        },
+        {
+          "text": "Call `response.text()` instead"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "What does `fetch()` do when the server answers 404?",
+      "points": 1,
+      "explanation": "fetch only fails when there's no connection at all.",
+      "options": [
+        {
+          "text": "It succeeds; you have to check `response.ok` yourself",
+          "correct": true
+        },
+        {
+          "text": "It throws an error"
+        },
+        {
+          "text": "It retries automatically"
+        },
+        {
+          "text": "It returns null"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "Why put `loading.value = false` in `finally`?",
+      "points": 1,
+      "explanation": "At the end of try, a failed request would leave \"Loading…\" on screen forever.",
+      "options": [
+        {
+          "text": "`finally` runs whether the request worked or failed",
+          "correct": true
+        },
+        {
+          "text": "finally runs first"
+        },
+        {
+          "text": "try can't change refs"
+        },
+        {
+          "text": "It makes the request faster"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "When there is an error you see the error **and** the list. What's the fix?\n\n```html\n<div v-if=\"loading\">Loading products...</div>\n<div v-if=\"error\">{{ error }}</div>\n<ProductList v-else :products=\"products\" />\n```",
+      "points": 1,
+      "explanation": "Loading, error and success: one v-if / v-else-if / v-else chain shows exactly one.",
+      "options": [
+        {
+          "text": "Make it one chain: `v-if`, `v-else-if=\"error\"`, `v-else`",
+          "correct": true
+        },
+        {
+          "text": "Use v-show on all three"
+        },
+        {
+          "text": "Put the error inside the list"
+        },
+        {
+          "text": "Remove the loading state"
+        }
+      ]
+    },
+    {
+      "type": "single",
+      "title": "Vue 6 – Fetching data",
+      "text": "The API calls the name `title`, your Product type calls it `name`. Where does the course say to fix that?",
+      "points": 1,
+      "explanation": "Data transformation at the boundary: the rest of the app never sees the API's names.",
+      "options": [
+        {
+          "text": "Right where the data comes in: `data.map(item => ({ id: item.id, name: item.title, ... }))`",
+          "correct": true
+        },
+        {
+          "text": "In every template that shows a product"
+        },
+        {
+          "text": "By renaming your interface to use title"
+        },
+        {
+          "text": "In localStorage"
+        }
+      ]
+    }
+  ]
+}
